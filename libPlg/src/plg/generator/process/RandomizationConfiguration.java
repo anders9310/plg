@@ -56,7 +56,8 @@ public class RandomizationConfiguration {
 	private Map<RANDOMIZATION_PATTERN, Double> weights;
 	private int maxDepth;
 	private double dataObjectProbability;
-	
+
+
 	/**
 	 * This enumeration describes the set of all possible patterns
 	 */
@@ -96,7 +97,7 @@ public class RandomizationConfiguration {
 	 * @param loopWeight the loop weight (must be in [0, 1])
 	 * @param singleActivityWeight the weight of single activity (must
 	 * be in <tt>[0,1]</tt>)
-	 * @param skupWeight the weight of a skip (must be in <tt>[0,1]</tt>)
+	 * @param skipWeight the weight of a skip (must be in <tt>[0,1]</tt>)
 	 * @param sequenceWeight he weight of sequence activity (must be
 	 * in <tt>[0,1]</tt>)
 	 * @param ANDWeight the weight of AND split-join (must be in <tt>[0,1]</tt>)
@@ -392,6 +393,12 @@ public class RandomizationConfiguration {
 	 * @return the random pattern
 	 */
 	public RANDOMIZATION_PATTERN getRandomPattern(boolean canLoop, boolean canSkip) {
+		Set<RANDOMIZATION_PATTERN> options = getAllPatterns(canLoop, canSkip);
+		
+		return getRandomPattern(options.toArray(new RANDOMIZATION_PATTERN[options.size()]));
+	}
+
+	private Set<RANDOMIZATION_PATTERN> getAllPatterns(boolean canLoop, boolean canSkip){
 		Set<RANDOMIZATION_PATTERN> options = new HashSet<RANDOMIZATION_PATTERN>();
 		options.add(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY);
 		options.add(RANDOMIZATION_PATTERN.SEQUENCE);
@@ -403,8 +410,7 @@ public class RandomizationConfiguration {
 		if (canLoop) {
 			options.add(RANDOMIZATION_PATTERN.LOOP);
 		}
-		
-		return getRandomPattern(options.toArray(new RANDOMIZATION_PATTERN[options.size()]));
+		return options;
 	}
 	
 	/**
@@ -423,7 +429,7 @@ public class RandomizationConfiguration {
 		}
 		return SetUtils.getRandomWeighted(options);
 	}
-	
+
 	/**
 	 * This method tells the requester whether it is necessary to generate a
 	 * data object, according to the value set for the
