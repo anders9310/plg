@@ -1,10 +1,12 @@
+package plg.test.unit;
+
 import org.junit.*;
 import plg.generator.process.weights.ProductionObligationWeight;
 
 public class ProductionObligationWeightTest {
 
-    double baseweight = 2.0;
-    int obligationValue = 10;
+    private double baseweight = 2.0;
+    private int obligationValue = 10;
 
     @BeforeClass
     public static void setUp(){

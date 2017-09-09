@@ -1,6 +1,7 @@
+package plg.test.unit;
+
 import org.junit.*;
 import plg.generator.process.GenerationParameter;
-import plg.generator.process.weights.ProductionObligationWeight;
 import plg.generator.process.weights.ProductionWeight;
 
 import java.util.HashMap;
@@ -9,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductionWeightTest {
-
+    private static int valueForAllObligations = 4;
+    private static double baseWeightForAllObligations = 2.0;
     private static List<GenerationParameter> genParams;
     private static Map<GenerationParameter, Double> obligationBaseWeights;
     private static Map<GenerationParameter, Integer> obligationValues;
@@ -28,18 +30,16 @@ public class ProductionWeightTest {
     }
 
     private static void setUpObligationBaseWeights() {
-        double obligationBaseWeight = 2.0;
-        obligationBaseWeights = new HashMap<>();
+        ProductionWeightTest.obligationBaseWeights = new HashMap<>();
         for(GenerationParameter gp : genParams){
-            obligationBaseWeights.put(gp, obligationBaseWeight);
+            ProductionWeightTest.obligationBaseWeights.put(gp, baseWeightForAllObligations);
         }
     }
 
     private static void setUpObligationValues() {
-        int obligationValue = 4;
-        obligationValues = new HashMap<>();
+        ProductionWeightTest.obligationValues = new HashMap<>();
         for(GenerationParameter gp : genParams){
-            obligationValues.put(gp, obligationValue);
+            ProductionWeightTest.obligationValues.put(gp, valueForAllObligations);
         }
     }
 

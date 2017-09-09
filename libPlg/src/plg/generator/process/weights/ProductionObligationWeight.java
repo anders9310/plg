@@ -1,11 +1,8 @@
 package plg.generator.process.weights;
 
-import plg.generator.process.GenerationParameter;
-
-public class ProductionObligationWeight {
-    private double value;
-    double baseWeight;
-    double obligationValue;
+public class ProductionObligationWeight extends Weight{
+    private double baseWeight;
+    private double obligationValue;
     public double remainingObligation;
 
 
@@ -15,12 +12,7 @@ public class ProductionObligationWeight {
         this.remainingObligation = obligationValue;
     }
 
-    public double getValue(){
-        calculateValue();
-        return value;
-    }
-
-    private void calculateValue() {
+    void calculateValue() {
         if(remainingObligation<0.0){
             value=0;
         }else{

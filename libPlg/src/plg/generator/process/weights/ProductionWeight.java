@@ -3,11 +3,9 @@ package plg.generator.process.weights;
 import plg.generator.process.GenerationParameter;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-public class ProductionWeight {
-    private double value;
+public class ProductionWeight extends Weight{
     private Map<GenerationParameter, ProductionObligationWeight> obligationBaseWeights;
 
     public ProductionWeight(Map<GenerationParameter, Double> obligationBaseWeights, Map<GenerationParameter, Integer> obligationValues){
@@ -24,12 +22,7 @@ public class ProductionWeight {
         }
     }
 
-    public double getValue(){
-        calculateValue();
-        return value;
-    }
-
-    private void calculateValue(){
+    void calculateValue(){
         double sumOfWeights = 0.0;
         for (Object o : obligationBaseWeights.entrySet()) {
             Map.Entry pair = (Map.Entry) o;
