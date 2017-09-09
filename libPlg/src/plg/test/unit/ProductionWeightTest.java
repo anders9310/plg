@@ -45,9 +45,9 @@ public class ProductionWeightTest {
 
     @Test
     public void testValue() {
-        ProductionWeight po = new ProductionWeight(obligationBaseWeights, obligationValues);
+        ProductionWeight pw = new ProductionWeight(obligationBaseWeights, obligationValues);
 
-        double weight = po.getValue();
+        double weight = pw.getValue();
 
         assert weight == 16.0; //baseWeight * remainingObligation^2 / obligation
 

@@ -1,19 +1,17 @@
 package plg.generator.process;
 
 import plg.generator.process.weights.ProductionObligationWeight;
+import plg.generator.process.weights.ProductionWeight;
 import plg.utils.Pair;
 import plg.utils.SetUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ParameterRandomizationConfiguration extends RandomizationConfiguration{
 
     private Map<GenerationParameter, Integer> obligations;
     private Map<GenerationParameter, Integer> remainingObligations;
-    private Map<RandomizationConfiguration.RANDOMIZATION_PATTERN, Double> productionWeights;
+    private Map<RandomizationConfiguration.RANDOMIZATION_PATTERN, ProductionWeight> productionWeights;
     public Map<RandomizationConfiguration.RANDOMIZATION_PATTERN, Map<GenerationParameter, ProductionObligationWeight>> obligationBaseWeights;
     private Map<RandomizationConfiguration.RANDOMIZATION_PATTERN, Map<GenerationParameter, ProductionObligationWeight>> obligationWeights;
 
@@ -21,17 +19,38 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     public ParameterRandomizationConfiguration(int numActivities, int numGateways) {
         super(5,5,0.1,0.2,0.1,0.7,0.3,0.3,3,0.1);
-        this.productionWeights = new HashMap<>();
+        initProductionWeights();
         initObligations(numActivities, numGateways);
+    }
 
-        this.obligationWeights = new HashMap<>();
-        Set<RandomizationConfiguration.RANDOMIZATION_PATTERN> patterns = getAllPatterns();
-        for(RandomizationConfiguration.RANDOMIZATION_PATTERN p : patterns){
-            Map<GenerationParameter, ProductionObligationWeight> baseWeightsForProduction = new HashMap<>();
-            baseWeightsForProduction.put(GenerationParameter.NUM_ACTIVITIES, new ProductionObligationWeight(2.0, obligations.get(GenerationParameter.NUM_ACTIVITIES)));
-            baseWeightsForProduction.put(GenerationParameter.NUM_GATEWAYS, new ProductionObligationWeight(2.0, obligations.get(GenerationParameter.NUM_GATEWAYS)));
-            obligationWeights.put(p, baseWeightsForProduction);
+    private void initProductionWeights() {
+        this.productionWeights = new HashMap<>();
+
+        Map<GenerationParameter, Double> obligationBaseWeights = setUpObligationBaseWeights();
+        Map<GenerationParameter, Integer> obligationValues = setUpObligationValues();
+        for(RANDOMIZATION_PATTERN pattern : RANDOMIZATION_PATTERN.values()){
+            ProductionWeight pw = new ProductionWeight(obligationBaseWeights, obligationValues);
+            productionWeights.put(pattern, pw);
         }
+
+    }
+
+    private Map<GenerationParameter, Double> setUpObligationBaseWeights() {
+        double obligationBaseWeight = 2.0;
+        Map<GenerationParameter, Double> obligationBaseWeights = new HashMap<>();
+        for(GenerationParameter gp : GenerationParameter.values()){
+            obligationBaseWeights.put(gp, obligationBaseWeight);
+        }
+        return obligationBaseWeights;
+    }
+
+    private Map<GenerationParameter, Integer> setUpObligationValues() {
+        int obligationValue = 4;
+        Map<GenerationParameter, Integer> obligationValues = new HashMap<>();
+        for(GenerationParameter gp : GenerationParameter.values()){
+            obligationValues.put(gp, obligationValue);
+        }
+        return obligationValues;
     }
 
     public RandomizationConfiguration.RANDOMIZATION_PATTERN getRandomPattern(boolean canLoop, boolean canSkip) {
@@ -42,9 +61,8 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     public RandomizationConfiguration.RANDOMIZATION_PATTERN getRandomPattern(Set<RandomizationConfiguration.RANDOMIZATION_PATTERN> patterns) {
         Set<Pair<RandomizationConfiguration.RANDOMIZATION_PATTERN, Double>> options = new HashSet<>();
-        calculateWeights(patterns, getAllGenerationParameters());
         for(RandomizationConfiguration.RANDOMIZATION_PATTERN p : patterns) {
-            options.add(new Pair<>(p, productionWeights.get(p)));
+            options.add(new Pair<>(p, productionWeights.get(p).getValue()));
         }
         return SetUtils.getRandomWeighted(options);
     }
@@ -60,13 +78,6 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return options;
     }
 
-    private Set<GenerationParameter> getAllGenerationParameters(){
-        Set<GenerationParameter> parameters = new HashSet<>();
-        parameters.add(GenerationParameter.NUM_ACTIVITIES);
-        parameters.add(GenerationParameter.NUM_GATEWAYS);
-        return parameters;
-    }
-
     private void initObligations(int numActivities, int numGateways) {
         obligations = new HashMap<>();
         remainingObligations = new HashMap<>();
@@ -77,21 +88,5 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private void initObligation(GenerationParameter parameter, int value) {
         obligations.put(parameter, value);
         remainingObligations.put(parameter, value);
-    }
-
-    private void calculateWeights(Set<RandomizationConfiguration.RANDOMIZATION_PATTERN> patterns, Set<GenerationParameter> parameters){
-        productionWeights = new HashMap<>();
-        for(RandomizationConfiguration.RANDOMIZATION_PATTERN p : patterns){
-            Map<GenerationParameter, ProductionObligationWeight> productionObligationWeights = obligationBaseWeights.get(p);
-            double sumOfWeightsForObligations = 0.0;
-            for(GenerationParameter gp : parameters){
-                ProductionObligationWeight obligationWeight = productionObligationWeights.get(gp);
-                sumOfWeightsForObligations += obligationWeight.getValue();
-            }
-            //find total production weight
-            double productionWeight = sumOfWeightsForObligations;
-
-            productionWeights.put(p, productionWeight);
-        }
     }
 }

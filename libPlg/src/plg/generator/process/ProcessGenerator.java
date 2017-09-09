@@ -83,7 +83,7 @@ public class ProcessGenerator {
 		PatternFrame p = newInternalPattern(1, true, false);
 		PatternFrame.connect(start, p).connect(end);
 		Logger.instance().info("Process randomization complete");
-	}
+	}//
 	
 	/**
 	 * This method generates a new internal pattern. The pattern to generate is
@@ -149,7 +149,7 @@ public class ProcessGenerator {
 			newDataObject().setObjectOwner(t, SetUtils.getRandom(DATA_OBJECT_DIRECTION.values()));
 		}
 		return new PatternFrame(t);
-	}
+	}//
 	
 	/**
 	 * This method generates a new data object and returns it.
@@ -162,7 +162,7 @@ public class ProcessGenerator {
 		d.setValue(new BigInteger(65, new Random()).toString(32));
 		Logger.instance().debug("New data object created (`" + d.getName() + "' = `" + d.getValue() + "')");
 		return d;
-	}
+	}//
 	
 	/**
 	 * This method generates a new sequence pattern. A sequence is connecting
@@ -205,7 +205,7 @@ public class ProcessGenerator {
 		PatternFrame.connect(join, afterJoin);
 		
 		return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
-	}
+	}//
 	
 	/**
 	 * This method generates a new XOR pattern. Each branch is populated using
@@ -235,7 +235,7 @@ public class ProcessGenerator {
 		PatternFrame.connect(join, afterJoin);
 		
 		return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
-	}
+	}//
 	
 	/**
 	 * This method generates a new XOR pattern. Each branch is populated using
@@ -261,7 +261,7 @@ public class ProcessGenerator {
 		PatternFrame.connect(join, afterJoin);
 		
 		return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
-	}
+	}//
 	
 	/**
 	 * This method returns a new activity name, based on a progressive pattern.
@@ -289,7 +289,7 @@ public class ProcessGenerator {
 		} else {
 			return candidateActivityName;
 		}
-	}
+	}//
 	
 	/**
 	 * This method returns a new data object name, based on a progressive
@@ -301,7 +301,7 @@ public class ProcessGenerator {
 	protected String askNewDataObjectName() {
 		generatedDataObjects++;
 		return String.format(DATA_OBJECT_NAME_PATTERN, numberToAlpha(generatedDataObjects).toLowerCase());
-	}
+	}//
 	
 	/**
 	 * This method converts a number into a string representation
