@@ -1,33 +1,27 @@
 package plg.generator.process.weights;
 
-import plg.generator.process.GenerationParameter;
+import plg.generator.process.Obligation;
+import plg.generator.process.Production;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductionWeight extends Weight{
-    private Map<GenerationParameter, ProductionObligationWeight> obligationBaseWeights;
+    private List<ProductionObligationWeight> obligationWeights;
 
-    public ProductionWeight(Map<GenerationParameter, Double> obligationBaseWeights, Map<GenerationParameter, Integer> obligationValues){
-        this.obligationBaseWeights = new HashMap<>();
-        for (Object o : obligationBaseWeights.entrySet()) {
-            Map.Entry pair = (Map.Entry) o;
-            GenerationParameter gp = (GenerationParameter) pair.getKey();
-            double obligationBaseWeight = (double) pair.getValue();
-            double obligationValue = obligationValues.get(gp);
-
-            ProductionObligationWeight pow = new ProductionObligationWeight(obligationBaseWeight, obligationValue);
-
-            this.obligationBaseWeights.put(gp, pow);
+    public ProductionWeight(RandomizationPattern randomizationPattern, List<Obligation> obligations){
+        obligationWeights = new ArrayList<>();
+        for(Obligation obligation : obligations){
+            ProductionObligationWeight pow = new ProductionObligationWeight(randomizationPattern, obligation);
+            obligationWeights.add(pow);
         }
     }
 
-    void calculateValue(){
+    protected double calculateValue(){
         double sumOfWeights = 0.0;
-        for (Object o : obligationBaseWeights.entrySet()) {
-            Map.Entry pair = (Map.Entry) o;
-            sumOfWeights += ((ProductionObligationWeight) pair.getValue()).getValue();
+        for (ProductionObligationWeight obligationWeight : obligationWeights) {
+            sumOfWeights += obligationWeight.getValue();
         }
-        this.value = sumOfWeights;
+        return sumOfWeights;
     }
 }

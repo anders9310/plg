@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import plg.generator.process.weights.RandomizationPattern;
 import plg.utils.Pair;
 import plg.utils.Random;
 import plg.utils.SetUtils;
@@ -53,40 +54,9 @@ public class RandomizationConfiguration {
 	/* Class' private fields */
 	private int ANDBranches;
 	private int XORBranches;
-	private Map<RANDOMIZATION_PATTERN, Double> weights;
+	private Map<RandomizationPattern, Double> weights;
 	private int maxDepth;
 	private double dataObjectProbability;
-
-
-	/**
-	 * This enumeration describes the set of all possible patterns
-	 */
-	public static enum RANDOMIZATION_PATTERN {
-		/**
-		 * Single activity pattern
-		 */
-		SINGLE_ACTIVITY,
-		/**
-		 * Sequence activities pattern
-		 */
-		SEQUENCE,
-		/**
-		 * AND pattern
-		 */
-		PARALLEL_EXECUTION,
-		/**
-		 * XOR pattern
-		 */
-		MUTUAL_EXCLUSION,
-		/**
-		 * XOR pattern
-		 */
-		LOOP,
-		/**
-		 * Empty: no activity pattern
-		 */
-		SKIP
-	}
 	
 	/**
 	 * This constructor builds a parameters configuration all parameters are
@@ -102,8 +72,6 @@ public class RandomizationConfiguration {
 	 * in <tt>[0,1]</tt>)
 	 * @param ANDWeight the weight of AND split-join (must be in <tt>[0,1]</tt>)
 	 * @param XORWeight the weight of XOR split-join (must be in <tt>[0,1]</tt>)
-	 * @param emptyPercent the weight of an empty pattern (must be in
-	 * <tt>[0,1]</tt>)
 	 * @param maxDepth the maximum network deep
 	 * @param dataObjectProbability probability to generate data objects
 	 * associated to sequences and events
@@ -112,7 +80,7 @@ public class RandomizationConfiguration {
 			double loopWeight, double singleActivityWeight, double skipWeight,
 			double sequenceWeight, double ANDWeight, double XORWeight,
 			int maxDepth, double dataObjectProbability) {
-		this.weights = new HashMap<RandomizationConfiguration.RANDOMIZATION_PATTERN, Double>();
+		this.weights = new HashMap<RandomizationPattern, Double>();
 		
 		setAndBranches(ANDBranches);
 		setXorBranches(XORBranches);
@@ -174,10 +142,10 @@ public class RandomizationConfiguration {
 	 * @return the object after the modification
 	 */
 	public RandomizationConfiguration setLoopWeight(double loopWeight) {
-		weights.put(RANDOMIZATION_PATTERN.LOOP,
+		weights.put(RandomizationPattern.LOOP,
 				(loopWeight >= 0.0 && loopWeight <= 1.0)?
 					loopWeight :
-					BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.LOOP));
+					BASIC_VALUES.weights.get(RandomizationPattern.LOOP));
 		return this;
 	}
 	
@@ -187,7 +155,7 @@ public class RandomizationConfiguration {
 	 * @return the value of the parameter
 	 */
 	public double getLoopWeight() {
-		return weights.get(RANDOMIZATION_PATTERN.LOOP);
+		return weights.get(RandomizationPattern.LOOP);
 	}
 	
 	/**
@@ -197,10 +165,10 @@ public class RandomizationConfiguration {
 	 * @return the object after the modification
 	 */
 	public RandomizationConfiguration setSingleActivityWeight(double singleActivityWeight) {
-		weights.put(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY,
+		weights.put(RandomizationPattern.SINGLE_ACTIVITY,
 				(singleActivityWeight >= 0.0 && singleActivityWeight <= 1.0)?
 						singleActivityWeight :
-						BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY));
+						BASIC_VALUES.weights.get(RandomizationPattern.SINGLE_ACTIVITY));
 		return this;
 	}
 	
@@ -210,7 +178,7 @@ public class RandomizationConfiguration {
 	 * @return the value of the parameter
 	 */
 	public double getSingleActivityWeight() {
-		return weights.get(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY);
+		return weights.get(RandomizationPattern.SINGLE_ACTIVITY);
 	}
 	
 	/**
@@ -220,10 +188,10 @@ public class RandomizationConfiguration {
 	 * @return the object after the modification
 	 */
 	public RandomizationConfiguration setSkipWeight(double skipWeight) {
-		weights.put(RANDOMIZATION_PATTERN.SKIP,
+		weights.put(RandomizationPattern.SKIP,
 				(skipWeight >= 0.0 && skipWeight <= 1.0)?
 						skipWeight :
-							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.SKIP));
+							BASIC_VALUES.weights.get(RandomizationPattern.SKIP));
 		return this;
 	}
 	
@@ -233,7 +201,7 @@ public class RandomizationConfiguration {
 	 * @return the value of the parameter
 	 */
 	public double getSkipWeight() {
-		return weights.get(RANDOMIZATION_PATTERN.SKIP);
+		return weights.get(RandomizationPattern.SKIP);
 	}
 	
 	/**
@@ -243,10 +211,10 @@ public class RandomizationConfiguration {
 	 * @return the object after the modification
 	 */
 	public RandomizationConfiguration setSequenceWeight(double sequenceWeight) {
-		weights.put(RANDOMIZATION_PATTERN.SEQUENCE,
+		weights.put(RandomizationPattern.SEQUENCE,
 				(sequenceWeight >= 0.0 && sequenceWeight <= 1.0)?
 						sequenceWeight :
-							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.SEQUENCE));
+							BASIC_VALUES.weights.get(RandomizationPattern.SEQUENCE));
 		return this;
 	}
 	
@@ -256,7 +224,7 @@ public class RandomizationConfiguration {
 	 * @return the value of the parameter
 	 */
 	public double getSequenceWeight() {
-		return weights.get(RANDOMIZATION_PATTERN.SEQUENCE);
+		return weights.get(RandomizationPattern.SEQUENCE);
 	}
 	
 	/**
@@ -266,10 +234,10 @@ public class RandomizationConfiguration {
 	 * @return the object after the modification
 	 */
 	public RandomizationConfiguration setANDWeight(double ANDWeight) {
-		weights.put(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION,
+		weights.put(RandomizationPattern.PARALLEL_EXECUTION,
 				(ANDWeight >= 0.0 && ANDWeight <= 1.0)?
 						ANDWeight :
-							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION));
+							BASIC_VALUES.weights.get(RandomizationPattern.PARALLEL_EXECUTION));
 		return this;
 	}
 	
@@ -279,7 +247,7 @@ public class RandomizationConfiguration {
 	 * @return the value of the parameter
 	 */
 	public double getANDWeight() {
-		return weights.get(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION);
+		return weights.get(RandomizationPattern.PARALLEL_EXECUTION);
 	}
 	
 	/**
@@ -289,10 +257,10 @@ public class RandomizationConfiguration {
 	 * @return the object after the modification
 	 */
 	public RandomizationConfiguration setXORWeight(double XORWeight) {
-		weights.put(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION,
+		weights.put(RandomizationPattern.MUTUAL_EXCLUSION,
 				(XORWeight >= 0.0 && XORWeight <= 1.0)?
 						XORWeight :
-							BASIC_VALUES.weights.get(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION));
+							BASIC_VALUES.weights.get(RandomizationPattern.MUTUAL_EXCLUSION));
 		return this;
 	}
 	
@@ -302,7 +270,7 @@ public class RandomizationConfiguration {
 	 * @return the value of the parameter
 	 */
 	public double getXORWeight() {
-		return weights.get(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION);
+		return weights.get(RandomizationPattern.MUTUAL_EXCLUSION);
 	}
 	
 	/**
@@ -392,23 +360,23 @@ public class RandomizationConfiguration {
 	 * @param canSkip specifies whether the pattern can be a skip
 	 * @return the random pattern
 	 */
-	public RANDOMIZATION_PATTERN getRandomPattern(boolean canLoop, boolean canSkip) {
-		Set<RANDOMIZATION_PATTERN> options = getAllPatterns(canLoop, canSkip);
+	public RandomizationPattern getRandomPattern(boolean canLoop, boolean canSkip) {
+		Set<RandomizationPattern> options = getAllPatterns(canLoop, canSkip);
 		
-		return getRandomPattern(options.toArray(new RANDOMIZATION_PATTERN[options.size()]));
+		return getRandomPattern(options.toArray(new RandomizationPattern[options.size()]));
 	}
 
-	private Set<RANDOMIZATION_PATTERN> getAllPatterns(boolean canLoop, boolean canSkip){
-		Set<RANDOMIZATION_PATTERN> options = new HashSet<RANDOMIZATION_PATTERN>();
-		options.add(RANDOMIZATION_PATTERN.SINGLE_ACTIVITY);
-		options.add(RANDOMIZATION_PATTERN.SEQUENCE);
-		options.add(RANDOMIZATION_PATTERN.PARALLEL_EXECUTION);
-		options.add(RANDOMIZATION_PATTERN.MUTUAL_EXCLUSION);
+	private Set<RandomizationPattern> getAllPatterns(boolean canLoop, boolean canSkip){
+		Set<RandomizationPattern> options = new HashSet<RandomizationPattern>();
+		options.add(RandomizationPattern.SINGLE_ACTIVITY);
+		options.add(RandomizationPattern.SEQUENCE);
+		options.add(RandomizationPattern.PARALLEL_EXECUTION);
+		options.add(RandomizationPattern.MUTUAL_EXCLUSION);
 		if (canSkip) {
-			options.add(RANDOMIZATION_PATTERN.SKIP);
+			options.add(RandomizationPattern.SKIP);
 		}
 		if (canLoop) {
-			options.add(RANDOMIZATION_PATTERN.LOOP);
+			options.add(RandomizationPattern.LOOP);
 		}
 		return options;
 	}
@@ -422,10 +390,10 @@ public class RandomizationConfiguration {
 	 * @param patterns the patterns to choose from
 	 * @return the random pattern
 	 */
-	public RANDOMIZATION_PATTERN getRandomPattern(RANDOMIZATION_PATTERN ... patterns) {
-		Set<Pair<RANDOMIZATION_PATTERN, Double>> options = new HashSet<Pair<RANDOMIZATION_PATTERN, Double>>();
-		for(RANDOMIZATION_PATTERN p : patterns) {
-			options.add(new Pair<RANDOMIZATION_PATTERN, Double>(p, weights.get(p)));
+	public RandomizationPattern getRandomPattern(RandomizationPattern... patterns) {
+		Set<Pair<RandomizationPattern, Double>> options = new HashSet<Pair<RandomizationPattern, Double>>();
+		for(RandomizationPattern p : patterns) {
+			options.add(new Pair<RandomizationPattern, Double>(p, weights.get(p)));
 		}
 		return SetUtils.getRandomWeighted(options);
 	}

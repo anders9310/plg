@@ -1,20 +1,23 @@
 package plg.test.unit;
 
 import org.junit.*;
+import plg.generator.process.GenerationParameter;
+import plg.generator.process.Obligation;
 import plg.generator.process.weights.ProductionObligationWeight;
+import plg.generator.process.weights.RandomizationPattern;
 
 public class ProductionObligationWeightTest {
 
-    private double baseweight = 2.0;
-    private int obligationValue = 10;
-
     @BeforeClass
     public static void setUp(){
+
     }
 
     @Test
     public void testValue() {
-        ProductionObligationWeight pow = new ProductionObligationWeight(baseweight, obligationValue);
+        RandomizationPattern pattern = RandomizationPattern.PARALLEL_EXECUTION;
+        Obligation obligation = new Obligation(GenerationParameter.NUM_ACTIVITIES,10);
+        ProductionObligationWeight pow = new ProductionObligationWeight(pattern, obligation);
 
         double weight = pow.getValue();
 
@@ -24,8 +27,9 @@ public class ProductionObligationWeightTest {
 
     @Test
     public void testValueWhenObligationFulfilled() {
-        ProductionObligationWeight pow = new ProductionObligationWeight(baseweight, obligationValue);
-        pow.remainingObligation = -1.0;
+        RandomizationPattern pattern = RandomizationPattern.PARALLEL_EXECUTION;
+        Obligation obligation = new Obligation(GenerationParameter.NUM_ACTIVITIES,-1);
+        ProductionObligationWeight pow = new ProductionObligationWeight(pattern, obligation);
 
         double weight = pow.getValue();
 

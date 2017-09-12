@@ -3,7 +3,7 @@ package plg.generator.process;
 import java.math.BigInteger;
 import java.util.Random;
 
-import plg.generator.process.RandomizationConfiguration.RANDOMIZATION_PATTERN;
+import plg.generator.process.weights.RandomizationPattern;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -62,7 +62,7 @@ public class ProcessGenerator {
 	/**
 	 * Protected class constructor. This method is not publicly available since
 	 * we would like to interact only through the
-	 * {@link ProcessGenerator#randomizeProcess(Process)} method.
+	 * {@link ProcessGenerator#randomizeProcess} method.
 	 * 
 	 * @param process the process to randomize
 	 * @param parameters the randomization parameters to use
@@ -97,11 +97,12 @@ public class ProcessGenerator {
 	protected PatternFrame newInternalPattern(int currentDepth, boolean canLoop, boolean canSkip) {
 		if (currentDepth <= parameters.getMaximumDepth()) {
 			
-			RANDOMIZATION_PATTERN nextAction = parameters.getRandomPattern(canLoop, canSkip);
+			RandomizationPattern nextAction = parameters.getRandomPattern(canLoop, canSkip);
 			PatternFrame generatedFrame = null;
-			
+
 			switch (nextAction) {
 			case SEQUENCE:
+
 				generatedFrame = newSequence(currentDepth + 1, canLoop, canSkip);
 				break;
 			case PARALLEL_EXECUTION:
@@ -125,8 +126,8 @@ public class ProcessGenerator {
 			
 		} else {
 			if (canSkip) {
-				RANDOMIZATION_PATTERN nextAction = parameters.getRandomPattern(RANDOMIZATION_PATTERN.SKIP, RANDOMIZATION_PATTERN.SINGLE_ACTIVITY);
-				if (nextAction == RANDOMIZATION_PATTERN.SKIP) {
+				RandomizationPattern nextAction = parameters.getRandomPattern(RandomizationPattern.SKIP, RandomizationPattern.SINGLE_ACTIVITY);
+				if (nextAction == RandomizationPattern.SKIP) {
 					Logger.instance().debug("Skip forced");
 					return null;
 				}
@@ -167,7 +168,7 @@ public class ProcessGenerator {
 	/**
 	 * This method generates a new sequence pattern. A sequence is connecting
 	 * two internal frames, generate using
-	 * {@link ProcessGenerator#newInternalPattern()}.
+	 * {@link ProcessGenerator#newInternalPattern}.
 	 * 
 	 * @param currentDepth the current depth of the generation
 	 * @param canLoop specifies whether a loop is allowed here or not
@@ -182,7 +183,7 @@ public class ProcessGenerator {
 	
 	/**
 	 * This method generates a new AND pattern. Each branch is populated using
-	 * the generate using {@link ProcessGenerator#newInternalPattern()} method.
+	 * the generate using {@link ProcessGenerator#newInternalPattern} method.
 	 * 
 	 * @param currentDepth the current depth of the generation
 	 * @param loopAllowed specifies whether a loop is allowed here or not
@@ -209,7 +210,7 @@ public class ProcessGenerator {
 	
 	/**
 	 * This method generates a new XOR pattern. Each branch is populated using
-	 * the generate using {@link ProcessGenerator#newInternalPattern()} method.
+	 * the generate using {@link ProcessGenerator#newInternalPattern} method.
 	 * 
 	 * @param currentDepth the current depth of the generation
 	 * @param loopAllowed specifies whether a loop is allowed here or not
@@ -239,7 +240,7 @@ public class ProcessGenerator {
 	
 	/**
 	 * This method generates a new XOR pattern. Each branch is populated using
-	 * the generate using {@link ProcessGenerator#newInternalPattern()} method.
+	 * the generate using {@link ProcessGenerator#newInternalPattern} method.
 	 * 
 	 * @param currentDepth the current depth of the generation
 	 * @return the frame containing the generated pattern

@@ -4,9 +4,9 @@ public abstract class Weight {
     protected double value;
 
     public double getValue(){
-        calculateValue();
+        value = calculateValue();
         return value;
     }
 
-    abstract void calculateValue();
+    abstract protected double calculateValue();
 }

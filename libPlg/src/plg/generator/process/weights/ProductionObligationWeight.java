@@ -1,22 +1,28 @@
 package plg.generator.process.weights;
 
+import plg.generator.process.Obligation;
+
 public class ProductionObligationWeight extends Weight{
     private double baseWeight;
-    private double obligationValue;
-    public double remainingObligation;
+    private Obligation obligation;
+    private RandomizationPattern productionPattern;
 
 
-    public ProductionObligationWeight(double baseWeight, double obligationValue){
-        this.baseWeight = baseWeight;
-        this.obligationValue = obligationValue;
-        this.remainingObligation = obligationValue;
+    public ProductionObligationWeight(RandomizationPattern productionPattern, Obligation obligation){
+        this.productionPattern = productionPattern;
+        this.obligation = obligation;
+        initBaseWeight();
     }
 
-    void calculateValue() {
-        if(remainingObligation<0.0){
-            value=0;
+    private void initBaseWeight() {
+        baseWeight = BaseWeights.BASE_WEIGHTS.getBaseWeight(this.productionPattern, this.obligation.getType());
+    }
+
+    protected double calculateValue() {
+        if(obligation.getRemaining()<0.0){
+            return 0;
         }else{
-            value = baseWeight * Math.pow(remainingObligation, 2) / obligationValue;
+            return baseWeight * Math.pow(obligation.getRemaining(), 2) / obligation.getValue();
         }
     }
 }
