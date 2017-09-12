@@ -13,7 +13,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     public static final ParameterRandomizationConfiguration BASIC_VALUES = new ParameterRandomizationConfiguration(10,4);
 
-    private ParameterRandomizationConfiguration(int numActivities, int numGateways) {
+    public ParameterRandomizationConfiguration(int numActivities, int numGateways) {
         super(5,5,0.1,0.2,0.1,0.7,0.3,0.3,3,0.1);
         initObligations(numActivities, numGateways);
         initProductions();

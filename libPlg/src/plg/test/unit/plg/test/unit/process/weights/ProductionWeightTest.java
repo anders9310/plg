@@ -32,7 +32,7 @@ public class ProductionWeightTest {
 
         double weight = pw.getValue();
 
-        assert weight == 12.0; //sum( baseWeight * remainingObligation^2 / obligation )
+        assert weight == 14.0; //sum( baseWeight * remainingObligation^2 / obligation )
 
     }
 }

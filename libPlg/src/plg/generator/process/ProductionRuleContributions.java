@@ -53,4 +53,8 @@ public class ProductionRuleContributions {
     public double getContribution(RandomizationPattern pattern, GenerationParameter parameter){
         return contributions.get(pattern).get(parameter);
     }
+
+    public Map<GenerationParameter, Double> getContribution(RandomizationPattern pattern){
+        return contributions.get(pattern);
+    }
 }

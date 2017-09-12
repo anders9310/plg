@@ -18,10 +18,12 @@ public class ProductionObligationWeight extends Weight{
     }
 
     protected double calculateValue() {
+        double smallestValue = 1;
         if(obligation.getRemaining()<0.0){
-            return 0;
-        } else{
-            double smallestValue = 1;
+            return smallestValue;
+        } else if(obligation.getValue()<=0){
+            return smallestValue;
+        }else{
             return smallestValue + baseWeight * Math.pow(obligation.getRemaining(), 2) / obligation.getValue();
         }
     }

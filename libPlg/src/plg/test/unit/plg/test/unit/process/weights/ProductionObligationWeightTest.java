@@ -21,7 +21,7 @@ public class ProductionObligationWeightTest {
 
         double weight = pow.getValue();
 
-        assert weight == 20.0; //baseWeight * remainingObligation^2 / obligation
+        assert weight == 21.0; //1 + baseWeight * remainingObligation^2 / obligation
 
     }
 
@@ -33,6 +33,6 @@ public class ProductionObligationWeightTest {
 
         double weight = pow.getValue();
 
-        assert weight == 0.0;
+        assert weight == 1.0;
     }
 }
