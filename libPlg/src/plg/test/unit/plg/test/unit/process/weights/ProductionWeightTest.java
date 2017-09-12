@@ -1,4 +1,4 @@
-package plg.test.unit;
+package plg.test.unit.process.weights;
 
 import org.junit.*;
 import plg.generator.process.GenerationParameter;
@@ -6,10 +6,8 @@ import plg.generator.process.Obligation;
 import plg.generator.process.weights.ProductionWeight;
 import plg.generator.process.weights.RandomizationPattern;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class ProductionWeightTest {
     private static int valueForAllObligations = 4;

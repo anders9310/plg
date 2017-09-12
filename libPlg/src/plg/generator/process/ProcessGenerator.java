@@ -97,12 +97,11 @@ public class ProcessGenerator {
 	protected PatternFrame newInternalPattern(int currentDepth, boolean canLoop, boolean canSkip) {
 		if (currentDepth <= parameters.getMaximumDepth()) {
 			
-			RandomizationPattern nextAction = parameters.getRandomPattern(canLoop, canSkip);
-			PatternFrame generatedFrame = null;
+			RandomizationPattern nextAction = parameters.generateRandomPattern(canLoop, canSkip);
+			PatternFrame generatedFrame;
 
 			switch (nextAction) {
 			case SEQUENCE:
-
 				generatedFrame = newSequence(currentDepth + 1, canLoop, canSkip);
 				break;
 			case PARALLEL_EXECUTION:
@@ -126,7 +125,7 @@ public class ProcessGenerator {
 			
 		} else {
 			if (canSkip) {
-				RandomizationPattern nextAction = parameters.getRandomPattern(RandomizationPattern.SKIP, RandomizationPattern.SINGLE_ACTIVITY);
+				RandomizationPattern nextAction = parameters.generateRandomPattern(RandomizationPattern.SKIP, RandomizationPattern.SINGLE_ACTIVITY);
 				if (nextAction == RandomizationPattern.SKIP) {
 					Logger.instance().debug("Skip forced");
 					return null;

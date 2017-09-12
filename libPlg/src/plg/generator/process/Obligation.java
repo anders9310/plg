@@ -11,6 +11,15 @@ public class Obligation {
         this.remaining = value;
     }
 
+    public int updateValue(Production generatedProduction){
+        double productionContribution = generatedProduction.getContribution(type);
+        this.remaining -= productionContribution;
+        if(remaining < 0){
+            remaining=0;
+        }
+        return remaining;
+    }
+
     public int getValue() {
         return value;
     }

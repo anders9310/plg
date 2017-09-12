@@ -13,22 +13,35 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     public static final ParameterRandomizationConfiguration BASIC_VALUES = new ParameterRandomizationConfiguration(10,4);
 
-    public ParameterRandomizationConfiguration(int numActivities, int numGateways) {
+    private ParameterRandomizationConfiguration(int numActivities, int numGateways) {
         super(5,5,0.1,0.2,0.1,0.7,0.3,0.3,3,0.1);
         initObligations(numActivities, numGateways);
         initProductions();
     }
 
-    public RandomizationPattern getRandomPattern(boolean canLoop, boolean canSkip) {
-        return getRandomPattern(productions);
+    public RandomizationPattern generateRandomPattern(boolean canLoop, boolean canSkip) {
+        return generateRandomPattern(productions);
     }
 
-    public RandomizationPattern getRandomPattern(Set<Production> patterns) {
+    public RandomizationPattern generateRandomPattern(Set<Production> patterns) {
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
         for(Production p : patterns) {
             options.add(new Pair<>(p.getType(), p.getWeight()));
         }
-        return SetUtils.getRandomWeighted(options);
+        RandomizationPattern generatedPattern = SetUtils.getRandomWeighted(options);
+        updateRemainingObligations(generatedPattern);
+        return generatedPattern;
+    }
+
+    private void updateRemainingObligations(RandomizationPattern generatedPattern) {
+        for(Production production : productions){
+            if(production.getType() == generatedPattern){
+                for(Obligation obligation : obligations){
+                    obligation.updateValue(production);
+                }
+                break;
+            }
+        }
     }
 
     private void initObligations(int numActivities, int numGateways) {

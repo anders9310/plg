@@ -14,11 +14,15 @@ public class Production {
         this.weight = new ProductionWeight(type, obligations);
     }
 
+    public double getContribution(GenerationParameter genParameter) {
+        return ProductionRuleContributions.CONTRIBUTIONS.getContribution(this.type, genParameter);
+    }
     public RandomizationPattern getType() {
         return type;
     }
-
     public double getWeight() {
         return weight.getValue();
     }
+
+
 }

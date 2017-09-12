@@ -360,10 +360,10 @@ public class RandomizationConfiguration {
 	 * @param canSkip specifies whether the pattern can be a skip
 	 * @return the random pattern
 	 */
-	public RandomizationPattern getRandomPattern(boolean canLoop, boolean canSkip) {
+	public RandomizationPattern generateRandomPattern(boolean canLoop, boolean canSkip) {
 		Set<RandomizationPattern> options = getAllPatterns(canLoop, canSkip);
 		
-		return getRandomPattern(options.toArray(new RandomizationPattern[options.size()]));
+		return generateRandomPattern(options.toArray(new RandomizationPattern[options.size()]));
 	}
 
 	private Set<RandomizationPattern> getAllPatterns(boolean canLoop, boolean canSkip){
@@ -390,7 +390,7 @@ public class RandomizationConfiguration {
 	 * @param patterns the patterns to choose from
 	 * @return the random pattern
 	 */
-	public RandomizationPattern getRandomPattern(RandomizationPattern... patterns) {
+	public RandomizationPattern generateRandomPattern(RandomizationPattern... patterns) {
 		Set<Pair<RandomizationPattern, Double>> options = new HashSet<Pair<RandomizationPattern, Double>>();
 		for(RandomizationPattern p : patterns) {
 			options.add(new Pair<RandomizationPattern, Double>(p, weights.get(p)));
@@ -409,7 +409,7 @@ public class RandomizationConfiguration {
 	public boolean generateDataObject() {
 		return Random.randomFromWeight(dataObjectProbability);
 	}
-	
+
 	@Override
 	public String toString() {
 		String toRet = "";
@@ -425,4 +425,6 @@ public class RandomizationConfiguration {
 		toRet += "Data Object Probability = " + getDataObjectProbability() + "\n";
 		return toRet;
 	}
+
+
 }

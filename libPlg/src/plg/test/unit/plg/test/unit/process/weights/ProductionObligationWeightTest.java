@@ -1,4 +1,4 @@
-package plg.test.unit;
+package plg.test.unit.process.weights;
 
 import org.junit.*;
 import plg.generator.process.GenerationParameter;

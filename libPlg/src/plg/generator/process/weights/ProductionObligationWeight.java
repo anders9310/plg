@@ -7,7 +7,6 @@ public class ProductionObligationWeight extends Weight{
     private Obligation obligation;
     private RandomizationPattern productionPattern;
 
-
     public ProductionObligationWeight(RandomizationPattern productionPattern, Obligation obligation){
         this.productionPattern = productionPattern;
         this.obligation = obligation;
@@ -21,8 +20,9 @@ public class ProductionObligationWeight extends Weight{
     protected double calculateValue() {
         if(obligation.getRemaining()<0.0){
             return 0;
-        }else{
-            return baseWeight * Math.pow(obligation.getRemaining(), 2) / obligation.getValue();
+        } else{
+            double smallestValue = 1;
+            return smallestValue + baseWeight * Math.pow(obligation.getRemaining(), 2) / obligation.getValue();
         }
     }
 }
