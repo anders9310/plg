@@ -1,7 +1,5 @@
 package plg.generator.process;
 
-import plg.generator.process.weights.RandomizationPattern;
-
 import java.util.HashMap;
 import java.util.Map;
 

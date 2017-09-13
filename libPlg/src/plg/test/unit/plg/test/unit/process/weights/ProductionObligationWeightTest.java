@@ -4,7 +4,7 @@ import org.junit.*;
 import plg.generator.process.GenerationParameter;
 import plg.generator.process.Obligation;
 import plg.generator.process.weights.ProductionObligationWeight;
-import plg.generator.process.weights.RandomizationPattern;
+import plg.generator.process.RandomizationPattern;
 
 public class ProductionObligationWeightTest {
 

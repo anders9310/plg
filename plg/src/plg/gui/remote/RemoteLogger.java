@@ -26,7 +26,7 @@ import org.json.simple.JSONValue;
 
 import plg.generator.log.SimulationConfiguration;
 import plg.generator.log.noise.NoiseConfiguration;
-import plg.generator.process.RandomizationConfiguration;
+import plg.generator.process.Plg2RandomizationConfiguration;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.config.UIConfiguration;
 import plg.gui.controller.ApplicationController;
@@ -472,7 +472,7 @@ public class RemoteLogger {
 		 * @param configuration the configuration to log
 		 * @return the current entity
 		 */
-		public RemoteLogEntity add(RandomizationConfiguration configuration) {
+		public RemoteLogEntity add(Plg2RandomizationConfiguration configuration) {
 			add("RP.A", configuration.getAndBranches());
 			add("RP.B", configuration.getXorBranches());
 			add("RP.C", configuration.getLoopWeight());

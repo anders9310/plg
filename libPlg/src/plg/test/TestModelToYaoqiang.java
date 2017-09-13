@@ -23,8 +23,8 @@ public class TestModelToYaoqiang {
 			TransformerException {
 
 		Process p = generateProcess(); // new Process("test");
-		// ProcessGenerator.randomizeProcess(p,
-		// RandomizationConfiguration.BASIC_VALUES);
+		// Plg2ProcessGenerator.randomizeProcess(p,
+		// Plg2RandomizationConfiguration.BASIC_VALUES);
 		System.out.println("Process randomization complete");
 
 //		Map<String, FlowElement> yqMap = new HashMap<String, FlowElement>();

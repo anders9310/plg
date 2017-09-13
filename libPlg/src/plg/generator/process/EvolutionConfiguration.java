@@ -2,11 +2,11 @@ package plg.generator.process;
 
 import plg.utils.Random;
 
-public class EvolutionConfiguration extends RandomizationConfiguration {
+public class EvolutionConfiguration extends Plg2RandomizationConfiguration {
 
 	private double activityEvolutionProbability = 0.1;
 	
-	public EvolutionConfiguration(double activityEvolutionProbability, RandomizationConfiguration random) {
+	public EvolutionConfiguration(double activityEvolutionProbability, Plg2RandomizationConfiguration random) {
 		super(random.getAndBranches(), random.getXorBranches(),
 				random.getLoopWeight(), random.getSingleActivityWeight(),
 				random.getSkipWeight(), random.getSequenceWeight(),

@@ -2,15 +2,10 @@ package plg.stream.test;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.generator.log.SimulationConfiguration;
-import plg.generator.process.ProcessGenerator;
-import plg.generator.process.RandomizationConfiguration;
+import plg.generator.process.Plg2ProcessGenerator;
+import plg.generator.process.Plg2RandomizationConfiguration;
 import plg.io.exporter.GraphvizBPMNExporter;
 import plg.model.Process;
-import plg.model.activity.Task;
-import plg.model.data.DataObject;
-import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
-import plg.model.event.EndEvent;
-import plg.model.event.StartEvent;
 import plg.stream.configuration.StreamConfiguration;
 import plg.stream.model.Streamer;
 
@@ -33,7 +28,7 @@ public class Tester {
 		XLogHelper.insertEvent(t3, "a", new Date(115, 0, 1));
 		XLogHelper.insertEvent(t3, "b", new Date(115, 0, 2));
 		XLogHelper.insertEvent(t3, "c", new Date(115, 0, 5));
-		
+
 		StreamConfiguration sc = new StreamConfiguration();
 		sc.maximumParallelInstances = 1;
 		sc.timeFractionBeforeNewTrace = 1;
@@ -41,7 +36,7 @@ public class Tester {
 		sb.enqueueTrace(t1);
 		sb.enqueueTrace(t2);
 		sb.enqueueTrace(t3);
-		
+
 		StreamEvent se = null;
 		do {
 			se = sb.getEventToStream();
@@ -50,20 +45,20 @@ public class Tester {
 				System.out.flush();
 			}
 		} while (se != null);
-		
+
 		System.out.println("complete");
 	}*/
-	
+
 	public static void main(String args[]) throws IllegalSequenceException {
 		System.out.println("start1");
-		
+
 		StreamConfiguration sc = new StreamConfiguration();
 		sc.servicePort = 1234;
 		sc.maximumParallelInstances = 20;
 		sc.timeFractionBeforeNewTrace = 1;
 		sc.markTraceBeginningEnd = true;
 		sc.timeMultiplier = 0.0005;
-		
+
 		Process p = new Process("test");
 //		StartEvent start = p.newStartEvent();
 //		Task A = p.newTask("A"); p.newSequence(start, A);
@@ -72,8 +67,8 @@ public class Tester {
 //		DataObject do1 = new DataObject(p);
 //		do1.set("do1", "10");
 //		do1.setObjectOwner(A, DATA_OBJECT_DIRECTION.GENERATED);
-		
-		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+
+		Plg2ProcessGenerator.randomizeProcess(p, Plg2RandomizationConfiguration.BASIC_VALUES);
 		
 		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
 		e.exportModel(p, "C:\\Users\\Andrea\\Desktop\\model.dot");

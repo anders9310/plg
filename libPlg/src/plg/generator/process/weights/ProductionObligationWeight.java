@@ -1,6 +1,7 @@
 package plg.generator.process.weights;
 
 import plg.generator.process.Obligation;
+import plg.generator.process.RandomizationPattern;
 
 public class ProductionObligationWeight extends Weight{
     private double baseWeight;

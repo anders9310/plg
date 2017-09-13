@@ -24,8 +24,8 @@ import javax.swing.event.ChangeListener;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.generator.log.SimulationConfiguration;
-import plg.generator.process.ProcessGenerator;
-import plg.generator.process.RandomizationConfiguration;
+import plg.generator.process.Plg2RandomizationConfiguration;
+import plg.generator.process.Plg2ProcessGenerator;
 import plg.io.exporter.GraphvizBPMNExporter;
 import plg.model.Process;
 import plg.stream.configuration.StreamConfiguration;
@@ -205,7 +205,7 @@ public class StreamPreview extends JPanel {
 //		StartEvent start = p.newStartEvent();
 //		Task A = p.newTask("A"); p.newSequence(start, A);
 //		EndEvent end = p.newEndEvent(); p.newSequence(A, end);
-		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		Plg2ProcessGenerator.randomizeProcess(p, Plg2RandomizationConfiguration.BASIC_VALUES);
 		GraphvizBPMNExporter e = new GraphvizBPMNExporter();
 		e.exportModel(p, "C:\\Users\\Andrea\\Desktop\\model.dot");
 		Streamer s = new Streamer(sc, p, new SimulationConfiguration());

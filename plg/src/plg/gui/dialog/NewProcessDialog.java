@@ -10,7 +10,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import plg.generator.process.RandomizationConfiguration;
+import plg.generator.process.Plg2RandomizationConfiguration;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.controller.ApplicationController;
 
@@ -34,8 +34,8 @@ public class NewProcessDialog extends GeneralDialog {
 	protected static final String KEY_XOR_BRANCHES = "XOR_BRANCHES";
 	protected static final String KEY_DATA_OBJECTS = "DATA_OBJECTS";
 	
-	protected final RandomizationConfiguration DEFAULTS = RandomizationConfiguration.BASIC_VALUES;
-	private RandomizationConfiguration userConfiguration = null;
+	protected final Plg2RandomizationConfiguration DEFAULTS = Plg2RandomizationConfiguration.BASIC_VALUES;
+	private Plg2RandomizationConfiguration userConfiguration = null;
 	
 	protected JTextField nameField = null;
 	protected JSpinner depthSpinner = null;
@@ -112,7 +112,7 @@ public class NewProcessDialog extends GeneralDialog {
 				configuration.setInteger(KEY_AND_BRANCHES, Integer.parseInt(andBranchesSpinner.getValue().toString()));
 				configuration.setInteger(KEY_XOR_BRANCHES, Integer.parseInt(xorBranchesSpinner.getValue().toString()));
 				
-				userConfiguration = new RandomizationConfiguration(
+				userConfiguration = new Plg2RandomizationConfiguration(
 						Integer.parseInt(andBranchesSpinner.getValue().toString()),
 						Integer.parseInt(xorBranchesSpinner.getValue().toString()),
 						(double)(loopWeightSlider.getValue() / 100d),
@@ -130,7 +130,7 @@ public class NewProcessDialog extends GeneralDialog {
 		resetButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RandomizationConfiguration v = RandomizationConfiguration.BASIC_VALUES;
+				Plg2RandomizationConfiguration v = Plg2RandomizationConfiguration.BASIC_VALUES;
 				andBranchesSpinner.setValue(v.getAndBranches());
 				xorBranchesSpinner.setValue(v.getXorBranches());
 				loopWeightSlider.setValue((int) (v.getLoopWeight() * 100));
@@ -204,7 +204,7 @@ public class NewProcessDialog extends GeneralDialog {
 	 * 
 	 * @return the configuration set
 	 */
-	public RandomizationConfiguration getConfiguredValues() {
+	public Plg2RandomizationConfiguration getConfiguredValues() {
 		return userConfiguration;
 	}
 	

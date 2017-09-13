@@ -16,18 +16,18 @@ import plg.utils.Logger;
  * 
  * @author Andrea Burattin
  */
-public class EvolutionGenerator extends ProcessGenerator {
+public class EvolutionGenerator extends Plg2ProcessGenerator {
 
 	/**
 	 * Protected class constructor. This method is not publicly available since
 	 * we would like to interact only through the
-	 * {@link EvolutionGenerator#evolveProcess(Process, RandomizationConfiguration)}
+	 * {@link EvolutionGenerator#evolveProcess(Process, EvolutionConfiguration)}
 	 * method.
 	 * 
 	 * @param process the process to randomize
 	 * @param parameters the randomization parameters to use
 	 */
-	protected EvolutionGenerator(Process process, RandomizationConfiguration parameters) {
+	protected EvolutionGenerator(Process process, Plg2RandomizationConfiguration parameters) {
 		super(process, parameters);
 		generatedActivities = process.getTasks().size();
 		generatedDataObjects = process.getDataObjects().size();

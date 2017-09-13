@@ -1,6 +1,5 @@
 package plg.generator.process;
 
-import plg.generator.process.weights.RandomizationPattern;
 import plg.utils.Pair;
 import plg.utils.SetUtils;
 
@@ -14,7 +13,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     public static final ParameterRandomizationConfiguration BASIC_VALUES = new ParameterRandomizationConfiguration(10,4);
 
     public ParameterRandomizationConfiguration(int numActivities, int numGateways) {
-        super(5,5,0.1,0.2,0.1,0.7,0.3,0.3,3,0.1);
+        super(0, 0, 0.1);
         initObligations(numActivities, numGateways);
         initProductions();
     }
@@ -23,7 +22,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return generateRandomPattern(productions);
     }
 
-    public RandomizationPattern generateRandomPattern(Set<Production> patterns) {
+    private RandomizationPattern generateRandomPattern(Set<Production> patterns) {
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
         for(Production p : patterns) {
             options.add(new Pair<>(p.getType(), p.getWeight()));
@@ -67,7 +66,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     private void initProductions(){
         productions = new HashSet<>();
-        for(plg.generator.process.weights.RandomizationPattern pattern : plg.generator.process.weights.RandomizationPattern.values()){
+        for(RandomizationPattern pattern : RandomizationPattern.values()){
             productions.add(new Production(pattern, obligations));
         }
     }

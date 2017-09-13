@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JSlider;
 
 import plg.generator.process.EvolutionConfiguration;
-import plg.generator.process.RandomizationConfiguration;
+import plg.generator.process.Plg2RandomizationConfiguration;
 import plg.gui.controller.ApplicationController;
 
 /**
@@ -21,7 +21,7 @@ public class EvolutionDialog extends NewProcessDialog {
 	/**
 	 * This is a test configuration with basic random values for a process evolution
 	 */
-	public static final RandomizationConfiguration BASIC_VALUES_EVOLUTION = new RandomizationConfiguration(
+	public static final Plg2RandomizationConfiguration BASIC_VALUES_EVOLUTION = new Plg2RandomizationConfiguration(
 			2, // max AND branches
 			2, // max XOR branches
 			0.01, // loop weight
@@ -35,7 +35,7 @@ public class EvolutionDialog extends NewProcessDialog {
 		);
 	
 	private static final long serialVersionUID = -6996256974716520028L;
-	protected RandomizationConfiguration DEFAULTS = BASIC_VALUES_EVOLUTION;
+	protected Plg2RandomizationConfiguration DEFAULTS = BASIC_VALUES_EVOLUTION;
 	protected JSlider evolutionProbabilitySlider = null;
 
 	/**
@@ -80,7 +80,7 @@ public class EvolutionDialog extends NewProcessDialog {
 	}
 	
 	protected void reset() {
-		RandomizationConfiguration v = DEFAULTS;
+		Plg2RandomizationConfiguration v = DEFAULTS;
 		andBranchesSpinner.setValue(v.getAndBranches());
 		xorBranchesSpinner.setValue(v.getXorBranches());
 		loopWeightSlider.setValue((int) (v.getLoopWeight() * 100));

@@ -1,4 +1,4 @@
-package plg.generator.process.weights;
+package plg.generator.process;
 
 public enum RandomizationPattern {
     SINGLE_ACTIVITY,

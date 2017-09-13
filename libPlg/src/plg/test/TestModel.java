@@ -9,8 +9,8 @@ import javax.xml.transform.TransformerException;
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidDataObject;
 import plg.exceptions.InvalidProcessException;
-import plg.generator.process.ProcessGenerator;
-import plg.generator.process.RandomizationConfiguration;
+import plg.generator.process.Plg2RandomizationConfiguration;
+import plg.generator.process.Plg2ProcessGenerator;
 import plg.io.importer.PLGImporter;
 import plg.model.Process;
 import plg.model.activity.Task;
@@ -32,7 +32,7 @@ public class TestModel {
 		
 //		for (int i = 0; i < 200; i++) {
 //			Process p = new Process("test");
-//			ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES.setDepth(3).setDataObjectProbability(0.1));
+//			Plg2ProcessGenerator.randomizeProcess(p, Plg2RandomizationConfiguration.BASIC_VALUES.setDepth(3).setDataObjectProbability(0.1));
 //			
 //			IFileExporter exporter = new GraphvizBPMNExporter();
 //			exporter.exportModel(p, "C:\\Users\\Andrea\\Desktop\\test-files\\test-"+i+".dot");
@@ -60,7 +60,7 @@ public class TestModel {
 		System.out.println("done");
 		
 //		Process p = new Process("test");
-		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+		Plg2ProcessGenerator.randomizeProcess(p, Plg2RandomizationConfiguration.BASIC_VALUES);
 		
 		
 	}

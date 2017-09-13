@@ -1,7 +1,6 @@
 package plg.generator.process;
 
 import plg.generator.process.weights.ProductionWeight;
-import plg.generator.process.weights.RandomizationPattern;
 
 import java.util.List;
 

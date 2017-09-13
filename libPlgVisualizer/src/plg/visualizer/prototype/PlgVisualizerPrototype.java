@@ -20,7 +20,7 @@ public class PlgVisualizerPrototype {
 	public static void main(String[] args) throws IllegalSequenceException, InvalidProcessException {
 		Process p = new Process("test");
 		p = generateProcess();
-//		ProcessGenerator.randomizeProcess(p, RandomizationConfiguration.BASIC_VALUES);
+//		Plg2ProcessGenerator.randomizeProcess(p, Plg2RandomizationConfiguration.BASIC_VALUES);
 		BPMNVisualizer v = new BPMNVisualizer(p);
 		
 		JFrame f = new JFrame("Test Frame");

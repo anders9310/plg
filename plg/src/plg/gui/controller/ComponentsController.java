@@ -2,7 +2,7 @@ package plg.gui.controller;
 
 import javax.swing.JOptionPane;
 
-import plg.generator.process.ProcessGenerator;
+import plg.generator.process.Plg2ProcessGenerator;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
 import plg.generator.scriptexecuter.StringScriptExecutor;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
@@ -67,7 +67,7 @@ public class ComponentsController {
 		Process owner = activity.getOwner();
 		String candidateName = String.format(
 				"variable_%s",
-				ProcessGenerator.numberToAlpha(owner.getDataObjects().size() + 1).toLowerCase());
+				Plg2ProcessGenerator.numberToAlpha(owner.getDataObjects().size() + 1).toLowerCase());
 		DataObject newDataObject = null;
 		
 		if (type.equals(StringDataObject.class)) {

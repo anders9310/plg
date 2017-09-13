@@ -12,7 +12,7 @@ import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import plg.generator.process.EvolutionGenerator;
-import plg.generator.process.ProcessGenerator;
+import plg.generator.process.Plg2ProcessGenerator;
 import plg.gui.config.ConfigurationSet;
 import plg.gui.dialog.EvolutionDialog;
 import plg.gui.dialog.GeneralDialog.RETURNED_VALUES;
@@ -72,7 +72,7 @@ public class ProcessesController {
 		npd.setVisible(true);
 		if (RETURNED_VALUES.SUCCESS.equals(npd.returnedValue())) {
 			Process p = new Process(npd.getNewProcessName());
-			ProcessGenerator.randomizeProcess(p, npd.getConfiguredValues());
+			Plg2ProcessGenerator.randomizeProcess(p, npd.getConfiguredValues());
 			
 			GENERATED_PROCESSES++;
 			processesList.storeNewProcess(GENERATED_PROCESSES, p.getName(), generateProcessSubtitle(p), p);

@@ -4,7 +4,7 @@ import org.junit.*;
 import plg.generator.process.GenerationParameter;
 import plg.generator.process.Obligation;
 import plg.generator.process.weights.ProductionWeight;
-import plg.generator.process.weights.RandomizationPattern;
+import plg.generator.process.RandomizationPattern;
 
 import java.util.LinkedList;
 import java.util.List;
