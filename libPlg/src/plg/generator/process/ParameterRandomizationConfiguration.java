@@ -13,7 +13,11 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     public static final ParameterRandomizationConfiguration BASIC_VALUES = new ParameterRandomizationConfiguration(10,4);
 
     public ParameterRandomizationConfiguration(int numActivities, int numGateways) {
-        super(0, 0, 0.1);
+        this(numActivities, numGateways, 0.1);
+    }
+
+    public ParameterRandomizationConfiguration(int numActivities, int numGateways, double dataObjectProbability) {
+        super(0, 0, dataObjectProbability);
         initObligations(numActivities, numGateways);
         initProductions();
     }
@@ -36,7 +40,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         for(Production production : productions){
             if(production.getType() == generatedPattern){
                 for(Obligation obligation : obligations){
-                    obligation.updateValue(production);
+                    obligation.updateValue(production.getType());
                 }
                 break;
             }

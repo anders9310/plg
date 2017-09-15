@@ -6,17 +6,17 @@ public class Obligation {
     private int remaining;
 
     public Obligation(GenerationParameter type, int value){
+        if(value < 0){
+            throw new IllegalArgumentException("The obligation value must be equal to or greater than 0");
+        }
         this.type = type;
         this.value = value;
         this.remaining = value;
     }
 
-    public int updateValue(Production generatedProduction){
-        double productionContribution = generatedProduction.getContribution(type);
+    public int updateValue(RandomizationPattern generatedPattern){
+        double productionContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(generatedPattern).get(type);
         this.remaining -= productionContribution;
-        if(remaining < 0){
-            remaining=0;
-        }
         return remaining;
     }
 
