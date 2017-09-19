@@ -1,4 +1,4 @@
-package plg.analysis;
+package plg.analysis.bpmeter;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -14,8 +14,50 @@ import plg.utils.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class BPMeterWrapper {
+
+    public String analyzeFiles(List<File> inFiles) {
+        String responseString;
+
+        FileInputStream fis = null;
+        try {
+            DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
+
+            // server back-end URL
+            HttpPost httppost = new HttpPost("http://benchflow.inf.usi.ch/bpmeter/api/");
+            MultipartEntity entity = new MultipartEntity();
+            for(File inFile : inFiles){
+                fis = new FileInputStream(inFile);
+                entity.addPart("models", new InputStreamBody(fis, inFile.getName()));
+            }
+            httppost.setEntity(entity);
+
+            HttpResponse response = httpclient.execute(httppost);
+
+            int statusCode = response.getStatusLine().getStatusCode();
+            Logger.instance().debug("Status code for BPMeter analysis request: " + statusCode);
+
+            HttpEntity responseEntity = response.getEntity();
+            responseString = EntityUtils.toString(responseEntity, "UTF-8");
+
+        } catch (ClientProtocolException e) {
+            Logger.instance().error("Unable to make connection: " + e.toString());
+            responseString = "";
+        } catch (Exception e){
+            Logger.instance().error(e.toString());
+            responseString = "";
+        }
+        finally {
+            try {
+                if (fis != null) fis.close();
+            } catch (IOException e) {
+                Logger.instance().error("Could not close FileInputStream");
+            }
+        }
+        return responseString;
+    }
 
     /**
      * Adapted from javatutorial.net
@@ -42,17 +84,17 @@ public class BPMeterWrapper {
             responseString = EntityUtils.toString(responseEntity, "UTF-8");
 
         } catch (ClientProtocolException e) {
-            Logger.instance().info("Unable to make connection: " + e.toString());
+            Logger.instance().error("Unable to make connection: " + e.toString());
             responseString = "";
-        } catch (IOException e) {
-            Logger.instance().info(e.toString());
+        } catch (Exception e){
+            Logger.instance().error(e.toString());
             responseString = "";
         }
         finally {
             try {
                 if (fis != null) fis.close();
             } catch (IOException e) {
-                Logger.instance().info("Could not close FileInputStream");
+                Logger.instance().error("Could not close FileInputStream");
             }
         }
         return removeOuterBrackets(responseString);

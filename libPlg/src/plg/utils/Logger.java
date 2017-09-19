@@ -72,6 +72,18 @@ public class Logger {
 			LOG_PRINT_STREAM.flush();
 		}
 	}
+
+	/**
+	 * This method is used to record error messages
+	 *
+	 * @param message the error message
+	 */
+	public void error(String message) {
+		if (LOGGING_ENABLED) {
+			LOG_PRINT_STREAM.println(now() + " - ERROR - " + message + " " + getCaller());
+			LOG_PRINT_STREAM.flush();
+		}
+	}
 	
 	/**
 	 * This method returns the caller signature (i.e., which class and where

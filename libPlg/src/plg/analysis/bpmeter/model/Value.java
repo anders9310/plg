@@ -1,4 +1,4 @@
-package plg.analysis.model.bpmeter;
+package plg.analysis.bpmeter.model;
 
 public class Value {
     String name;

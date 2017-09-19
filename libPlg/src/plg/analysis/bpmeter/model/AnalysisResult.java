@@ -1,7 +1,6 @@
-package plg.analysis.model.bpmeter;
+package plg.analysis.bpmeter.model;
 
 import java.util.List;
-import java.util.Objects;
 
 public class AnalysisResult {
 
@@ -15,5 +14,9 @@ public class AnalysisResult {
             }
         }
         return null;
+    }
+
+    public String getName() {
+        return name;
     }
 }
