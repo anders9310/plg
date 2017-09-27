@@ -28,4 +28,48 @@ public class BPMeterWrapperTest {
 
         assert !resultJson.equals("");
     }
+
+    @Test
+    public void testMultipleFilesAnalysis(){
+        List<File> fileList = new LinkedList<>();
+        int numFiles = 5;
+        for(int i=0; i<numFiles; i++){
+            fileList.add(inFile);
+        }
+
+        String resultJson = bpMeter.analyzeFiles(fileList);
+
+        assertCorrectFormat(resultJson);
+    }
+
+    @Test
+    public void testMoreThanMaxFilesAnalysis(){
+        List<File> fileList = new LinkedList<>();
+        int numFiles = 150;
+        for(int i=0; i<numFiles; i++){
+            fileList.add(inFile);
+        }
+
+        String resultJson = bpMeter.analyzeFiles(fileList);
+
+        assertCorrectFormat(resultJson);
+    }
+
+    @Test
+    public void testNoFilesAnalysis(){
+        List<File> fileList = new LinkedList<>();
+
+        String resultJson = bpMeter.analyzeFiles(fileList);
+
+        assert resultJson.equals("[]");
+    }
+
+    private void assertCorrectFormat(String resultJson){
+        assert !resultJson.equals("");
+        assert !resultJson.equals("[]");
+        assert resultJson.charAt(0)=='[';
+        assert resultJson.charAt(resultJson.length()-1)==']';
+        assert resultJson.charAt(resultJson.length()-2)!=',';
+        assert resultJson.length()>2;
+    }
 }

@@ -13,12 +13,45 @@ import plg.utils.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BPMeterWrapper {
 
+    private final int MAX_FILES_PER_REQUEST = 100;
+
     public String analyzeFiles(List<File> inFiles) {
+        if(inFiles.isEmpty()){
+            return "[]";
+        }
+
+        String responseString = "[";
+
+        List<File> currentFiles = new LinkedList<>();
+        int i = 0;
+        while(i<inFiles.size()){
+            currentFiles.add(inFiles.get(i));
+            if(i % MAX_FILES_PER_REQUEST == 0 && i>0 || i==inFiles.size()-1){
+                String callResponse = callApi(currentFiles);
+                responseString = responseString.concat(removeOuterBrackets(callResponse));
+
+                if(i!=inFiles.size()-1){
+                    responseString = responseString.concat(",");
+                }
+                currentFiles = new LinkedList<>();
+            }
+            i++;
+        }
+
+        return responseString.concat("]");
+    }
+
+    /**
+     * Adapted from javatutorial.net
+     */
+    private String callApi(List<File> inFiles){
         String responseString;
 
         FileInputStream fis = null;
@@ -38,6 +71,9 @@ public class BPMeterWrapper {
 
             int statusCode = response.getStatusLine().getStatusCode();
             Logger.instance().debug("Status code for BPMeter analysis request: " + statusCode);
+            if(statusCode!=200){
+                throw new RuntimeException("Status code for BPMeter analysis request: " + statusCode);
+            }
 
             HttpEntity responseEntity = response.getEntity();
             responseString = EntityUtils.toString(responseEntity, "UTF-8");
@@ -45,11 +81,13 @@ public class BPMeterWrapper {
         } catch (ClientProtocolException e) {
             Logger.instance().error("Unable to make connection: " + e.toString());
             responseString = "";
-        } catch (Exception e){
+        } catch (FileNotFoundException e) {
             Logger.instance().error(e.toString());
             responseString = "";
-        }
-        finally {
+        } catch (IOException e) {
+            Logger.instance().error(e.toString());
+            responseString = "";
+        } finally {
             try {
                 if (fis != null) fis.close();
             } catch (IOException e) {
@@ -58,47 +96,6 @@ public class BPMeterWrapper {
             }
         }
         return responseString;
-    }
-
-    /**
-     * Adapted from javatutorial.net
-     */
-    public String analyzeFile(File inFile) {
-        String responseString;
-
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(inFile);
-            DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
-
-            // server back-end URL
-            HttpPost httppost = new HttpPost("http://benchflow.inf.usi.ch/bpmeter/api/");
-            MultipartEntity entity = new MultipartEntity();
-            // set the file input stream and file name as arguments
-            entity.addPart("models", new InputStreamBody(fis, inFile.getName()));
-            httppost.setEntity(entity);
-            // execute the request
-            HttpResponse response = httpclient.execute(httppost);
-
-            int statusCode = response.getStatusLine().getStatusCode();
-            HttpEntity responseEntity = response.getEntity();
-            responseString = EntityUtils.toString(responseEntity, "UTF-8");
-
-        } catch (ClientProtocolException e) {
-            Logger.instance().error("Unable to make connection: " + e.toString());
-            responseString = "";
-        } catch (Exception e){
-            Logger.instance().error(e.toString());
-            responseString = "";
-        }
-        finally {
-            try {
-                if (fis != null) fis.close();
-            } catch (IOException e) {
-                Logger.instance().error("Could not close FileInputStream");
-            }
-        }
-        return removeOuterBrackets(responseString);
     }
 
     private String removeOuterBrackets(String stringWithOuterBrackets){

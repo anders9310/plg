@@ -1,6 +1,7 @@
 package plg.test.unit.analysis;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import plg.analysis.BPMNProcessAnalyzer;
 import plg.analysis.bpmeter.model.AnalysisResult;
@@ -67,6 +68,27 @@ public class BPMNProcessAnalyzerTest {
 
         //Cleanup
         resultsFile.delete();
+    }
+
+    @Ignore //Takes a fairly long time
+    @Test
+    public void testAnalyzeManyFiles(){
+        final String modelFileBaseName = "bpmnmodel";
+        final String modelFileType = ".bpmn";
+        List<File> modelFiles = new LinkedList<>();
+        File file = new File(FILE_PATH + "\\" + modelFileBaseName + 0 + modelFileType);
+        int numFiles = 500;
+        for(int i = 0; i<numFiles; i++){
+            modelFiles.add(file);
+        }
+
+        long startMillis = System.currentTimeMillis();
+        List<AnalysisResult> analysisResults = processAnalyzer.analyzeModels(modelFiles);
+
+        long durationSecs = (System.currentTimeMillis()-startMillis)/1000;
+        Logger.instance().debug("Analysis of " + numFiles + " files took " + durationSecs + " seconds.");
+
+        assert analysisResults.size() == numFiles;
     }
 
 

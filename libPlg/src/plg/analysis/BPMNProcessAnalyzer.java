@@ -3,6 +3,7 @@ package plg.analysis;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import plg.analysis.bpmeter.BPMeterDataModelHandler;
 import plg.analysis.bpmeter.BPMeterWrapper;
 import plg.analysis.bpmeter.model.AnalysisResult;
 import plg.utils.Logger;
@@ -14,7 +15,6 @@ import java.util.List;
 public class BPMNProcessAnalyzer {
     CSVManager csvManager;
     BPMeterWrapper bpMeter = new BPMeterWrapper();
-    Gson gson = new Gson();
 
     public AnalysisResult analyzeModel(File bpmnModelFile){
         List<File> files = new LinkedList<>();
@@ -28,15 +28,7 @@ public class BPMNProcessAnalyzer {
         Logger.instance().info("Starting process analysis for list of files");
 
         String analysisResultJson = bpMeter.analyzeFiles(bpmnModelFiles);
-
-        List<AnalysisResult> result;
-        try{
-            result = gson.fromJson(analysisResultJson, new TypeToken<List<AnalysisResult>>(){}.getType());
-        } catch(JsonParseException e){
-            Logger.instance().error("Error while deserializing JSON: " + "\n" +
-                    "Error message" + e.toString());
-            result = null;
-        }
+        List<AnalysisResult> result = BPMeterDataModelHandler.convertJsonResultToDataModel(analysisResultJson);
 
         Logger.instance().info("Process analysis complete for list of files");
         return result;
