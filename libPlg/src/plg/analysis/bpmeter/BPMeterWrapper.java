@@ -54,6 +54,7 @@ public class BPMeterWrapper {
                 if (fis != null) fis.close();
             } catch (IOException e) {
                 Logger.instance().error("Could not close FileInputStream");
+                responseString = "";
             }
         }
         return responseString;

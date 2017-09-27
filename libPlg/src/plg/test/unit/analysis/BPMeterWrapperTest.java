@@ -11,7 +11,7 @@ import java.util.List;
 public class BPMeterWrapperTest {
     BPMeterWrapper bpMeter;
     File inFile;
-    private static final String FILE_PATH = "C:\\Users\\ander_000\\IdeaProjects\\plg\\libPlg\\src\\plg\\test\\modelfiles\\bpmnmodel_0.bpmn";
+    private static final String FILE_PATH = "C:\\Users\\ander_000\\IdeaProjects\\plg\\libPlg\\src\\plg\\test\\unit\\analysis\\bpmnmodel0.bpmn";
 
     @Before
     public void setUp(){
@@ -23,7 +23,9 @@ public class BPMeterWrapperTest {
     public void testFileAnalysis(){
         List<File> fileList = new LinkedList<>();
         fileList.add(inFile);
+
         String resultJson = bpMeter.analyzeFiles(fileList);
-        System.out.println(resultJson);
+
+        assert !resultJson.equals("");
     }
 }
