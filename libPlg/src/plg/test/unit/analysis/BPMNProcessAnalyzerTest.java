@@ -18,8 +18,8 @@ public class BPMNProcessAnalyzerTest {
     private static final String MODEL_NAME = "bpmnmodel0.bpmn";
     private static final String CSV_FILE_NAME = "bpmnmodel_analysisresults.csv";
 
-    BPMNProcessAnalyzer processAnalyzer;
-    File inFile;
+    private BPMNProcessAnalyzer processAnalyzer;
+    private File inFile;
 
     @Before
     public void setUp(){
