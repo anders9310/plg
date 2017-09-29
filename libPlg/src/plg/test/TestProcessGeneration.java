@@ -25,25 +25,20 @@ public class TestProcessGeneration {
         BPMNExporter e = new BPMNExporter();
         String baseFileName = "bpmnmodel_";
         String bpmnExtension = ".bpmn";
-        List<AnalysisResult> analysisResults = new LinkedList<>();
+        List<File> exportedFiles = new LinkedList<>();
         for(int i = 0; i< NUM_GENERATED_MODELS; i++){
             Process p =new Process("test" );
-            ObligationsProcessGenerator.randomizeProcess(p, new ParameterRandomizationConfiguration(10, 5));
+            ObligationsProcessGenerator.randomizeProcess(p, new ParameterRandomizationConfiguration(50, 25));
 
             String modelNumber = String.valueOf(i);
             String path = basePath + "\\" + baseFileName + modelNumber + bpmnExtension;
             e.exportModel(p, path);
 
-            File inFile = new File(path);
-            AnalysisResult analysisResult = processAnalyzer.analyzeModel(inFile);
-            if(analysisResult!=null){
-                analysisResults.add(analysisResult);
-            }else{
-                Logger.instance().info("Analysis returned null-result for " + path + ". Not exporting results for this model.");
-            }
-
+            File processFile = new File(path);
+            exportedFiles.add(processFile);
         }
 
+        List<AnalysisResult> analysisResults = processAnalyzer.analyzeModels(exportedFiles);
         processAnalyzer.exportAnalysisResultsToCsv(resultsBasePath, csvFileName, analysisResults);
     }
 }
