@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="OpenXES">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/OpenXES/OpenXES-XStream.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/OpenXES/guava-16.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/OpenXES/Spex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/OpenXES/OpenXES.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/OpenXES/doc.zip!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/OpenXES/xpp3_min-1.1.4c.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/OpenXES/xstream-1.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

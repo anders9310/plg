@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/libPlg/libPlg.iml" filepath="$PROJECT_DIR$/libPlg/libPlg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libPlgStream/libPlgStream.iml" filepath="$PROJECT_DIR$/libPlgStream/libPlgStream.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libPlgVisualizer/libPlgVisualizer.iml" filepath="$PROJECT_DIR$/libPlgVisualizer/libPlgVisualizer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plg/plg.iml" filepath="$PROJECT_DIR$/plg/plg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plg-cli/plg-cli.iml" filepath="$PROJECT_DIR$/plg-cli/plg-cli.iml" />
+    </modules>
+  </component>
+</project>

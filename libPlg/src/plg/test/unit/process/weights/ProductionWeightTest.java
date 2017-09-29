@@ -1,6 +1,7 @@
 package plg.test.unit.process.weights;
 
-import org.junit.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import plg.generator.process.GenerationParameter;
 import plg.generator.process.Obligation;
 import plg.generator.process.weights.ProductionWeight;

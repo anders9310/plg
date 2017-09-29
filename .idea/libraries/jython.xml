@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jython">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/jython/jython-standalone-2.7-b1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/jython/jython-standalone-2.5.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

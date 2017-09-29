@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="lib1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libPlgStream/lib/collections-generic-4.01.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlgStream/lib/OperationalSupport.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

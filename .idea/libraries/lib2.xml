@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/reflections-0.10-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/multiline-string-0.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libPlg/lib/camunda-bpmn-model-7.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
