@@ -4,9 +4,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import plg.generator.process.*;
-import plg.generator.process.weights.*;
-
-import java.util.Map;
 
 import static org.junit.Assert.fail;
 

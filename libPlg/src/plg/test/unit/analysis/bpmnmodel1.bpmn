@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://plg.processmining.it/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yaoqiang="http://bpmn.sourceforge.net" exporter="Yaoqiang BPMN Editor" exporterVersion="5.3" expressionLanguage="http://www.w3.org/1999/XPath" id="definitions_1043b489-38f8-4bc5-91b0-a00b2800e881" name="" targetNamespace="http://plg.processmining.it/" typeLanguage="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
+  <process id="test" isClosed="false" processType="None">
+    <extensionElements>
+      <yaoqiang:description/>
+      <yaoqiang:pageFormat height="841.8897637795276" imageableHeight="831.8897637795276" imageableWidth="588.1102362204724" imageableX="5.0" imageableY="5.0" orientation="0" width="598.1102362204724"/>
+      <yaoqiang:page background="#FFFFFF" horizontalCount="1" verticalCount="1"/>
+    </extensionElements>
+    <startEvent id="element168" isInterrupting="true" name="Start" parallelMultiple="false">
+      <outgoing>element168-element170</outgoing>
+      <outputSet/>
+    </startEvent>
+    <endEvent id="element169" name="End">
+      <incoming>element170-element169</incoming>
+      <inputSet/>
+    </endEvent>
+    <task completionQuantity="1" id="element170" isForCompensation="false" name="Activity A" startQuantity="1">
+      <incoming>element168-element170</incoming>
+      <outgoing>element170-element169</outgoing>
+    </task>
+    <sequenceFlow id="element168-element170" isImmediate="true" sourceRef="element168" targetRef="element170"/>
+    <sequenceFlow id="element170-element169" isImmediate="true" sourceRef="element170" targetRef="element169"/>
+  </process>
+  <bpmndi:BPMNDiagram id="Yaoqiang_Diagram-test" name="diagram" resolution="120.0">
+    <bpmndi:BPMNPlane bpmnElement="test">
+      <bpmndi:BPMNShape bpmnElement="element168" id="Yaoqiang-element168">
+        <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="19.84" width="29.0" x="1.5" y="40.08"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="element169" id="Yaoqiang-element169">
+        <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="19.84" width="24.0" x="4.0" y="40.08"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="element170" id="Yaoqiang-element170">
+        <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="19.84" width="53.0" x="16.0" y="19.58"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="element168-element170" id="Yaoqiang-element168-element170">
+        <di:waypoint x="16.0" y="16.0"/>
+        <di:waypoint x="16.0" y="9.056603773584897"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="19.84" width="6.0" x="13.0" y="2.61"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="element170-element169" id="Yaoqiang-element170-element169">
+        <di:waypoint x="16.0" y="9.056603773584897"/>
+        <di:waypoint x="16.0" y="16.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="19.84" width="6.0" x="13.0" y="2.61"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
