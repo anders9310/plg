@@ -13,7 +13,7 @@ public class ProductionRuleContributions {
 
         RandomizationPattern pattern = RandomizationPattern.SEQUENCE;
         Map<GenerationParameter, Double> obligationsValues = new HashMap<>();
-        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2.0);
+        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 0.0);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0.0);
         contributions.put(pattern, obligationsValues);
 
@@ -25,19 +25,19 @@ public class ProductionRuleContributions {
 
         pattern = RandomizationPattern.MUTUAL_EXCLUSION;
         obligationsValues = new HashMap<>();
-        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2.0);
+        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 0.0);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1.0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
         obligationsValues = new HashMap<>();
-        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2.0);
+        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 0.0);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1.0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.LOOP;
         obligationsValues = new HashMap<>();
-        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2.0);
+        obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 0.0);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1.0);
         contributions.put(pattern, obligationsValues);
 

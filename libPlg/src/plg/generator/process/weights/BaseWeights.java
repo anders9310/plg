@@ -45,7 +45,7 @@ public class BaseWeights {
             case SEQUENCE:
                 switch(genParam){
                     case NUM_ACTIVITIES:
-                        return 0;
+                        return 2;
                     case NUM_GATEWAYS:
                         return 0;
                     default:
@@ -54,7 +54,7 @@ public class BaseWeights {
             case PARALLEL_EXECUTION:
                 switch(genParam){
                     case NUM_ACTIVITIES:
-                        return 0;
+                        return 2;
                     case NUM_GATEWAYS:
                         return 0;
                     default:
@@ -63,7 +63,7 @@ public class BaseWeights {
             case MUTUAL_EXCLUSION:
                 switch(genParam){
                     case NUM_ACTIVITIES:
-                        return 0;
+                        return 2;
                     case NUM_GATEWAYS:
                         return 0;
                     default:
@@ -72,7 +72,7 @@ public class BaseWeights {
             case LOOP:
                 switch(genParam){
                     case NUM_ACTIVITIES:
-                        return 0;
+                        return 2;
                     case NUM_GATEWAYS:
                         return 0;
                     default:
