@@ -44,11 +44,12 @@ public class TestProcessGeneration {
         String bpmnExtension = ".bpmn";
         for(int i = 0; i< NUM_GENERATED_MODELS; i++){
             Process p =new Process("test" );
-            ObligationsProcessGenerator.randomizeProcess(p, new ParameterRandomizationConfiguration(10, 0));
+            ObligationsProcessGenerator.randomizeProcess(p, new ParameterRandomizationConfiguration(30, 0));
 
             String modelNumber = String.valueOf(i);
             String path = MODEL_FILES_FOLDER + "\\" + baseFileName + modelNumber + bpmnExtension;
-            File processFile = e.exportModel(p, path);
+            e.exportModel(p, path);
+            File processFile = new File(path);
             exportedFiles.add(processFile);
         }
         return exportedFiles;
