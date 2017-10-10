@@ -13,7 +13,7 @@ import java.util.List;
 
 public class TestProcessGeneration {
 
-    private static final int NUM_GENERATED_MODELS = 100;
+    private static final int NUM_GENERATED_MODELS = 3000;
     private static final String PROJECT_ROOT_FOLDER = System.getProperty("user.dir");
     private static final String PROJECT_TEST_FOLDER = PROJECT_ROOT_FOLDER + "\\src\\plg\\test";
     public static final String MODEL_FILES_FOLDER = PROJECT_TEST_FOLDER + "\\modelfiles";
@@ -22,8 +22,8 @@ public class TestProcessGeneration {
     private static BPMNProcessAnalyzer processAnalyzer = new BPMNProcessAnalyzer();
 
     public static void main(String[] args) throws Exception {
-        //generateAnalyzeExportResults();
-        analyzeExportResults();
+        generateAnalyzeExportResults();
+        //analyzeExportResults();
     }
 
     private static void generateAnalyzeExportResults(){
@@ -44,7 +44,7 @@ public class TestProcessGeneration {
         String bpmnExtension = ".bpmn";
         for(int i = 0; i< NUM_GENERATED_MODELS; i++){
             Process p =new Process("test" );
-            ObligationsProcessGenerator.randomizeProcess(p, new ParameterRandomizationConfiguration(30, 0));
+            ObligationsProcessGenerator.randomizeProcess(p, new ParameterRandomizationConfiguration(15, 0));
 
             String modelNumber = String.valueOf(i);
             String path = MODEL_FILES_FOLDER + "\\" + baseFileName + modelNumber + bpmnExtension;

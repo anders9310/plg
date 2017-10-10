@@ -27,11 +27,11 @@ public class BaseWeights {
         baseWeights.put(pattern, obligationsValues);
     }
 
-    private double calcBaseWeight(RandomizationPattern pattern, GenerationParameter genParam){
-        return contributions.getContribution(pattern, genParam) + getExpectedRandomContribution(pattern, genParam);
+    public double calcBaseWeight(RandomizationPattern pattern, GenerationParameter genParam){
+        return contributions.getContribution(pattern, genParam) + getPotential(pattern, genParam);
     }
 
-    private double getExpectedRandomContribution(RandomizationPattern pattern, GenerationParameter genParam) {
+    private double getPotential(RandomizationPattern pattern, GenerationParameter genParam) {
         switch(pattern){
             case SINGLE_ACTIVITY:
                 switch(genParam){
@@ -45,7 +45,7 @@ public class BaseWeights {
             case SEQUENCE:
                 switch(genParam){
                     case NUM_ACTIVITIES:
-                        return 2;
+                        return 1;
                     case NUM_GATEWAYS:
                         return 0;
                     default:
@@ -54,7 +54,7 @@ public class BaseWeights {
             case PARALLEL_EXECUTION:
                 switch(genParam){
                     case NUM_ACTIVITIES:
-                        return 2;
+                        return 1;
                     case NUM_GATEWAYS:
                         return 0;
                     default:
@@ -72,7 +72,7 @@ public class BaseWeights {
             case LOOP:
                 switch(genParam){
                     case NUM_ACTIVITIES:
-                        return 2;
+                        return 1;
                     case NUM_GATEWAYS:
                         return 0;
                     default:
@@ -91,7 +91,7 @@ public class BaseWeights {
         return 0;
     }
 
-    public double getBaseWeight(RandomizationPattern pattern, GenerationParameter parameter){
-        return baseWeights.get(pattern).get(parameter);
+    public double getBasePotential(RandomizationPattern pattern, GenerationParameter parameter){
+        return getPotential(pattern, parameter);
     }
 }
