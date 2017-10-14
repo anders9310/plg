@@ -76,6 +76,7 @@ public class ProcessGenerator {
         PatternFrame p = generateMainFrame();
         PatternFrame.connect(start, p).connect(end);
         Logger.instance().info("Process randomization complete");
+        parameters.printResults();
     }
 
     protected PatternFrame generateMainFrame(){
@@ -192,6 +193,7 @@ public class ProcessGenerator {
         Gateway join = process.newExclusiveGateway();
         PatternFrame afterJoin = newActivity();
         int branchesToGenerate = parameters.getRandomXORBranches();
+        Logger.instance().debug("branchesToGenerate: " + branchesToGenerate);
 
         for(int i = 0; i < branchesToGenerate; i++) {
             PatternFrame p = newInternalPattern(currentDepth, loopAllowed, canSkip);

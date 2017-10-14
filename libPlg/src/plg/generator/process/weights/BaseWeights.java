@@ -31,67 +31,25 @@ public class BaseWeights {
         return contributions.getContribution(pattern, genParam) + getPotential(pattern, genParam);
     }
 
-    private double getPotential(RandomizationPattern pattern, GenerationParameter genParam) {
+    private int getPotential(RandomizationPattern pattern, GenerationParameter genParam) {
         switch(pattern){
             case SINGLE_ACTIVITY:
-                switch(genParam){
-                    case NUM_ACTIVITIES:
-                        return 0;
-                    case NUM_GATEWAYS:
-                        return 0;
-                    default:
-                        return 0;
-                }
+                return -1;
             case SEQUENCE:
-                switch(genParam){
-                    case NUM_ACTIVITIES:
-                        return 1;
-                    case NUM_GATEWAYS:
-                        return 0;
-                    default:
-                        return 0;
-                }
+                return 1;
             case PARALLEL_EXECUTION:
-                switch(genParam){
-                    case NUM_ACTIVITIES:
-                        return 1;
-                    case NUM_GATEWAYS:
-                        return 0;
-                    default:
-                        return 0;
-                }
+                return 1;
             case MUTUAL_EXCLUSION:
-                switch(genParam){
-                    case NUM_ACTIVITIES:
-                        return 2;
-                    case NUM_GATEWAYS:
-                        return 0;
-                    default:
-                        return 0;
-                }
+                return 1;
             case LOOP:
-                switch(genParam){
-                    case NUM_ACTIVITIES:
-                        return 1;
-                    case NUM_GATEWAYS:
-                        return 0;
-                    default:
-                        return 0;
-                }
+                return 1;
             case SKIP:
-                switch(genParam){
-                    case NUM_ACTIVITIES:
-                        return 0;
-                    case NUM_GATEWAYS:
-                        return 0;
-                    default:
-                        return 0;
-                }
+                return -1;
         }
         return 0;
     }
 
-    public double getBasePotential(RandomizationPattern pattern, GenerationParameter parameter){
+    public int getBasePotential(RandomizationPattern pattern, GenerationParameter parameter){
         return getPotential(pattern, parameter);
     }
 }

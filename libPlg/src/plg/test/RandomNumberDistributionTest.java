@@ -27,7 +27,7 @@ public class RandomNumberDistributionTest {
     private static void generateRandomNumbersPoissonStyle(){
         List<Number> results = new LinkedList<>();
         for(int i = 0; i<NUM; i++){
-            results.add(getRandomNumberPoissonDistributionWithPotential());
+            results.add(getSizeInverseTransformSampling());
         }
         printToCsv(results);
     }
@@ -55,7 +55,6 @@ public class RandomNumberDistributionTest {
             k++;
             p *= lambda/k;
             s += p;
-            u = Math.random();
         }
         return k;
     }

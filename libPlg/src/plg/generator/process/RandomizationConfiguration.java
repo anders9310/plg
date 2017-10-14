@@ -54,7 +54,7 @@ public abstract class RandomizationConfiguration {
      * @return the number of AND branches to generate
      */
     public int getRandomANDBranches() {
-        return Random.nextInt(MIN_AND_BRANCHES, getAndBranches() - 1);
+        return Random.nextInt(MIN_AND_BRANCHES, getAndBranches());
     }
 
     /**
@@ -64,7 +64,8 @@ public abstract class RandomizationConfiguration {
      * @return the number of XOR branches to generate
      */
     public int getRandomXORBranches() {
-        return Random.nextInt(MIN_XOR_BRANCHES, getXorBranches() - 1);
+        //return MIN_XOR_BRANCHES + (int)Math.floor(Math.random()*(getXorBranches()-MIN_XOR_BRANCHES+1));
+        return Random.nextInt(MIN_XOR_BRANCHES, getXorBranches());
     }
 
     /**
@@ -127,4 +128,6 @@ public abstract class RandomizationConfiguration {
     public int getXorBranches() {
         return XORBranches;
     }
+
+    public abstract void printResults();
 }

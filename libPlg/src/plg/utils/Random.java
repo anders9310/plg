@@ -42,7 +42,26 @@ public class Random {
 	public static Integer nextInt(int min, int max) {
 		Float v = RANDOM_GENERATOR.nextFloat();
 		int range = max - min;
-		range = Math.round(range * v) + min;
+		range = (int)Math.floor((range+1) * v ) + min;
 		return range;
+	}
+
+	/**
+	 * Generates a Poisson-distributed random number using inverse transformation sampling
+	 * @param mean The expected mean of the Poisson distribution
+	 * @return Poisson-distributed random number
+	 */
+	public static int poissonRandom(double mean){
+		double lambda = mean;
+		int k = 0;
+		double p = Math.exp(-lambda);
+		double s = p;
+		double u = Math.random();
+		while(u>s){
+			k++;
+			p *= lambda/k;
+			s += p;
+		}
+		return k;
 	}
 }

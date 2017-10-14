@@ -308,4 +308,6 @@ public class Plg2RandomizationConfiguration extends RandomizationConfiguration{
 		toRet += "Data Object Probability = " + getDataObjectProbability() + "\n";
 		return toRet;
 	}
+
+	public void printResults(){};
 }
