@@ -20,7 +20,7 @@ import java.util.List;
 
 public class BPMeterWrapper {
 
-    private final int MAX_FILES_PER_REQUEST = 50;
+    private final int MAX_FILES_PER_REQUEST = 20;
 
     public String analyzeFiles(List<File> inFiles) {
         if(inFiles.isEmpty()){

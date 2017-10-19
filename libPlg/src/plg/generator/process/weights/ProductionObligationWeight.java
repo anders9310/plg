@@ -8,18 +8,18 @@ public class ProductionObligationWeight extends Weight{
     private int productionTerminals;
     private int productionPotential;
     private Obligation obligation;
-    private RandomizationPattern productionPattern;
+    private RandomizationPattern randomizationPattern;
     private double zeroIntersectionValue = 1;
 
-    public ProductionObligationWeight(RandomizationPattern productionPattern, Obligation obligation){
-        this.productionPattern = productionPattern;
+    public ProductionObligationWeight(RandomizationPattern randomizationPattern, Obligation obligation){
+        this.randomizationPattern = randomizationPattern;
         this.obligation = obligation;
         cacheProductionContributions();
     }
 
     private void cacheProductionContributions() {
-        productionTerminals = ProductionRuleContributions.CONTRIBUTIONS.getContribution(this.productionPattern, this.obligation.getType());
-        productionPotential = BaseWeights.BASE_WEIGHTS.getBasePotential(this.productionPattern, this.obligation.getType());
+        productionTerminals = ProductionRuleContributions.CONTRIBUTIONS.getContribution(this.randomizationPattern, this.obligation.getType());
+        productionPotential = BaseWeights.BASE_WEIGHTS.getBasePotential(this.randomizationPattern, this.obligation.getType());
     }
 
     protected double calculateValue() {
@@ -35,7 +35,7 @@ public class ProductionObligationWeight extends Weight{
             if(productionSizeContribution>0 && productionPotential>0){
                 return 1;
             }else if(productionSizeContribution>0){
-                throw new RuntimeException("Cannot handle the type of production rule: " + productionPattern.name());
+                throw new RuntimeException("Cannot handle the type of production rule: " + randomizationPattern.name());
             }else{
                 return 0;
             }
@@ -67,7 +67,7 @@ public class ProductionObligationWeight extends Weight{
         }
     }
 
-    /*private double getExpValue(){
-        return Math.exp(baseWeight * obligation.getRemaining()) + zeroIntersectionValue-1;
-    }*/
+    public RandomizationPattern getRandomizationPattern() {
+        return randomizationPattern;
+    }
 }

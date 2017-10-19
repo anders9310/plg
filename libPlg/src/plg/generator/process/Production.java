@@ -8,9 +8,9 @@ public class Production {
     private RandomizationPattern type;
     private ProductionWeight weight;
 
-    public Production(RandomizationPattern type, List<Obligation> obligations){
+    public Production(RandomizationPattern type, List<Obligation> obligations, List<RandomizationPattern> allRandomizationPatterns){
         this.type = type;
-        this.weight = new ProductionWeight(type, obligations);
+        this.weight = new ProductionWeight(type, obligations, allRandomizationPatterns);
     }
 
     public double getContribution(GenerationParameter genParameter) {

@@ -9,7 +9,7 @@ import java.util.*;
 public class ParameterRandomizationConfiguration extends RandomizationConfiguration{
 
     private List<Obligation> obligations;
-    private Set<Production> productions;
+    private List<Production> productions;
 
     public ParameterRandomizationConfiguration(int numActivities, int numGateways) {
         this(numActivities, numGateways, 0.1);
@@ -25,16 +25,10 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return generateRandomPattern(productions);
     }
 
-    private RandomizationPattern generateRandomPattern(Set<Production> patterns) {
+    private RandomizationPattern generateRandomPattern(List<Production> patterns) {
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
-        if(!allProductionWeightsAre0(patterns)){
-            for(Production p : patterns) {
-                options.add(new Pair<>(p.getType(), p.getWeight()));
-            }
-        }else{
-            for(Production p : patterns) {
-                options.add(new Pair<>(p.getType(), 1.0));
-            }
+        for(Production p : patterns) {
+            options.add(new Pair<>(p.getType(), p.getWeight()));
         }
 
         RandomizationPattern generatedPattern = SetUtils.getRandomWeighted(options);
@@ -42,8 +36,8 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return generatedPattern;
     }
 
-    private boolean allProductionWeightsAre0(Set<Production> patterns) {
-        int sum = 0;
+    private boolean allProductionWeightsAre0(List<Production> patterns) {
+        double sum = 0;
         for(Production p : patterns) {
             sum += p.getWeight();
         }
@@ -57,19 +51,26 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         initObligations(generationParameters);
     }
 
+    private void initObligations(Map<GenerationParameter, Integer> genParams) {
+        obligations = new ArrayList<>();
+        for (Map.Entry gpAndValue : genParams.entrySet()) {
+            GenerationParameter gp = (GenerationParameter) gpAndValue.getKey();
+            int value = (int) gpAndValue.getValue();
+            initObligation(gp, value);
+        }
+    }
+
     private void initObligation(GenerationParameter gp, int value) {
         Obligation obligation = new Obligation(gp, value);
         obligations.add(obligation);
     }
 
     private void initProductions(){
-        productions = new HashSet<>();
-        /*productions.add(new Production(RandomizationPattern.SEQUENCE, obligations));
-        productions.add(new Production(RandomizationPattern.MUTUAL_EXCLUSION, obligations));
-        productions.add(new Production(RandomizationPattern.SINGLE_ACTIVITY, obligations));
-        productions.add(new Production(RandomizationPattern.SKIP, obligations));*/
+        List<RandomizationPattern> randomizationPatterns = new LinkedList<>();
+        randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
+        productions = new LinkedList<>();
         for(RandomizationPattern pattern : RandomizationPattern.values()){
-            productions.add(new Production(pattern, obligations));
+            productions.add(new Production(pattern, obligations, randomizationPatterns));
         }
     }
 
@@ -86,14 +87,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
 
 
-    private void initObligations(Map<GenerationParameter, Integer> genParams) {
-        obligations = new ArrayList<>();
-        for (Map.Entry gpAndValue : genParams.entrySet()) {
-            GenerationParameter gp = (GenerationParameter) gpAndValue.getKey();
-            int value = (int) gpAndValue.getValue();
-            initObligation(gp, value);
-        }
-    }
+
 
 
     public void printResults(){

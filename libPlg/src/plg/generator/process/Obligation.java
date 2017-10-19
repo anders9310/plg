@@ -56,5 +56,4 @@ public class Obligation {
             Logger.instance().debug("Did not hit target value");
         }
     }
-
 }
