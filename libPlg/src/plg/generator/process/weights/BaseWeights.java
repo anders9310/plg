@@ -45,6 +45,10 @@ public class BaseWeights {
                 return 1;
             case SKIP:
                 return -1;
+            case MUTUAL_EXCLUSION_SINGLEBRANCH:
+                return -1;
+            case PARALLEL_EXECUTION_SINGLEBRANCH:
+                return -1;
         }
         return 0;
     }

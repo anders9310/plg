@@ -27,11 +27,36 @@ public class ObligationWeight extends Weight{
     protected double calculateValue() {
         double totalProductionObligationWeight = getTotalProductionObligationWeights();
         double thisObligationProductionWeight = getThisObligationProductionWeight();
+        double highestObligationProductionWeight = getHighestObligationProductionWeight();
         if(totalProductionObligationWeight>0){
-            return thisObligationProductionWeight/totalProductionObligationWeight;
+            return thisObligationProductionWeight / totalProductionObligationWeight;
         }else{
-            return getEvenlyDistributedContribution();
+            return 0;
         }
+    }
+
+    private double getHighestObligationProductionWeight() {
+        double highestObligationProductionWeight = 0;
+        for(ProductionObligationWeight pow : pows){
+            if(pow.getValue()>highestObligationProductionWeight){
+                highestObligationProductionWeight = pow.getValue();
+            }
+        }
+        return highestObligationProductionWeight;
+    }
+    private double getNumberHighestObligationProductionWeight() {
+        double highestObligationProductionWeight = 0;
+        double numHighest = 0;
+        for(ProductionObligationWeight pow : pows){
+            if(pow.getValue()==highestObligationProductionWeight){
+                numHighest++;
+            }
+            else if(pow.getValue()>highestObligationProductionWeight){
+                highestObligationProductionWeight = pow.getValue();
+                numHighest=1;
+            }
+        }
+        return numHighest;
     }
 
     private double getEvenlyDistributedContribution() {
@@ -41,7 +66,7 @@ public class ObligationWeight extends Weight{
     private double getTotalProductionObligationWeights(){
         double sumOfWeights = 0;
         for(ProductionObligationWeight pow : pows){
-            sumOfWeights += pow.calculateValue();
+            sumOfWeights += Math.abs(pow.calculateValue());
         }
         return sumOfWeights;
     }

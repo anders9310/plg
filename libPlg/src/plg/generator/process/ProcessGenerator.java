@@ -112,6 +112,12 @@ public class ProcessGenerator {
             case SKIP:
                 generatedFrame = null;
                 break;
+            case PARALLEL_EXECUTION_SINGLEBRANCH:
+                generatedFrame = newAndBranchesSingle(currentDepth + 1, canLoop);
+                break;
+            case MUTUAL_EXCLUSION_SINGLEBRANCH:
+                generatedFrame = newXorBranchesSingle(currentDepth + 1, canLoop, canSkip);
+                break;
             default:
                 generatedFrame = newActivity();
                 break;
@@ -176,7 +182,22 @@ public class ProcessGenerator {
         PatternFrame.connect(join, afterJoin);
 
         return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
-    }//
+    }
+
+    protected PatternFrame newAndBranchesSingle(int currentDepth, boolean loopAllowed) {
+        Logger.instance().debug("New ANDSKIP pattern to create");
+        PatternFrame beforeSplit = newActivity();
+        Gateway split = process.newParallelGateway();
+        Gateway join = process.newParallelGateway();
+        PatternFrame afterJoin = newActivity();
+
+        PatternFrame.connect(split, join);
+
+        PatternFrame.connect(beforeSplit, split);
+        PatternFrame.connect(join, afterJoin);
+
+        return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
+    }
 
     /**
      * This method generates a new XOR pattern. Each branch is populated using
@@ -209,7 +230,23 @@ public class ProcessGenerator {
         PatternFrame.connect(join, afterJoin);
 
         return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
-    }//
+    }
+
+    protected PatternFrame newXorBranchesSingle(int currentDepth, boolean loopAllowed, boolean canSkip) {
+        Logger.instance().debug("New XORSKIP pattern to create");
+        PatternFrame beforeSplit = newActivity();
+        Gateway split = process.newExclusiveGateway();
+        Gateway join = process.newExclusiveGateway();
+        PatternFrame afterJoin = newActivity();
+
+        PatternFrame.connect(split, join);
+
+
+        PatternFrame.connect(beforeSplit, split);
+        PatternFrame.connect(join, afterJoin);
+
+        return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
+    }
 
     /**
      * This method generates a new XOR pattern. Each branch is populated using

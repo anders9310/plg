@@ -1,6 +1,7 @@
 package plg.generator.process;
 
 import plg.generator.process.weights.ProductionWeight;
+import plg.utils.Logger;
 
 import java.util.List;
 
@@ -20,7 +21,9 @@ public class Production {
         return type;
     }
     public double getWeight() {
-        return weight.getValue();
+        double weightValue = weight.getValue();
+        Logger.instance().debug("Pattern: " + type.name() + ". Weight: " + weightValue);
+        return weightValue;
     }
 
 

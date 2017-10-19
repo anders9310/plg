@@ -15,7 +15,7 @@ import java.util.List;
 public class CSVManager {
 
     private static final String NEW_LINE_SEPARATOR = "\n";
-    private static final Object [] FILE_HEADER = {"Model Name",MetricType.NUM_ACTIVITIES.getName(),MetricType.NUM_GATEWAYS.getName()};
+    private static final Object [] FILE_HEADER = {"Model Name",MetricType.NUM_ACTIVITIES.getName(),MetricType.NUM_GATEWAYS.getName(), MetricType.NUM_AND_GATES.getName(), MetricType.NUM_XOR_GATES.getName()};
 
     public void writeCsv(String filePath, String fileName, List<AnalysisResult> analysisResults){
 
@@ -33,11 +33,15 @@ public class CSVManager {
                     String modelName = aRes.getName();
                     int numberOfActivities = (int) aRes.findMetric(MetricType.NUM_ACTIVITIES.getName()).getValues().get(0).getValue();
                     int numberOfGateways = (int) aRes.findMetric(MetricType.NUM_GATEWAYS.getName()).getValues().get(0).getValue();
+                    int numberOfAnd = (int) aRes.findMetric(MetricType.NUM_AND_GATES.getName()).getValues().get(0).getValue();
+                    int numberOfXor = (int) aRes.findMetric(MetricType.NUM_XOR_GATES.getName()).getValues().get(0).getValue();
 
                     List<String> analysisResultList = new ArrayList<>();
                     analysisResultList.add(modelName);
                     analysisResultList.add(String.valueOf(numberOfActivities));
                     analysisResultList.add(String.valueOf(numberOfGateways));
+                    analysisResultList.add(String.valueOf(numberOfAnd));
+                    analysisResultList.add(String.valueOf(numberOfXor));
                     csvFilePrinter.printRecord(analysisResultList);
                 } else{
                     Logger.instance().info("Found null-result in list of model analysis results. Skipping writing result.");

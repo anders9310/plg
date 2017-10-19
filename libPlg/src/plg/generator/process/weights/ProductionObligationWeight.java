@@ -36,22 +36,30 @@ public class ProductionObligationWeight extends Weight{
                 return 1;
             }else if(productionSizeContribution>0){
                 throw new RuntimeException("Cannot handle the type of production rule: " + randomizationPattern.name());
-            }else{
+            }else if(productionSizeContribution==0){
                 return 0;
+            }else{
+                return -1;
             }
+            //if(productionSizeContribution==0)return 0;
+            //else return productionSizeContribution/Math.abs(productionSizeContribution);
         }else if(currentSize==targetValue){
             //Stay the same
             if(productionSizeContribution == 0){
                 return 1;
             }else{
-                return 0;
+                return -1;
             }
         }else{//decrease
             if(productionSizeContribution<0){
                 return 1;
-            }else{
+            }else if(productionSizeContribution==0){
                 return 0;
+            }else{
+                return -1;
             }
+            //if(productionSizeContribution==0)return 0;
+            //else return -productionSizeContribution/Math.abs(productionSizeContribution);
         }
     }
 

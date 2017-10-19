@@ -26,6 +26,7 @@ public class ProductionWeight extends Weight{
         for (ObligationWeight ow : obligationWeights) {
             sumOfWeights += ow.getValue();
         }
-        return sumOfWeights;
+        if(sumOfWeights<0) return 0;
+        else return sumOfWeights;
     }
 }

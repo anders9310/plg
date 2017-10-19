@@ -27,10 +27,27 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     private RandomizationPattern generateRandomPattern(List<Production> patterns) {
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
-        for(Production p : patterns) {
-            options.add(new Pair<>(p.getType(), p.getWeight()));
+        if(allProductionWeightsAre0(patterns)){
+            for(Production p : patterns) {
+                options.add(new Pair<>(p.getType(), 1.0));
+            }
+        }else{
+            /*Set<Pair<RandomizationPattern, Double>> tempOptions = new HashSet<>();
+            double highestWeight = 0;
+            for(Production p : patterns) {
+                if(p.getWeight()>highestWeight){
+                    tempOptions = new HashSet<>();
+                    tempOptions.add(new Pair<>(p.getType(), p.getWeight()));
+                    highestWeight = p.getWeight();
+                } else if(p.getWeight()==highestWeight){
+                    tempOptions.add(new Pair<>(p.getType(), p.getWeight()));
+                }*/
+            //}
+            //options = tempOptions;
+            for(Production p : patterns) {
+                options.add(new Pair<>(p.getType(), p.getWeight()));
+            }
         }
-
         RandomizationPattern generatedPattern = SetUtils.getRandomWeighted(options);
         updateRemainingObligations(generatedPattern);
         return generatedPattern;
