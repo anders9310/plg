@@ -11,13 +11,13 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private List<Obligation> obligations;
     private List<Production> productions;
 
-    public ParameterRandomizationConfiguration(int numActivities, int numGateways) {
-        this(numActivities, numGateways, 0.1);
+    public ParameterRandomizationConfiguration(int numActivities, int numGateways, int numAndGates, int numXorGates) {
+        this(numActivities, numGateways, numAndGates, numXorGates, 0.1);
     }
 
-    public ParameterRandomizationConfiguration(int numActivities, int numGateways, double dataObjectProbability) {
+    public ParameterRandomizationConfiguration(int numActivities, int numGateways, int numAndGates, int numXorGates, double dataObjectProbability) {
         super(2, 2, dataObjectProbability);
-        initObligations(numActivities, numGateways);
+        initObligations(numActivities, numGateways, numAndGates, numXorGates);
         initProductions();
     }
 
@@ -44,10 +44,12 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return sum==0;
     }
 
-    private void initObligations(int numActivities, int numGateways) {
+    private void initObligations(int numActivities, int numGateways, int numAndGates, int numXorGates) {
         Map<GenerationParameter, Integer> generationParameters = new HashMap<>();
-        generationParameters.put(GenerationParameter.NUM_ACTIVITIES, numActivities);
-        generationParameters.put(GenerationParameter.NUM_GATEWAYS, numGateways);
+        if(numActivities!=0) generationParameters.put(GenerationParameter.NUM_ACTIVITIES, numActivities);
+        if(numGateways!=0) generationParameters.put(GenerationParameter.NUM_GATEWAYS, numGateways);
+        if(numAndGates!=0) generationParameters.put(GenerationParameter.NUM_AND_GATES, numAndGates);
+        if(numXorGates!=0) generationParameters.put(GenerationParameter.NUM_XOR_GATES, numXorGates);
         initObligations(generationParameters);
     }
 

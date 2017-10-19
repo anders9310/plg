@@ -12,7 +12,7 @@ public class ParameterRandomizationConfigurationTest {
     public void testZeroObligation(){
         int numActivities = 10;
         int numGateways = 0;
-        ParameterRandomizationConfiguration randomConfig = new ParameterRandomizationConfiguration(numActivities, numGateways);
+        ParameterRandomizationConfiguration randomConfig = new ParameterRandomizationConfiguration(numActivities, numGateways, 0, 0);
         try{
             randomConfig.generateRandomPattern(true, true);
         }catch(Exception e){

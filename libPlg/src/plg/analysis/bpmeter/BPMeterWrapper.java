@@ -32,17 +32,23 @@ public class BPMeterWrapper {
         List<File> currentFiles = new LinkedList<>();
         int i = 0;
         while(i<inFiles.size()){
-            currentFiles.add(inFiles.get(i));
-            if(i % MAX_FILES_PER_REQUEST == 0 && i>0 || i==inFiles.size()-1){
-                String callResponse = callApi(currentFiles);
-                responseString = responseString.concat(removeOuterBrackets(callResponse));
+            try{
+                currentFiles.add(inFiles.get(i));
+                if(i % MAX_FILES_PER_REQUEST == 0 && i>0 || i==inFiles.size()-1){
 
-                if(i!=inFiles.size()-1){
-                    responseString = responseString.concat(",");
+                    String callResponse = callApi(currentFiles);
+
+                    responseString = responseString.concat(removeOuterBrackets(callResponse));
+
+                    if(i!=inFiles.size()-1){
+                        responseString = responseString.concat(",");
+                    }
+                    currentFiles = new LinkedList<>();
                 }
-                currentFiles = new LinkedList<>();
+                i++;
+            }catch (RuntimeException e){
+                Logger.instance().error("Got error while calling BPMeter API. Retrying... ");
             }
-            i++;
         }
 
         return responseString.concat("]");

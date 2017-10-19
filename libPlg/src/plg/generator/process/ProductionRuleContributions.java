@@ -15,36 +15,48 @@ public class ProductionRuleContributions {
         Map<GenerationParameter, Integer> obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 0);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
+        obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
+        obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.SINGLE_ACTIVITY;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 1);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
+        obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
+        obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.MUTUAL_EXCLUSION;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 2);
+        obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
+        obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 2);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 2);
+        obligationsValues.put(GenerationParameter.NUM_AND_GATES, 2);
+        obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.LOOP;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 2);
+        obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
+        obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 2);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.SKIP;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 0);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
+        obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
+        obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
         contributions.put(pattern, obligationsValues);
     }
 
