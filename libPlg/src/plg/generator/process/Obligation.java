@@ -17,8 +17,8 @@ public class Obligation {
         }
         this.type = type;
         this.mean = mean;
-        //this.targetValue = Random.poissonRandom(mean);
-        this.targetValue = mean;
+        this.targetValue = Random.poissonRandom(mean);
+        //this.targetValue = mean;
         this.terminals = 0;
         this.potential = 1;
         Logger.instance().debug("Obligation for " + type.name() + " created with target value = " + this.targetValue + " for mean = " + mean);

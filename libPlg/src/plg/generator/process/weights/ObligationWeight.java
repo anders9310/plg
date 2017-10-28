@@ -2,7 +2,6 @@ package plg.generator.process.weights;
 
 import plg.generator.process.GenerationParameter;
 import plg.generator.process.Obligation;
-import plg.generator.process.Production;
 import plg.generator.process.RandomizationPattern;
 
 import java.util.ArrayList;
@@ -27,40 +26,11 @@ public class ObligationWeight extends Weight{
     protected double calculateValue() {
         double totalProductionObligationWeight = getTotalProductionObligationWeights();
         double thisObligationProductionWeight = getThisObligationProductionWeight();
-        double highestObligationProductionWeight = getHighestObligationProductionWeight();
         if(totalProductionObligationWeight>0){
             return thisObligationProductionWeight / totalProductionObligationWeight;
         }else{
             return 0;
         }
-    }
-
-    private double getHighestObligationProductionWeight() {
-        double highestObligationProductionWeight = 0;
-        for(ProductionObligationWeight pow : pows){
-            if(pow.getValue()>highestObligationProductionWeight){
-                highestObligationProductionWeight = pow.getValue();
-            }
-        }
-        return highestObligationProductionWeight;
-    }
-    private double getNumberHighestObligationProductionWeight() {
-        double highestObligationProductionWeight = 0;
-        double numHighest = 0;
-        for(ProductionObligationWeight pow : pows){
-            if(pow.getValue()==highestObligationProductionWeight){
-                numHighest++;
-            }
-            else if(pow.getValue()>highestObligationProductionWeight){
-                highestObligationProductionWeight = pow.getValue();
-                numHighest=1;
-            }
-        }
-        return numHighest;
-    }
-
-    private double getEvenlyDistributedContribution() {
-        return 1.0 / pows.size();
     }
 
     private double getTotalProductionObligationWeights(){

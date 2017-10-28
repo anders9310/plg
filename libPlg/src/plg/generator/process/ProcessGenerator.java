@@ -1,5 +1,6 @@
 package plg.generator.process;
 
+import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -348,5 +349,8 @@ public class ProcessGenerator {
 
     public RandomizationConfiguration getParameters() {
         return parameters;
+    }
+    public int getGeneratedConnections(){
+        return process.getSequences().size();
     }
 }
