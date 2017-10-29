@@ -3,13 +3,19 @@ package plg.generator.process;
 import plg.utils.Logger;
 import plg.utils.Pair;
 import plg.utils.SetUtils;
-
+import plg.model.Process;
 import java.util.*;
 
 public class ParameterRandomizationConfiguration extends RandomizationConfiguration{
 
     private List<Obligation> obligations;
     private List<Production> productions;
+    private Process process;
+
+    public ParameterRandomizationConfiguration(Process process, int numActivities, int numGateways, int numAndGates, int numXorGates) {
+        this(numActivities, numGateways, numAndGates, numXorGates, 0.1);
+        this.process = process;
+    }
 
     public ParameterRandomizationConfiguration(int numActivities, int numGateways, int numAndGates, int numXorGates) {
         this(numActivities, numGateways, numAndGates, numXorGates, 0.1);
