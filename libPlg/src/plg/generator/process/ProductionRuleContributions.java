@@ -17,6 +17,7 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 1);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.SINGLE_ACTIVITY;
@@ -25,6 +26,7 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, -1);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.MUTUAL_EXCLUSION;
@@ -33,6 +35,7 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 1);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
@@ -41,6 +44,7 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 1);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.LOOP;
@@ -49,6 +53,7 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 1);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.SKIP;
@@ -57,23 +62,26 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, -1);
         contributions.put(pattern, obligationsValues);
 
-        pattern = RandomizationPattern.MUTUAL_EXCLUSION_SINGLEBRANCH;
+        /*pattern = RandomizationPattern.MUTUAL_EXCLUSION_SINGLEBRANCH;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 1);
-        contributions.put(pattern, obligationsValues);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
+        contributions.put(pattern, obligationsValues);*/
 
-        pattern = RandomizationPattern.PARALLEL_EXECUTION_SINGLEBRANCH;
+        /*pattern = RandomizationPattern.PARALLEL_EXECUTION_SINGLEBRANCH;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 1);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
-        contributions.put(pattern, obligationsValues);
+        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
+        contributions.put(pattern, obligationsValues);*/
     }
 
     public int getContribution(RandomizationPattern pattern, GenerationParameter parameter){

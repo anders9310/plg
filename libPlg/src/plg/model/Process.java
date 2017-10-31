@@ -39,6 +39,8 @@ public class Process {
 	private Set<EndEvent> endEvents;
 	private Set<Sequence> sequences;
 	private Set<DataObject> dataObjects;
+	private MetricCalculator metrics;
+	private int numSkips;
 	
 	/**
 	 * Process constructor. This constructor creates and empty process.
@@ -55,6 +57,8 @@ public class Process {
 		this.gateways = new HashSet<Gateway>();
 		this.dataObjects = new HashSet<DataObject>();
 		this.sequences = new HashSet<Sequence>();
+		this.metrics = new MetricCalculator(this);
+		this.numSkips = 0;
 	}
 	
 	/**
@@ -157,7 +161,6 @@ public class Process {
 		valid = true;
 		return true;
 	}
-	
 	
 	/**
 	 * This method can be used to get the cached value returned by the
@@ -309,6 +312,10 @@ public class Process {
 	public EndEvent newEndEvent() {
 		return new EndEvent(this);
 	}
+
+	public void newSkip(){
+		numSkips++;
+	}
 	
 	/**
 	 * This method creates a new sequence registered to the current process.
@@ -445,7 +452,15 @@ public class Process {
 		}
 		return toRet;
 	}
-	
+
+	public MetricCalculator getMetrics() {
+		return metrics;
+	}
+
+	public int getNumSkips() {
+		return numSkips;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();

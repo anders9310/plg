@@ -31,6 +31,10 @@ public class BaseWeights {
         return contributions.getContribution(pattern, genParam) + getPotential(pattern, genParam);
     }
 
+    public int getBasePotential(RandomizationPattern pattern, GenerationParameter parameter){
+        return getPotential(pattern, parameter);
+    }
+
     private int getPotential(RandomizationPattern pattern, GenerationParameter genParam) {
         switch(pattern){
             case SINGLE_ACTIVITY:
@@ -45,15 +49,12 @@ public class BaseWeights {
                 return 1;
             case SKIP:
                 return -1;
-            case MUTUAL_EXCLUSION_SINGLEBRANCH:
+            /*case MUTUAL_EXCLUSION_SINGLEBRANCH:
                 return -1;
             case PARALLEL_EXECUTION_SINGLEBRANCH:
-                return -1;
+                return -1;*/
         }
         return 0;
     }
 
-    public int getBasePotential(RandomizationPattern pattern, GenerationParameter parameter){
-        return getPotential(pattern, parameter);
-    }
 }

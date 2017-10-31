@@ -111,20 +111,25 @@ public class ProcessGenerator {
                 generatedFrame = newLoopBranch(currentDepth + 1);
                 break;
             case SKIP:
-                generatedFrame = null;
+                generatedFrame = newSkip();
                 break;
-            case PARALLEL_EXECUTION_SINGLEBRANCH:
+            /*case PARALLEL_EXECUTION_SINGLEBRANCH:
                 generatedFrame = newAndBranchesSingle(currentDepth + 1, canLoop);
                 break;
             case MUTUAL_EXCLUSION_SINGLEBRANCH:
                 generatedFrame = newXorBranchesSingle(currentDepth + 1, canLoop, canSkip);
-                break;
+                break;*/
             default:
                 generatedFrame = newActivity();
                 break;
         }
 
         return generatedFrame;
+    }
+
+    private PatternFrame newSkip() {
+        process.newSkip();
+        return null;
     }
 
     /**
@@ -215,7 +220,7 @@ public class ProcessGenerator {
         Gateway join = process.newExclusiveGateway();
         PatternFrame afterJoin = newActivity();
         int branchesToGenerate = parameters.getRandomXORBranches();
-        Logger.instance().debug("branchesToGenerate: " + branchesToGenerate);
+        //Logger.instance().debug("branchesToGenerate: " + branchesToGenerate);
 
         for(int i = 0; i < branchesToGenerate; i++) {
             PatternFrame p = newInternalPattern(currentDepth, loopAllowed, canSkip);

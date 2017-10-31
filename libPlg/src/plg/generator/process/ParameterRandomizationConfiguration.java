@@ -1,6 +1,5 @@
 package plg.generator.process;
 
-import plg.utils.Logger;
 import plg.utils.Pair;
 import plg.utils.SetUtils;
 import plg.model.Process;
@@ -12,19 +11,44 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private List<Production> productions;
     private Process process;
 
-    public ParameterRandomizationConfiguration(Process process, int numActivities, int numGateways, int numAndGates, int numXorGates) {
-        this(numActivities, numGateways, numAndGates, numXorGates, 0.1);
+    public ParameterRandomizationConfiguration(Process process, int numActivities, int numGateways, int numAndGates, int numXorGates, double coefficientOfNetworkConnectivity) {
+        super(2, 2, 0.0);
         this.process = process;
-    }
-
-    public ParameterRandomizationConfiguration(int numActivities, int numGateways, int numAndGates, int numXorGates) {
-        this(numActivities, numGateways, numAndGates, numXorGates, 0.1);
-    }
-
-    public ParameterRandomizationConfiguration(int numActivities, int numGateways, int numAndGates, int numXorGates, double dataObjectProbability) {
-        super(2, 2, dataObjectProbability);
-        initObligations(numActivities, numGateways, numAndGates, numXorGates);
+        initObligations(numActivities, numGateways, numAndGates, numXorGates, coefficientOfNetworkConnectivity);
         initProductions();
+    }
+
+    private void initObligations(double numActivities, double numGateways, double numAndGates, double numXorGates, double coefficientOfNetworkConnectivity) {
+        Map<GenerationParameter, Double> generationParameters = new HashMap<>();
+        if(numActivities>0) generationParameters.put(GenerationParameter.NUM_ACTIVITIES, numActivities);
+        if(numGateways>0) generationParameters.put(GenerationParameter.NUM_GATEWAYS, numGateways);
+        if(numAndGates>0) generationParameters.put(GenerationParameter.NUM_AND_GATES, numAndGates);
+        if(numXorGates>0) generationParameters.put(GenerationParameter.NUM_XOR_GATES, numXorGates);
+        if(coefficientOfNetworkConnectivity>0) generationParameters.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, coefficientOfNetworkConnectivity);
+        initObligations(generationParameters);
+    }
+
+    private void initObligations(Map<GenerationParameter, Double> genParams) {
+        obligations = new ArrayList<>();
+        for (Map.Entry gpAndValue : genParams.entrySet()) {
+            GenerationParameter gp = (GenerationParameter) gpAndValue.getKey();
+            double value = (double) gpAndValue.getValue();
+            initObligation(gp, value);
+        }
+    }
+
+    private void initObligation(GenerationParameter gp, double value) {
+        Obligation obligation = new Obligation(process, gp, value);
+        obligations.add(obligation);
+    }
+
+    private void initProductions(){
+        List<RandomizationPattern> randomizationPatterns = new LinkedList<>();
+        randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
+        productions = new LinkedList<>();
+        for(RandomizationPattern pattern : RandomizationPattern.values()){
+            productions.add(new Production(pattern, obligations, randomizationPatterns));
+        }
     }
 
     public RandomizationPattern generateRandomPattern(boolean canLoop, boolean canSkip) {
@@ -38,18 +62,6 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
                 options.add(new Pair<>(p.getType(), 1.0));
             }
         }else{
-            /*Set<Pair<RandomizationPattern, Double>> tempOptions = new HashSet<>();
-            double highestWeight = 0;
-            for(Production p : patterns) {
-                if(p.getWeight()>highestWeight){
-                    tempOptions = new HashSet<>();
-                    tempOptions.add(new Pair<>(p.getType(), p.getWeight()));
-                    highestWeight = p.getWeight();
-                } else if(p.getWeight()==highestWeight){
-                    tempOptions.add(new Pair<>(p.getType(), p.getWeight()));
-                }*/
-            //}
-            //options = tempOptions;
             for(Production p : patterns) {
                 options.add(new Pair<>(p.getType(), p.getWeight()));
             }
@@ -67,38 +79,6 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return sum==0;
     }
 
-    private void initObligations(int numActivities, int numGateways, int numAndGates, int numXorGates) {
-        Map<GenerationParameter, Integer> generationParameters = new HashMap<>();
-        if(numActivities!=0) generationParameters.put(GenerationParameter.NUM_ACTIVITIES, numActivities);
-        if(numGateways!=0) generationParameters.put(GenerationParameter.NUM_GATEWAYS, numGateways);
-        if(numAndGates!=0) generationParameters.put(GenerationParameter.NUM_AND_GATES, numAndGates);
-        if(numXorGates!=0) generationParameters.put(GenerationParameter.NUM_XOR_GATES, numXorGates);
-        initObligations(generationParameters);
-    }
-
-    private void initObligations(Map<GenerationParameter, Integer> genParams) {
-        obligations = new ArrayList<>();
-        for (Map.Entry gpAndValue : genParams.entrySet()) {
-            GenerationParameter gp = (GenerationParameter) gpAndValue.getKey();
-            int value = (int) gpAndValue.getValue();
-            initObligation(gp, value);
-        }
-    }
-
-    private void initObligation(GenerationParameter gp, int value) {
-        Obligation obligation = new Obligation(gp, value);
-        obligations.add(obligation);
-    }
-
-    private void initProductions(){
-        List<RandomizationPattern> randomizationPatterns = new LinkedList<>();
-        randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
-        productions = new LinkedList<>();
-        for(RandomizationPattern pattern : RandomizationPattern.values()){
-            productions.add(new Production(pattern, obligations, randomizationPatterns));
-        }
-    }
-
     private void updateRemainingObligations(RandomizationPattern generatedPattern) {
         for(Production production : productions){
             if(production.getType() == generatedPattern){
@@ -110,17 +90,9 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         }
     }
 
-
-
-
-
-
     public void printResults(){
         for(Obligation o : obligations){
             o.printStatus();
         }
     }
-
-
-
 }

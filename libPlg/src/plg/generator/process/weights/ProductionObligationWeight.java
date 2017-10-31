@@ -9,7 +9,7 @@ public class ProductionObligationWeight extends Weight{
     private int productionPotential;
     private Obligation obligation;
     private RandomizationPattern randomizationPattern;
-    private double zeroIntersectionValue = 1;
+    private double POTENTIAL_THRESHOLD = 2;
 
     public ProductionObligationWeight(RandomizationPattern randomizationPattern, Obligation obligation){
         this.randomizationPattern = randomizationPattern;
@@ -26,44 +26,71 @@ public class ProductionObligationWeight extends Weight{
         if(obligation.getMean() == 0){
             return 0;
         }
-        int targetValue = obligation.getTargetValue();
-        int currentSize = obligation.getTerminals() + obligation.getPotential();
-        int productionSizeContribution = calcSizeContribution(productionTerminals, productionPotential);
+        double targetValue = obligation.getTargetValue();
+        double currentValue = obligation.getCurrentValue();
+        double currentPotential = obligation.getPotential();
+        double currentSize = obligation.getCurrentValue() + obligation.getPotential();
+        double returnValue;
 
-        if(currentSize<targetValue){
-            //increase
-            if(productionSizeContribution>0 && productionPotential>0){
-                return 1;
-            }else if(productionSizeContribution>0){
-                throw new RuntimeException("Cannot handle the type of production rule: " + randomizationPattern.name());
-            }else if(productionSizeContribution==0){
-                return 0;
+        double terminalWish;
+        if(currentValue<targetValue){//increase
+            if(productionTerminals>0){
+                terminalWish = 1;
+            }else if(productionTerminals==0){
+                terminalWish = 0;
             }else{
-                return -1;
+                terminalWish = -1;
             }
-            //if(productionSizeContribution==0)return 0;
-            //else return productionSizeContribution/Math.abs(productionSizeContribution);
-        }else if(currentSize==targetValue){
-            //Stay the same
-            if(productionSizeContribution == 0){
-                return 1;
+        }else if(currentValue==targetValue){//Stay the same
+            if(productionTerminals == 0){
+                terminalWish = 1;
             }else{
-                return -1;
+                terminalWish = -1;
             }
         }else{//decrease
-            if(productionSizeContribution<0){
-                return 1;
-            }else if(productionSizeContribution==0){
-                return 0;
+            if(productionTerminals<0){
+                terminalWish = 1;
+            }else if(productionTerminals==0){
+                terminalWish = 0;
             }else{
-                return -1;
+                terminalWish = -1;
             }
-            //if(productionSizeContribution==0)return 0;
-            //else return -productionSizeContribution/Math.abs(productionSizeContribution);
         }
+
+        double potentialWish;
+        if(currentValue<targetValue){//increase
+            if(productionPotential>0){
+                if(currentPotential<POTENTIAL_THRESHOLD){
+                    return 1;
+                }
+                potentialWish = 1;
+            }else if(productionPotential==0){
+                potentialWish = 0;
+            }else{
+                potentialWish = -1;
+            }
+        }else{//decrease
+            if(productionPotential<0){
+                potentialWish = 1;
+            }else if(productionPotential==0){
+                potentialWish = 0;
+            }else{
+                potentialWish = -1;
+            }
+        }
+
+        double sum = terminalWish + potentialWish;
+        if(sum>0){
+            returnValue = 1;
+        }else if(sum < 0){
+            returnValue = -1;
+        }else{
+            returnValue=0;
+        }
+        return returnValue;
     }
 
-    private int calcSizeContribution(int productionTerminals, int productionPotential){
+    private double calcSizeContribution(double productionTerminals, double productionPotential){
         return productionTerminals + productionPotential;
     }
 

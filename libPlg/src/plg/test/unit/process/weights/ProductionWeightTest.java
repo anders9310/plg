@@ -22,9 +22,9 @@ public class ProductionWeightTest {
     }
 
     private static void setUpObligations() {
-        obligations = new LinkedList<>();
+        /*obligations = new LinkedList<>();
         obligations.add(new Obligation(GenerationParameter.NUM_ACTIVITIES, valueForAllObligations));
-        obligations.add(new Obligation(GenerationParameter.NUM_GATEWAYS, valueForAllObligations));
+        obligations.add(new Obligation(GenerationParameter.NUM_GATEWAYS, valueForAllObligations));*/
     }
 
     @Test
