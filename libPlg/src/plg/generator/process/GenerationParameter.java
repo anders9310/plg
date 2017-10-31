@@ -5,6 +5,7 @@ public enum GenerationParameter {
     NUM_GATEWAYS,
     NUM_AND_GATES,
     NUM_XOR_GATES,
+    DIAMETER,
     COEFFICIENT_OF_NETWORK_CONNECTIVITY;
 
     public boolean isRatioBased(){

@@ -81,34 +81,32 @@ public class ProcessGenerator {
     }
 
     protected PatternFrame generateMainFrame(){
-        return newInternalPattern(0, true, true);
+        return newInternalPattern(new LocalModelState(0, true, true));
     }
 
     /**
      * This method generates a new internal pattern. The pattern to generate is
      * randomly selected with respect to the provided random generation policy.
      *
-     * @param currentDepth the current depth of the generation
-     * @param canLoop specifies whether a loop is allowed here or not
-     * @param canSkip specifies whether the pattern can be a skip
+     * @param localState Data container with information local to the generated patters
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newInternalPattern(int currentDepth, boolean canLoop, boolean canSkip) {
-        RandomizationPattern nextAction = parameters.generateRandomPattern(canLoop, canSkip);
+    protected PatternFrame newInternalPattern(LocalModelState localState) {
+        RandomizationPattern nextAction = parameters.generateRandomPattern(localState);
         PatternFrame generatedFrame;
 
         switch (nextAction) {
             case SEQUENCE:
-                generatedFrame = newSequence(currentDepth + 1, canLoop, canSkip);
+                generatedFrame = newSequence(localState.increaseCurrentDepthBy(1));
                 break;
             case PARALLEL_EXECUTION:
-                generatedFrame = newAndBranches(currentDepth + 1, canLoop);
+                generatedFrame = newAndBranches(localState.increaseCurrentDepthBy(1));
                 break;
             case MUTUAL_EXCLUSION:
-                generatedFrame = newXorBranches(currentDepth + 1, canLoop, canSkip);
+                generatedFrame = newXorBranches(localState.increaseCurrentDepthBy(1));
                 break;
             case LOOP:
-                generatedFrame = newLoopBranch(currentDepth + 1);
+                generatedFrame = newLoopBranch(localState.increaseCurrentDepthBy(1));
                 break;
             case SKIP:
                 generatedFrame = newSkip();
@@ -152,14 +150,12 @@ public class ProcessGenerator {
      * two internal frames, generate using
      * {@link Plg2ProcessGenerator#newInternalPattern}.
      *
-     * @param currentDepth the current depth of the generation
-     * @param canLoop specifies whether a loop is allowed here or not
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newSequence(int currentDepth, boolean canLoop, boolean canSkip) {
+    protected PatternFrame newSequence(LocalModelState localState) {
         Logger.instance().debug("New sequence pattern to create");
-        PatternFrame p1 = newInternalPattern(currentDepth, canLoop, canSkip);
-        PatternFrame p2 = newInternalPattern(currentDepth, canLoop, canSkip);
+        PatternFrame p1 = newInternalPattern(localState.makeCopy());
+        PatternFrame p2 = newInternalPattern(localState.makeCopy());
         return PatternFrame.connect(p1, p2);
     }
 
@@ -167,11 +163,9 @@ public class ProcessGenerator {
      * This method generates a new AND pattern. Each branch is populated using
      * the generate using {@link Plg2ProcessGenerator#newInternalPattern} method.
      *
-     * @param currentDepth the current depth of the generation
-     * @param loopAllowed specifies whether a loop is allowed here or not
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newAndBranches(int currentDepth, boolean loopAllowed) {
+    protected PatternFrame newAndBranches(LocalModelState localState) {
         Logger.instance().debug("New AND pattern to create");
         PatternFrame beforeSplit = newActivity();
         Gateway split = process.newParallelGateway();
@@ -180,7 +174,7 @@ public class ProcessGenerator {
         int branchesToGenerate = parameters.getRandomANDBranches();
 
         for(int i = 0; i < branchesToGenerate; i++) {
-            PatternFrame p = newInternalPattern(currentDepth, loopAllowed, false);
+            PatternFrame p = newInternalPattern(localState.makeCopy().setCanSkip(false));
             PatternFrame.connect(split, p).connect(join);
         }
 
@@ -209,11 +203,9 @@ public class ProcessGenerator {
      * This method generates a new XOR pattern. Each branch is populated using
      * the generate using {@link Plg2ProcessGenerator#newInternalPattern} method.
      *
-     * @param currentDepth the current depth of the generation
-     * @param loopAllowed specifies whether a loop is allowed here or not
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newXorBranches(int currentDepth, boolean loopAllowed, boolean canSkip) {
+    protected PatternFrame newXorBranches(LocalModelState localState) {
         Logger.instance().debug("New XOR pattern to create");
         PatternFrame beforeSplit = newActivity();
         Gateway split = process.newExclusiveGateway();
@@ -223,7 +215,7 @@ public class ProcessGenerator {
         //Logger.instance().debug("branchesToGenerate: " + branchesToGenerate);
 
         for(int i = 0; i < branchesToGenerate; i++) {
-            PatternFrame p = newInternalPattern(currentDepth, loopAllowed, canSkip);
+            PatternFrame p = newInternalPattern(localState.makeCopy());
             PatternFrame.connect(split, p).connect(join);
             if(p!=null){
                 if (parameters.generateDataObject() && p.getLeftBound() instanceof IDataObjectOwner) {
@@ -258,18 +250,17 @@ public class ProcessGenerator {
      * This method generates a new XOR pattern. Each branch is populated using
      * the generate using {@link Plg2ProcessGenerator#newInternalPattern} method.
      *
-     * @param currentDepth the current depth of the generation
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newLoopBranch(int currentDepth) {
+    protected PatternFrame newLoopBranch(LocalModelState localState) {
         Logger.instance().debug("New loop pattern to create");
         PatternFrame beforeSplit = newActivity();
         Gateway split = process.newExclusiveGateway();
         Gateway join = process.newExclusiveGateway();
         PatternFrame afterJoin = newActivity();
 
-        PatternFrame body = newInternalPattern(currentDepth, false, false);
-        PatternFrame rollback = newInternalPattern(currentDepth, false, true);
+        PatternFrame body = newInternalPattern(localState.makeCopy().setCanLoop(false).setCanSkip(false));
+        PatternFrame rollback = newInternalPattern(localState.makeCopy().setCanLoop(false).setCanSkip(true));
 
         PatternFrame.connect(split, body).connect(join);
         PatternFrame.connect(join, rollback).connect(split);

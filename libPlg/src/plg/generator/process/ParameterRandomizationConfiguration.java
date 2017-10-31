@@ -11,19 +11,20 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private List<Production> productions;
     private Process process;
 
-    public ParameterRandomizationConfiguration(Process process, int numActivities, int numGateways, int numAndGates, int numXorGates, double coefficientOfNetworkConnectivity) {
+    public ParameterRandomizationConfiguration(Process process, int numActivities, int numGateways, int numAndGates, int numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
         super(2, 2, 0.0);
         this.process = process;
-        initObligations(numActivities, numGateways, numAndGates, numXorGates, coefficientOfNetworkConnectivity);
+        initObligations(numActivities, numGateways, numAndGates, numXorGates, diameter, coefficientOfNetworkConnectivity);
         initProductions();
     }
 
-    private void initObligations(double numActivities, double numGateways, double numAndGates, double numXorGates, double coefficientOfNetworkConnectivity) {
+    private void initObligations(double numActivities, double numGateways, double numAndGates, double numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
         Map<GenerationParameter, Double> generationParameters = new HashMap<>();
         if(numActivities>0) generationParameters.put(GenerationParameter.NUM_ACTIVITIES, numActivities);
         if(numGateways>0) generationParameters.put(GenerationParameter.NUM_GATEWAYS, numGateways);
         if(numAndGates>0) generationParameters.put(GenerationParameter.NUM_AND_GATES, numAndGates);
         if(numXorGates>0) generationParameters.put(GenerationParameter.NUM_XOR_GATES, numXorGates);
+        if(diameter>0) generationParameters.put(GenerationParameter.DIAMETER, diameter);
         if(coefficientOfNetworkConnectivity>0) generationParameters.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, coefficientOfNetworkConnectivity);
         initObligations(generationParameters);
     }
@@ -51,7 +52,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         }
     }
 
-    public RandomizationPattern generateRandomPattern(boolean canLoop, boolean canSkip) {
+    public RandomizationPattern generateRandomPattern(LocalModelState localState) {
         return generateRandomPattern(productions);
     }
 

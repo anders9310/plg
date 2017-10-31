@@ -54,7 +54,7 @@ public class EvolutionGenerator extends Plg2ProcessGenerator {
 				Logger.instance().debug("Evolution starting from " + randomTask);
 				
 				EvolutionGenerator eg = new EvolutionGenerator(process, parameters);
-				PatternFrame evolution = eg.newInternalPattern(1, true, true);
+				PatternFrame evolution = eg.newInternalPattern(new LocalModelState(1, true, true));
 				
 				if (evolution == null) {
 					try {

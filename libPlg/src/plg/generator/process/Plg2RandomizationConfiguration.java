@@ -251,12 +251,10 @@ public class Plg2RandomizationConfiguration extends RandomizationConfiguration{
 	 * 
 	 * <p> The selection is done according to the given probabilities
 	 * 
-	 * @param canLoop specifies whether the pattern can be a loop
-	 * @param canSkip specifies whether the pattern can be a skip
 	 * @return the random pattern
 	 */
-	public RandomizationPattern generateRandomPattern(boolean canLoop, boolean canSkip) {
-		Set<RandomizationPattern> options = getAllPatterns(canLoop, canSkip);
+	public RandomizationPattern generateRandomPattern(LocalModelState localState) {
+		Set<RandomizationPattern> options = getAllPatterns(localState.canLoop, localState.canSkip);
 		
 		return generateRandomPattern(options.toArray(new RandomizationPattern[options.size()]));
 	}

@@ -39,14 +39,14 @@ public class Plg2ProcessGenerator extends ProcessGenerator{
 	}
 
 	protected PatternFrame generateMainFrame(){
-		return newInternalPattern(0, true, false);
+		return newInternalPattern(new LocalModelState(0, true, false));
 	}
 
-	protected PatternFrame newInternalPattern(int currentDepth, boolean canLoop, boolean canSkip){
-		if (currentDepth <= getParameters().getMaximumDepth()) {
-			return super.newInternalPattern(currentDepth, canLoop, canSkip);
+	protected PatternFrame newInternalPattern(LocalModelState localState){
+		if (localState.currentDepth <= getParameters().getMaximumDepth()) {
+			return super.newInternalPattern(localState);
 		} else {
-			if (canSkip) {
+			if (localState.canSkip) {
 				RandomizationPattern nextAction = getParameters().generateRandomPattern(RandomizationPattern.SKIP, RandomizationPattern.SINGLE_ACTIVITY);
 				if (nextAction == RandomizationPattern.SKIP) {
 					Logger.instance().debug("Skip forced");
