@@ -1,38 +1,43 @@
 package plg.generator.process;
 
 
-public class LocalModelState {
+public class CurrentGenerationState {
     public int currentDepth;
     public boolean canLoop;
     public boolean canSkip;
+    public int potential;
 
     /**
      * @param currentDepth the current depth of the generation
      * @param canLoop specifies whether a loop is allowed here or not
      * @param canSkip specifies whether the pattern can be a skip
      */
-    public LocalModelState(int currentDepth, boolean canLoop, boolean canSkip){
+    public CurrentGenerationState(int currentDepth, boolean canLoop, boolean canSkip){
         this.currentDepth = currentDepth;
         this.canLoop = canLoop;
         this.canSkip = canSkip;
+        this.potential = 1;
     }
 
-    public LocalModelState increaseCurrentDepthBy(int n){
+    public CurrentGenerationState increaseCurrentDepthBy(int n){
         currentDepth += n;
         return this;
     }
 
-    public LocalModelState makeCopy(){
-        return new LocalModelState(this.currentDepth, this.canLoop, this.canSkip);
+    public CurrentGenerationState makeCopy(){
+        return new CurrentGenerationState(this.currentDepth, this.canLoop, this.canSkip);
     }
 
-    public LocalModelState setCanLoop(boolean canLoop) {
+    public CurrentGenerationState setCanLoop(boolean canLoop) {
         this.canLoop = canLoop;
         return this;
     }
-
-    public LocalModelState setCanSkip(boolean canSkip) {
+    public CurrentGenerationState setCanSkip(boolean canSkip) {
         this.canSkip = canSkip;
+        return this;
+    }
+    public CurrentGenerationState increasePotentialBy(int n) {
+        this.potential += n;
         return this;
     }
 }

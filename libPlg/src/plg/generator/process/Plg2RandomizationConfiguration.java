@@ -250,10 +250,10 @@ public class Plg2RandomizationConfiguration extends RandomizationConfiguration{
 	 * </ul>
 	 * 
 	 * <p> The selection is done according to the given probabilities
-	 * 
+	 *
 	 * @return the random pattern
 	 */
-	public RandomizationPattern generateRandomPattern(LocalModelState localState) {
+	public RandomizationPattern generateRandomPattern(CurrentGenerationState localState) {
 		Set<RandomizationPattern> options = getAllPatterns(localState.canLoop, localState.canSkip);
 		
 		return generateRandomPattern(options.toArray(new RandomizationPattern[options.size()]));

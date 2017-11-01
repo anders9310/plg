@@ -33,7 +33,7 @@ public abstract class RandomizationConfiguration {
         setDataObjectProbability(dataObjectProbability);
     }
 
-    public abstract RandomizationPattern generateRandomPattern(LocalModelState localState);
+    public abstract RandomizationPattern generateRandomPattern(CurrentGenerationState localState);
 
     /**
      * This method tells the requester whether it is necessary to generate a

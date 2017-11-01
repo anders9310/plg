@@ -19,7 +19,7 @@ public class ProductionObligationWeightTest {
     public static void setUp(){
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
         genParam = GenerationParameter.NUM_ACTIVITIES;
-        w_0 = BaseWeights.BASE_WEIGHTS.getBasePotential(pattern, genParam);
+        w_0 = BaseWeights.BASE_WEIGHTS.getBasePotential(pattern);
         ruleContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, genParam);
     }
 
@@ -43,7 +43,7 @@ public class ProductionObligationWeightTest {
         obligation = new Obligation(genParam,o_t);
         pow = new ProductionObligationWeight(pattern, obligation);
 
-        obligation.updateValue(pattern);
+        obligation.updatePotential(pattern);
         double weight = pow.getValue();
 
         double expectedWeight = 1 + w_0 * Math.pow(o_r, 2) / o_t;
@@ -102,11 +102,5 @@ public class ProductionObligationWeightTest {
 
         double expected = 1 / (w_0*Math.pow(o_r, 2) + 1);
         assert weight == expected;*/
-    }
-
-    private void updateObligation(int numTimes){
-        for(int i = 0; i<numTimes; i++){
-            obligation.updateValue(pattern);
-        }
     }
 }

@@ -1,19 +1,7 @@
 package plg.generator.process;
 
-import java.math.BigInteger;
-import java.util.Random;
-
 import plg.model.Process;
-import plg.model.activity.Task;
-import plg.model.data.DataObject;
-import plg.model.data.IDataObjectOwner;
-import plg.model.data.IDataObjectOwner.DATA_OBJECT_DIRECTION;
-import plg.model.event.EndEvent;
-import plg.model.event.Event;
-import plg.model.event.StartEvent;
-import plg.model.gateway.Gateway;
 import plg.utils.Logger;
-import plg.utils.SetUtils;
 
 /**
  * This class contains the random generator of processes. Actually, this class
@@ -39,10 +27,10 @@ public class Plg2ProcessGenerator extends ProcessGenerator{
 	}
 
 	protected PatternFrame generateMainFrame(){
-		return newInternalPattern(new LocalModelState(0, true, false));
+		return newInternalPattern(new CurrentGenerationState(0, true, false));
 	}
 
-	protected PatternFrame newInternalPattern(LocalModelState localState){
+	protected PatternFrame newInternalPattern(CurrentGenerationState localState){
 		if (localState.currentDepth <= getParameters().getMaximumDepth()) {
 			return super.newInternalPattern(localState);
 		} else {

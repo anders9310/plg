@@ -28,14 +28,14 @@ public class BaseWeights {
     }
 
     public double calcBaseWeight(RandomizationPattern pattern, GenerationParameter genParam){
-        return contributions.getContribution(pattern, genParam) + getPotential(pattern, genParam);
+        return contributions.getContribution(pattern, genParam) + getPotential(pattern);
     }
 
-    public int getBasePotential(RandomizationPattern pattern, GenerationParameter parameter){
-        return getPotential(pattern, parameter);
+    public int getBasePotential(RandomizationPattern pattern){
+        return getPotential(pattern);
     }
 
-    private int getPotential(RandomizationPattern pattern, GenerationParameter genParam) {
+    private int getPotential(RandomizationPattern pattern) {
         switch(pattern){
             case SINGLE_ACTIVITY:
                 return -1;

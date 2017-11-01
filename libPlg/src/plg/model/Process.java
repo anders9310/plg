@@ -7,6 +7,8 @@ import java.util.Set;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
+import plg.generator.process.GenerationParameter;
+import plg.generator.process.RandomizationPattern;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
 import plg.generator.scriptexecuter.StringScriptExecutor;
 import plg.model.activity.Task;
@@ -453,8 +455,11 @@ public class Process {
 		return toRet;
 	}
 
-	public MetricCalculator getMetrics() {
-		return metrics;
+	public double getMetric(GenerationParameter metric) {
+		return metrics.getMetric(metric);
+	}
+	public double getContribution(GenerationParameter metric, RandomizationPattern pattern){
+		return metrics.getContribution(metric, pattern);
 	}
 
 	public int getNumSkips() {

@@ -20,8 +20,8 @@ public class Production {
     public RandomizationPattern getType() {
         return type;
     }
-    public double getWeight() {
-        double weightValue = weight.getValue();
+    public double getWeight(CurrentGenerationState state) {
+        double weightValue = weight.getValue(state);
         Logger.instance().debug("Pattern: " + type.name() + ". Weight: " + weightValue);
         return weightValue;
     }

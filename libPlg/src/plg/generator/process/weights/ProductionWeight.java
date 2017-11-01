@@ -1,5 +1,6 @@
 package plg.generator.process.weights;
 
+import plg.generator.process.CurrentGenerationState;
 import plg.generator.process.Obligation;
 import plg.generator.process.Production;
 import plg.generator.process.RandomizationPattern;
@@ -21,10 +22,10 @@ public class ProductionWeight extends Weight{
         }
     }
 
-    protected double calculateValue(){
+    protected double calculateValue(CurrentGenerationState state){
         double sumOfWeights = 0;
         for (ObligationWeight ow : obligationWeights) {
-            sumOfWeights += ow.getValue();
+            sumOfWeights += ow.getValue(state);
         }
         if(sumOfWeights<0) return 0;
         else return sumOfWeights;

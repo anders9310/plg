@@ -10,6 +10,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private List<Obligation> obligations;
     private List<Production> productions;
     private Process process;
+    private CurrentGenerationState state;
 
     public ParameterRandomizationConfiguration(Process process, int numActivities, int numGateways, int numAndGates, int numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
         super(2, 2, 0.0);
@@ -52,7 +53,8 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         }
     }
 
-    public RandomizationPattern generateRandomPattern(LocalModelState localState) {
+    public RandomizationPattern generateRandomPattern(CurrentGenerationState state) {
+        this.state = state;
         return generateRandomPattern(productions);
     }
 
@@ -64,31 +66,19 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
             }
         }else{
             for(Production p : patterns) {
-                options.add(new Pair<>(p.getType(), p.getWeight()));
+                options.add(new Pair<>(p.getType(), p.getWeight(state)));
             }
         }
         RandomizationPattern generatedPattern = SetUtils.getRandomWeighted(options);
-        updateRemainingObligations(generatedPattern);
         return generatedPattern;
     }
 
     private boolean allProductionWeightsAre0(List<Production> patterns) {
         double sum = 0;
         for(Production p : patterns) {
-            sum += p.getWeight();
+            sum += p.getWeight(state);
         }
         return sum==0;
-    }
-
-    private void updateRemainingObligations(RandomizationPattern generatedPattern) {
-        for(Production production : productions){
-            if(production.getType() == generatedPattern){
-                for(Obligation obligation : obligations){
-                    obligation.updateValue(production.getType());
-                }
-                break;
-            }
-        }
     }
 
     public void printResults(){

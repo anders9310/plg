@@ -1,5 +1,6 @@
 package plg.generator.process.weights;
 
+import plg.generator.process.CurrentGenerationState;
 import plg.generator.process.GenerationParameter;
 import plg.generator.process.Obligation;
 import plg.generator.process.RandomizationPattern;
@@ -23,9 +24,9 @@ public class ObligationWeight extends Weight{
     }
 
     @Override
-    protected double calculateValue() {
-        double totalProductionObligationWeight = getTotalProductionObligationWeights();
-        double thisObligationProductionWeight = getThisObligationProductionWeight();
+    protected double calculateValue(CurrentGenerationState state) {
+        double totalProductionObligationWeight = getTotalProductionObligationWeights(state);
+        double thisObligationProductionWeight = getThisObligationProductionWeight(state);
         if(totalProductionObligationWeight>0){
             return thisObligationProductionWeight / totalProductionObligationWeight;
         }else{
@@ -33,18 +34,18 @@ public class ObligationWeight extends Weight{
         }
     }
 
-    private double getTotalProductionObligationWeights(){
+    private double getTotalProductionObligationWeights(CurrentGenerationState state){
         double sumOfWeights = 0;
         for(ProductionObligationWeight pow : pows){
-            sumOfWeights += Math.abs(pow.calculateValue());
+            sumOfWeights += Math.abs(pow.getValue(state));
         }
         return sumOfWeights;
     }
 
-    private double getThisObligationProductionWeight(){
+    private double getThisObligationProductionWeight(CurrentGenerationState state){
         ProductionObligationWeight thisProductionObligationWeight = findProductionObligatWeightForRandomizationPattern(this.randomizationPattern);
         if(thisProductionObligationWeight!=null){
-            return thisProductionObligationWeight.calculateValue();
+            return thisProductionObligationWeight.calculateValue(state);
         }else{
             throw new RuntimeException("Unexpected ObligationWeightState");
         }

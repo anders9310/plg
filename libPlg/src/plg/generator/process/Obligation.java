@@ -3,7 +3,6 @@ package plg.generator.process;
 import plg.generator.process.weights.BaseWeights;
 import plg.model.Process;
 import plg.utils.Logger;
-import plg.utils.Random;
 
 public class Obligation {
     private Process process;
@@ -17,7 +16,7 @@ public class Obligation {
         if(mean < 0){
             throw new IllegalArgumentException("The obligation value must be equal to or greater than 0");
         }
-        this.process = process;
+        this.process =process;
         this.type = type;
         this.mean = mean;
         if(!type.isRatioBased()){
@@ -26,22 +25,16 @@ public class Obligation {
         } else{
             this.targetValue = mean;
         }
-        this.currentValue = 0; //TODO: Refactor to get value from this.process
+        this.currentValue = process.getMetric(type);
         this.potential = 1;
         Logger.instance().debug("Obligation for " + type.name() + " created with target value = " + this.targetValue + " for mean = " + mean);
     }
 
-    public void updateValue(RandomizationPattern generatedPattern){
-        double productionContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(generatedPattern).get(type);
-        double productionPotential = BaseWeights.BASE_WEIGHTS.getBasePotential(generatedPattern, type);
-        if(type.isRatioBased()){
-            this.currentValue = process.getMetrics().getCoefficientOfNetworkConnectivity(); //TODO: get support for other ratio-metrics too...
-        }else{
-            this.currentValue +=productionContribution;
-        }
+    /*public void updatePotential(RandomizationPattern generatedPattern){ //TODO: refactor so this is not needed anymore
+        double productionPotential = BaseWeights.BASE_WEIGHTS.getBasePotential(generatedPattern);
         this.potential+=productionPotential;
-        Logger.instance().debug("Generated pattern: " + generatedPattern.name() + ". Obligation metric: " + type.name() + ". Value: " + (currentValue) + "/" + targetValue + ". Potential: " + potential);
-    }
+        Logger.instance().debug("Generated pattern: " + generatedPattern.name() + ". Obligation metric: " + type.name() + ". Value: " + getCurrentValue() + "/" + targetValue + ". Potential: " + potential);
+    }*/
 
     public double getTargetValue() {
         return targetValue;
@@ -56,10 +49,14 @@ public class Obligation {
         return mean;
     }
     public double getCurrentValue() {
+        this.currentValue = process.getMetric(type);
         return currentValue;
     }
     public int getPotential(){
         return potential;
+    }
+    public Process getProcess() {
+        return process;
     }
 
     public void printStatus(){

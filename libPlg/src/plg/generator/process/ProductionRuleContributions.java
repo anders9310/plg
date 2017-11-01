@@ -35,7 +35,6 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 1);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
@@ -44,7 +43,6 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 1);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.LOOP;
@@ -53,7 +51,6 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 1);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.SKIP;

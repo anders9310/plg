@@ -1,6 +1,6 @@
 package plg.generator.process;
 
-import plg.model.FlowObject;
+import plg.generator.process.weights.BaseWeights;
 import plg.model.Process;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
@@ -81,7 +81,7 @@ public class ProcessGenerator {
     }
 
     protected PatternFrame generateMainFrame(){
-        return newInternalPattern(new LocalModelState(0, true, true));
+        return newInternalPattern(new CurrentGenerationState(0, true, true));
     }
 
     /**
@@ -91,9 +91,10 @@ public class ProcessGenerator {
      * @param localState Data container with information local to the generated patters
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newInternalPattern(LocalModelState localState) {
+    protected PatternFrame newInternalPattern(CurrentGenerationState localState) {
         RandomizationPattern nextAction = parameters.generateRandomPattern(localState);
         PatternFrame generatedFrame;
+        localState.increasePotentialBy(BaseWeights.BASE_WEIGHTS.getBasePotential(nextAction));
 
         switch (nextAction) {
             case SEQUENCE:
@@ -152,7 +153,7 @@ public class ProcessGenerator {
      *
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newSequence(LocalModelState localState) {
+    protected PatternFrame newSequence(CurrentGenerationState localState) {
         Logger.instance().debug("New sequence pattern to create");
         PatternFrame p1 = newInternalPattern(localState.makeCopy());
         PatternFrame p2 = newInternalPattern(localState.makeCopy());
@@ -165,7 +166,7 @@ public class ProcessGenerator {
      *
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newAndBranches(LocalModelState localState) {
+    protected PatternFrame newAndBranches(CurrentGenerationState localState) {
         Logger.instance().debug("New AND pattern to create");
         PatternFrame beforeSplit = newActivity();
         Gateway split = process.newParallelGateway();
@@ -205,7 +206,7 @@ public class ProcessGenerator {
      *
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newXorBranches(LocalModelState localState) {
+    protected PatternFrame newXorBranches(CurrentGenerationState localState) {
         Logger.instance().debug("New XOR pattern to create");
         PatternFrame beforeSplit = newActivity();
         Gateway split = process.newExclusiveGateway();
@@ -252,7 +253,7 @@ public class ProcessGenerator {
      *
      * @return the frame containing the generated pattern
      */
-    protected PatternFrame newLoopBranch(LocalModelState localState) {
+    protected PatternFrame newLoopBranch(CurrentGenerationState localState) {
         Logger.instance().debug("New loop pattern to create");
         PatternFrame beforeSplit = newActivity();
         Gateway split = process.newExclusiveGateway();
