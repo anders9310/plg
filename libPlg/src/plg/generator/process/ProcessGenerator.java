@@ -1,7 +1,9 @@
 package plg.generator.process;
 
 import plg.generator.process.weights.BaseWeights;
+import plg.model.FlowObject;
 import plg.model.Process;
+import plg.model.UnknownComponent;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.data.IDataObjectOwner;
@@ -74,14 +76,18 @@ public class ProcessGenerator {
         Logger.instance().info("Starting process randomization");
         Event start = process.newStartEvent();
         Event end = process.newEndEvent();
-        PatternFrame p = generateMainFrame();
+
+        UnknownComponent c = process.newUnknownComponent();
+        PatternFrame.connect(start, c).connect(end);
+
+        PatternFrame p = generateMainFrame(new CurrentGenerationState(0, true, true).setParentComponent(c));
         PatternFrame.connect(start, p).connect(end);
         Logger.instance().info("Process randomization complete");
         parameters.printResults();
     }
 
-    protected PatternFrame generateMainFrame(){
-        return newInternalPattern(new CurrentGenerationState(0, true, true));
+    protected PatternFrame generateMainFrame(CurrentGenerationState localState){
+        return newInternalPattern(localState);
     }
 
     /**
@@ -110,6 +116,7 @@ public class ProcessGenerator {
                 generatedFrame = newLoopBranch(localState.increaseCurrentDepthBy(1));
                 break;
             case SKIP:
+                process.removeComponent(localState.parentComponent);
                 generatedFrame = newSkip();
                 break;
             /*case PARALLEL_EXECUTION_SINGLEBRANCH:
@@ -119,6 +126,7 @@ public class ProcessGenerator {
                 generatedFrame = newXorBranchesSingle(currentDepth + 1, canLoop, canSkip);
                 break;*/
             default:
+                process.removeComponent(localState.parentComponent);
                 generatedFrame = newActivity();
                 break;
         }
@@ -155,8 +163,14 @@ public class ProcessGenerator {
      */
     protected PatternFrame newSequence(CurrentGenerationState localState) {
         Logger.instance().debug("New sequence pattern to create");
-        PatternFrame p1 = newInternalPattern(localState.makeCopy());
-        PatternFrame p2 = newInternalPattern(localState.makeCopy());
+        UnknownComponent c1 = process.newUnknownComponent();
+        UnknownComponent c2 = process.newUnknownComponent();
+        PatternFrame.connect((FlowObject)localState.parentComponent.getIncomingObjects().toArray()[0], c1);
+        PatternFrame.connect(c1, c2);
+        PatternFrame.connect(c2, (FlowObject)localState.parentComponent.getOutgoingObjects().toArray()[0]);
+        process.removeComponent(localState.parentComponent);
+        PatternFrame p1 = newInternalPattern(localState.makeCopy().setParentComponent(c1));
+        PatternFrame p2 = newInternalPattern(localState.makeCopy().setParentComponent(c2));
         return PatternFrame.connect(p1, p2);
     }
 
@@ -174,14 +188,25 @@ public class ProcessGenerator {
         PatternFrame afterJoin = newActivity();
         int branchesToGenerate = parameters.getRandomANDBranches();
 
+        UnknownComponent dummyEntry = process.newUnknownComponent();
+        UnknownComponent dummyExit = process.newUnknownComponent();
+
+        PatternFrame.connect((FlowObject)localState.parentComponent.getIncomingObjects().toArray()[0], dummyEntry).connect(beforeSplit).connect(split);
+        PatternFrame.connect(join, afterJoin).connect(dummyExit).connect((FlowObject)localState.parentComponent.getOutgoingObjects().toArray()[0]);
+        process.removeComponent(localState.parentComponent);
+
+        UnknownComponent[] components = new UnknownComponent[branchesToGenerate];
         for(int i = 0; i < branchesToGenerate; i++) {
-            PatternFrame p = newInternalPattern(localState.makeCopy().setCanSkip(false));
+            components[i] = process.newUnknownComponent();
+            PatternFrame.connect(split, components[i]).connect(join);
+        }
+        for(int i = 0; i < branchesToGenerate; i++) {
+            PatternFrame p = newInternalPattern(localState.makeCopy().setCanSkip(false).setParentComponent(components[i]));
             PatternFrame.connect(split, p).connect(join);
         }
 
-        PatternFrame.connect(beforeSplit, split);
-        PatternFrame.connect(join, afterJoin);
-
+        process.removeComponent(dummyEntry);
+        process.removeComponent(dummyExit);
         return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
     }
 
@@ -215,8 +240,20 @@ public class ProcessGenerator {
         int branchesToGenerate = parameters.getRandomXORBranches();
         //Logger.instance().debug("branchesToGenerate: " + branchesToGenerate);
 
+        UnknownComponent dummyEntry = process.newUnknownComponent();
+        UnknownComponent dummyExit = process.newUnknownComponent();
+
+        PatternFrame.connect((FlowObject)localState.parentComponent.getIncomingObjects().toArray()[0], dummyEntry).connect(beforeSplit).connect(split);
+        PatternFrame.connect(join, afterJoin).connect(dummyExit).connect((FlowObject)localState.parentComponent.getOutgoingObjects().toArray()[0]);
+        process.removeComponent(localState.parentComponent);
+
+        UnknownComponent[] components = new UnknownComponent[branchesToGenerate];
         for(int i = 0; i < branchesToGenerate; i++) {
-            PatternFrame p = newInternalPattern(localState.makeCopy());
+            components[i] = process.newUnknownComponent();
+            PatternFrame.connect(split, components[i]).connect(join);
+        }
+        for(int i = 0; i < branchesToGenerate; i++) {
+            PatternFrame p = newInternalPattern(localState.makeCopy().setParentComponent(components[i]));
             PatternFrame.connect(split, p).connect(join);
             if(p!=null){
                 if (parameters.generateDataObject() && p.getLeftBound() instanceof IDataObjectOwner) {
@@ -225,9 +262,8 @@ public class ProcessGenerator {
             }
         }
 
-        PatternFrame.connect(beforeSplit, split);
-        PatternFrame.connect(join, afterJoin);
-
+        process.removeComponent(dummyEntry);
+        process.removeComponent(dummyExit);
         return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
     }
 
@@ -260,14 +296,28 @@ public class ProcessGenerator {
         Gateway join = process.newExclusiveGateway();
         PatternFrame afterJoin = newActivity();
 
-        PatternFrame body = newInternalPattern(localState.makeCopy().setCanLoop(false).setCanSkip(false));
-        PatternFrame rollback = newInternalPattern(localState.makeCopy().setCanLoop(false).setCanSkip(true));
+        UnknownComponent dummyEntry = process.newUnknownComponent();
+        UnknownComponent dummyExit = process.newUnknownComponent();
+
+        PatternFrame.connect((FlowObject)localState.parentComponent.getIncomingObjects().toArray()[0], dummyEntry).connect(beforeSplit);
+        PatternFrame.connect(beforeSplit, split);
+        PatternFrame.connect(join, afterJoin);
+        PatternFrame.connect(afterJoin, dummyExit).connect((FlowObject)localState.parentComponent.getOutgoingObjects().toArray()[0]);
+        process.removeComponent(localState.parentComponent);
+
+        UnknownComponent cBody = process.newUnknownComponent();
+        PatternFrame.connect(split, cBody).connect(join);
+        UnknownComponent cRollback = process.newUnknownComponent();
+        PatternFrame.connect(join, cRollback).connect(split);
+
+        PatternFrame body = newInternalPattern(localState.makeCopy().setCanLoop(false).setCanSkip(false).setParentComponent(cBody));
+        PatternFrame rollback = newInternalPattern(localState.makeCopy().setCanLoop(false).setCanSkip(true).setParentComponent(cRollback));
 
         PatternFrame.connect(split, body).connect(join);
         PatternFrame.connect(join, rollback).connect(split);
 
-        PatternFrame.connect(beforeSplit, split);
-        PatternFrame.connect(join, afterJoin);
+        process.removeComponent(dummyEntry);
+        process.removeComponent(dummyExit);
 
         return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
     }//

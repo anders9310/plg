@@ -1,9 +1,7 @@
 package plg.model;
 
 import java.math.BigInteger;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
@@ -42,6 +40,7 @@ public class Process {
 	private Set<Sequence> sequences;
 	private Set<DataObject> dataObjects;
 	private MetricCalculator metrics;
+	private Set<UnknownComponent> unknownComponents;
 	private int numSkips;
 	
 	/**
@@ -60,6 +59,7 @@ public class Process {
 		this.dataObjects = new HashSet<DataObject>();
 		this.sequences = new HashSet<Sequence>();
 		this.metrics = new MetricCalculator(this);
+		this.unknownComponents = new HashSet<UnknownComponent>();
 		this.numSkips = 0;
 	}
 	
@@ -208,6 +208,9 @@ public class Process {
 			valid = false;
 		} else if (component instanceof DataObject) {
 			dataObjects.add((DataObject) component);
+		} else if (component instanceof UnknownComponent) {
+			unknownComponents.add((UnknownComponent) component);
+			valid = false;
 		}
 	}
 	
@@ -236,13 +239,18 @@ public class Process {
 	 */
 	public void removeComponent(Component component) {
 		if (component instanceof FlowObject) {
+			List<Sequence> sequencesToRemove = new LinkedList<>();
 			for(Sequence s : sequences) {
 				if(s.getSource().equals(component) || s.getSink().equals(component)) {
-					removeComponent(s);
+					sequencesToRemove.add(s);
 				}
 			}
+			for(Sequence s : sequencesToRemove){
+				removeComponent(s);
+			}
 		}
-		
+
+		components.remove(component);
 		if (component instanceof StartEvent) {
 			startEvents.remove((StartEvent) component);
 			valid = false;
@@ -263,6 +271,9 @@ public class Process {
 			valid = false;
 		} else if (component instanceof DataObject) {
 			dataObjects.remove((DataObject) component);
+			valid = false;
+		} else if (component instanceof UnknownComponent) {
+			unknownComponents.remove((UnknownComponent) component);
 			valid = false;
 		}
 	}
@@ -333,6 +344,10 @@ public class Process {
 		} else {
 			return s;
 		}
+	}
+
+	public UnknownComponent newUnknownComponent() {
+		return new UnknownComponent(this);
 	}
 	
 	/**

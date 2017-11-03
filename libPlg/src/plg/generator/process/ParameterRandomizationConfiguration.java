@@ -70,6 +70,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         if(allProductionWeightsAre0(patterns)){
             for(Production p : patterns) {
                 options.add(new Pair<>(p.getType(), 1.0));
+                Logger.instance().debug("Pattern: " + p.getType().name() + " - Weight: " + 1.0);
             }
         }else{
             for(Production p : patterns) {

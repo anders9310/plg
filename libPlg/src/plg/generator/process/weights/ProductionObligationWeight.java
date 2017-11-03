@@ -88,7 +88,7 @@ public class ProductionObligationWeight extends Weight{
         }else{
             returnValue=0;
         }
-        return returnValue;
+        return sum;
     }
 
     public RandomizationPattern getRandomizationPattern() {
