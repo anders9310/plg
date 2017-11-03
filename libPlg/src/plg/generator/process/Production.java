@@ -22,7 +22,6 @@ public class Production {
     }
     public double getWeight(CurrentGenerationState state) {
         double weightValue = weight.getValue(state);
-        Logger.instance().debug("Pattern: " + type.name() + ". Weight: " + weightValue);
         return weightValue;
     }
 

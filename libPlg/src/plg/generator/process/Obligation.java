@@ -30,12 +30,6 @@ public class Obligation {
         Logger.instance().debug("Obligation for " + type.name() + " created with target value = " + this.targetValue + " for mean = " + mean);
     }
 
-    /*public void updatePotential(RandomizationPattern generatedPattern){ //TODO: refactor so this is not needed anymore
-        double productionPotential = BaseWeights.BASE_WEIGHTS.getBasePotential(generatedPattern);
-        this.potential+=productionPotential;
-        Logger.instance().debug("Generated pattern: " + generatedPattern.name() + ". Obligation metric: " + type.name() + ". Value: " + getCurrentValue() + "/" + targetValue + ". Potential: " + potential);
-    }*/
-
     public double getTargetValue() {
         return targetValue;
     }
@@ -60,8 +54,8 @@ public class Obligation {
     }
 
     public void printStatus(){
-        Logger.instance().debug("Metric: " + type.name() + ". value = " + (currentValue +potential) + ". targetValue = " + targetValue + ". isTarget: " + (currentValue +potential==targetValue));
-        if(mean!=0 && !(currentValue +potential==targetValue)){
+        Logger.instance().debug("Metric: " + type.name() + ". value = " + (currentValue) + ". targetValue = " + targetValue + ". isTarget: " + (currentValue==targetValue));
+        if(mean!=0 && !(currentValue==targetValue)){
             Logger.instance().debug("Did not hit target value");
         }
     }

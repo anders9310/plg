@@ -6,9 +6,7 @@ import plg.generator.process.RandomizationPattern;
 import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.List;
 import java.util.Set;
 
 public class MetricCalculator {

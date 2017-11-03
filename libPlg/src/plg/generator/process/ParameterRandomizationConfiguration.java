@@ -1,5 +1,6 @@
 package plg.generator.process;
 
+import plg.utils.Logger;
 import plg.utils.Pair;
 import plg.utils.SetUtils;
 import plg.model.Process;
@@ -59,6 +60,12 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     }
 
     private RandomizationPattern generateRandomPattern(List<Production> patterns) {
+        Logger.instance().debug("-------------------------------------------");
+
+        for(Obligation o : obligations){
+            Logger.instance().debug("Metric name: " + o.getType().name() + ". Value: " + process.getMetric(o.getType()));
+        }
+        Logger.instance().debug("Potential: " + state.potential);
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
         if(allProductionWeightsAre0(patterns)){
             for(Production p : patterns) {
@@ -66,10 +73,14 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
             }
         }else{
             for(Production p : patterns) {
-                options.add(new Pair<>(p.getType(), p.getWeight(state)));
+                double weight = p.getWeight(state);
+                options.add(new Pair<>(p.getType(), weight));
+                Logger.instance().debug("Pattern: " + p.getType().name() + " - Weight: " + weight);
             }
         }
         RandomizationPattern generatedPattern = SetUtils.getRandomWeighted(options);
+        Logger.instance().debug("Next pattern: " + generatedPattern.name());
+        Logger.instance().debug("-------------------------------------------");
         return generatedPattern;
     }
 

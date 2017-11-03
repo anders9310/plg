@@ -25,7 +25,7 @@ public class CurrentGenerationState {
     }
 
     public CurrentGenerationState makeCopy(){
-        return new CurrentGenerationState(this.currentDepth, this.canLoop, this.canSkip);
+        return new CurrentGenerationState(this.currentDepth, this.canLoop, this.canSkip).setPotential(this.potential);
     }
 
     public CurrentGenerationState setCanLoop(boolean canLoop) {
@@ -34,6 +34,10 @@ public class CurrentGenerationState {
     }
     public CurrentGenerationState setCanSkip(boolean canSkip) {
         this.canSkip = canSkip;
+        return this;
+    }
+    public CurrentGenerationState setPotential(int potential) {
+        this.potential = potential;
         return this;
     }
     public CurrentGenerationState increasePotentialBy(int n) {

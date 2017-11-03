@@ -23,7 +23,8 @@ public class TestProcessGeneration {
     private static BPMNProcessAnalyzer processAnalyzer = new BPMNProcessAnalyzer();
 
     public static void main(String[] args) throws Exception {
-        generateAnalyzeExportResults();
+        generateProcessModelFiles();
+        //generateAnalyzeExportResults();
         //analyzeExportResults();
         cleanUpModelFiles();
     }
