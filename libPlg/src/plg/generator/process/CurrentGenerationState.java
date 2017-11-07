@@ -8,7 +8,7 @@ public class CurrentGenerationState {
     public boolean canLoop;
     public boolean canSkip;
     public int potential;
-    UnknownComponent parentComponent;
+    public UnknownComponent parentComponent;
 
     /**
      * @param currentDepth the current depth of the generation

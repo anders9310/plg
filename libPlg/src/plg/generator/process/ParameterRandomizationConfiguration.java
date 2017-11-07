@@ -47,7 +47,10 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     private void initProductions(){
         List<RandomizationPattern> randomizationPatterns = new LinkedList<>();
-        randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
+        randomizationPatterns.add(RandomizationPattern.SEQUENCE);
+        randomizationPatterns.add(RandomizationPattern.PARALLEL_EXECUTION);
+        randomizationPatterns.add(RandomizationPattern.SKIP);
+        //randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
         productions = new LinkedList<>();
         for(RandomizationPattern pattern : RandomizationPattern.values()){
             productions.add(new Production(pattern, obligations, randomizationPatterns));

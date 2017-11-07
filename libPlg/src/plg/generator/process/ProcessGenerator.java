@@ -12,6 +12,7 @@ import plg.model.event.Event;
 import plg.model.event.StartEvent;
 import plg.model.gateway.Gateway;
 import plg.utils.Logger;
+import plg.utils.Pair;
 import plg.utils.SetUtils;
 
 import java.math.BigInteger;
@@ -63,7 +64,7 @@ public class ProcessGenerator {
      * @param process the process to randomize
      * @param parameters the randomization parameters to use
      */
-    protected ProcessGenerator(Process process, RandomizationConfiguration parameters) {
+    public ProcessGenerator(Process process, RandomizationConfiguration parameters) {
         this.process = process;
         this.parameters = parameters;
     }
@@ -99,6 +100,10 @@ public class ProcessGenerator {
      */
     protected PatternFrame newInternalPattern(CurrentGenerationState localState) {
         RandomizationPattern nextAction = parameters.generateRandomPattern(localState);
+        return newInternalPattern(localState, nextAction);
+    }
+
+    public PatternFrame newInternalPattern(CurrentGenerationState localState,RandomizationPattern nextAction) {
         PatternFrame generatedFrame;
         localState.increasePotentialBy(BaseWeights.BASE_WEIGHTS.getBasePotential(nextAction));
 
@@ -130,7 +135,6 @@ public class ProcessGenerator {
                 generatedFrame = newActivity();
                 break;
         }
-
         return generatedFrame;
     }
 
@@ -163,15 +167,20 @@ public class ProcessGenerator {
      */
     protected PatternFrame newSequence(CurrentGenerationState localState) {
         Logger.instance().debug("New sequence pattern to create");
+        Pair<UnknownComponent, UnknownComponent> newComponents = replaceComponentWithSequencePatternDummies(localState.parentComponent);
+        PatternFrame p1 = newInternalPattern(localState.makeCopy().setParentComponent(newComponents.getFirst()));
+        PatternFrame p2 = newInternalPattern(localState.makeCopy().setParentComponent(newComponents.getSecond()));
+        return PatternFrame.connect(p1, p2);
+    }
+
+    public Pair<UnknownComponent, UnknownComponent> replaceComponentWithSequencePatternDummies(UnknownComponent parentComponent){
         UnknownComponent c1 = process.newUnknownComponent();
         UnknownComponent c2 = process.newUnknownComponent();
-        PatternFrame.connect((FlowObject)localState.parentComponent.getIncomingObjects().toArray()[0], c1);
+        PatternFrame.connect((FlowObject)parentComponent.getIncomingObjects().toArray()[0], c1);
         PatternFrame.connect(c1, c2);
-        PatternFrame.connect(c2, (FlowObject)localState.parentComponent.getOutgoingObjects().toArray()[0]);
-        process.removeComponent(localState.parentComponent);
-        PatternFrame p1 = newInternalPattern(localState.makeCopy().setParentComponent(c1));
-        PatternFrame p2 = newInternalPattern(localState.makeCopy().setParentComponent(c2));
-        return PatternFrame.connect(p1, p2);
+        PatternFrame.connect(c2, (FlowObject)parentComponent.getOutgoingObjects().toArray()[0]);
+        process.removeComponent(parentComponent);
+        return new Pair<>(c1, c2);
     }
 
     /**
@@ -182,32 +191,46 @@ public class ProcessGenerator {
      */
     protected PatternFrame newAndBranches(CurrentGenerationState localState) {
         Logger.instance().debug("New AND pattern to create");
+        Pair<UnknownComponent, UnknownComponent> dummyEntryExit = new Pair<>(process.newUnknownComponent(), process.newUnknownComponent());
+        PatternFrame.connect((FlowObject)localState.parentComponent.getIncomingObjects().toArray()[0], dummyEntryExit.getFirst());
+        PatternFrame.connect(dummyEntryExit.getSecond(), (FlowObject)localState.parentComponent.getOutgoingObjects().toArray()[0]);
+
+        UnknownComponent[] branchComponents = replaceComponentWithAndPatternDummies(localState.parentComponent, dummyEntryExit);
+
+        PatternFrame beforeSplit = (PatternFrame)dummyEntryExit.getFirst().getOutgoingObjects().toArray()[0];
+        PatternFrame afterJoin = (PatternFrame)dummyEntryExit.getSecond().getOutgoingObjects().toArray()[0];
+        Gateway split = (Gateway) beforeSplit.getRightBound().getOutgoingObjects().toArray()[0];
+        Gateway join = (Gateway) afterJoin.getLeftBound().getIncomingObjects().toArray()[0];
+
+        for(int i = 0; i < branchComponents.length; i++) {
+            PatternFrame p = newInternalPattern(localState.makeCopy().setCanSkip(false).setParentComponent(branchComponents[i]));
+            PatternFrame.connect(split, p).connect(join);
+        }
+
+
+        process.removeComponent(dummyEntryExit.getFirst());
+        process.removeComponent(dummyEntryExit.getSecond());
+        return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
+    }
+
+    public UnknownComponent[] replaceComponentWithAndPatternDummies(UnknownComponent parentComponent, Pair<UnknownComponent, UnknownComponent> entries){
         PatternFrame beforeSplit = newActivity();
         Gateway split = process.newParallelGateway();
         Gateway join = process.newParallelGateway();
         PatternFrame afterJoin = newActivity();
         int branchesToGenerate = parameters.getRandomANDBranches();
 
-        UnknownComponent dummyEntry = process.newUnknownComponent();
-        UnknownComponent dummyExit = process.newUnknownComponent();
-
-        PatternFrame.connect((FlowObject)localState.parentComponent.getIncomingObjects().toArray()[0], dummyEntry).connect(beforeSplit).connect(split);
-        PatternFrame.connect(join, afterJoin).connect(dummyExit).connect((FlowObject)localState.parentComponent.getOutgoingObjects().toArray()[0]);
-        process.removeComponent(localState.parentComponent);
+        PatternFrame.connect(entries.getFirst(), beforeSplit).connect(split);
+        PatternFrame.connect(join, afterJoin).connect(entries.getSecond());
+        process.removeComponent(parentComponent);
 
         UnknownComponent[] components = new UnknownComponent[branchesToGenerate];
         for(int i = 0; i < branchesToGenerate; i++) {
             components[i] = process.newUnknownComponent();
             PatternFrame.connect(split, components[i]).connect(join);
         }
-        for(int i = 0; i < branchesToGenerate; i++) {
-            PatternFrame p = newInternalPattern(localState.makeCopy().setCanSkip(false).setParentComponent(components[i]));
-            PatternFrame.connect(split, p).connect(join);
-        }
 
-        process.removeComponent(dummyEntry);
-        process.removeComponent(dummyExit);
-        return new PatternFrame(beforeSplit.getLeftBound(), afterJoin.getRightBound());
+        return components;
     }
 
     protected PatternFrame newAndBranchesSingle(int currentDepth, boolean loopAllowed) {

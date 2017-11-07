@@ -1,9 +1,10 @@
 package plg.generator.process.weights;
 
-import plg.generator.process.CurrentGenerationState;
-import plg.generator.process.Obligation;
-import plg.generator.process.RandomizationPattern;
+import plg.generator.process.*;
+import plg.model.FlowObject;
 import plg.model.Process;
+import plg.model.UnknownComponent;
+import plg.utils.Pair;
 
 public class ProductionObligationWeight extends Weight{
     private int productionPotentialIncrease;
@@ -27,11 +28,11 @@ public class ProductionObligationWeight extends Weight{
         if(obligation.getMean() == 0){
             return 0;
         }
-        double metricContribution = process.getContribution(this.obligation.getType(), this.randomizationPattern);
+
+        double metricContribution = getContributionBySimulation(state);
         double targetValue = obligation.getTargetValue();
         double currentValue = obligation.getCurrentValue();
         double currentPotential = obligation.getPotential();
-        double returnValue;
 
         double terminalWish;
         if(currentValue<targetValue){//increase
@@ -80,15 +81,42 @@ public class ProductionObligationWeight extends Weight{
             }
         }
 
-        double sum = terminalWish + potentialWish;
-        if(sum>0){
-            returnValue = 1;
-        }else if(sum < 0){
-            returnValue = -1;
-        }else{
-            returnValue=0;
+        return terminalWish + potentialWish;
+    }
+
+    private double getContributionBySimulation(CurrentGenerationState state) {
+        double currentValue = process.getMetric(this.obligation.getType());
+        CurrentGenerationState simulationState = state.makeCopy();
+        Process simulationProcess = (Process) process.clone();
+        RandomizationConfiguration parameters = new ParameterRandomizationConfiguration(simulationProcess,0,0,0,0,0,0);
+        ProcessGenerator simulator = new ProcessGenerator(simulationProcess, parameters);
+
+        switch (this.randomizationPattern) {
+            case SEQUENCE:
+                simulator.replaceComponentWithSequencePatternDummies(simulationState.parentComponent);
+            case PARALLEL_EXECUTION:
+                Pair<UnknownComponent, UnknownComponent> dummyEntryExit = new Pair<>(process.newUnknownComponent(), process.newUnknownComponent());
+                PatternFrame.connect((FlowObject)simulationState.parentComponent.getIncomingObjects().toArray()[0], dummyEntryExit.getFirst());
+                PatternFrame.connect(dummyEntryExit.getSecond(), (FlowObject)simulationState.parentComponent.getOutgoingObjects().toArray()[0]);
+                simulator.replaceComponentWithAndPatternDummies(simulationState.parentComponent, dummyEntryExit);
+            case SKIP:
+                PatternFrame.connect((FlowObject) simulationState.parentComponent.getIncomingObjects().toArray()[0], (FlowObject) simulationState.parentComponent.getOutgoingObjects().toArray()[0]);
+                process.removeComponent(simulationState.parentComponent);
+            /*case MUTUAL_EXCLUSION:
+                newXorBranches(localState.increaseCurrentDepthBy(1));
+            case LOOP:
+                newLoopBranch(localState.increaseCurrentDepthBy(1));
+            */
+            default:
+                /*process.removeComponent(localState.parentComponent);
+                generatedFrame = newActivity();*/
         }
-        return sum;
+
+        double simulatedValue = simulationProcess.getMetric(this.obligation.getType());
+        double contribution = simulatedValue - currentValue;
+        return contribution;
+
+
     }
 
     public RandomizationPattern getRandomizationPattern() {

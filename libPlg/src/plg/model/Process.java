@@ -476,9 +476,11 @@ public class Process {
 	public double getContribution(GenerationParameter metric, RandomizationPattern pattern){
 		return metrics.getContribution(metric, pattern);
 	}
-
 	public int getNumSkips() {
 		return numSkips;
+	}
+	public void setNumSkips(int numSkips) {
+		this.numSkips = numSkips;
 	}
 
 	@Override
@@ -506,7 +508,7 @@ public class Process {
 		}
 		return buffer.toString();
 	}
-	
+
 	@Override
 	public Object clone() {
 		Process p = new Process(name);
@@ -546,6 +548,9 @@ public class Process {
 				}
 			}
 		}
+		for(UnknownComponent c : unknownComponents){
+			p.newUnknownComponent().setComponentId(c.componentId);
+		}
 		for (Sequence s : getSequences()) {
 			try {
 				FlowObject newSource = (FlowObject) p.searchComponent(s.getSource().getId());
@@ -556,6 +561,7 @@ public class Process {
 				e.printStackTrace();
 			}
 		}
+		p.setNumSkips(getNumSkips());
 		try {
 			p.check();
 		} catch (InvalidProcessException e1) {
