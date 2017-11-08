@@ -250,7 +250,6 @@ public class Process {
 			}
 		}
 
-		components.remove(component);
 		if (component instanceof StartEvent) {
 			startEvents.remove((StartEvent) component);
 			valid = false;
@@ -276,6 +275,7 @@ public class Process {
 			unknownComponents.remove((UnknownComponent) component);
 			valid = false;
 		}
+		components.remove(component);
 	}
 	
 	/**

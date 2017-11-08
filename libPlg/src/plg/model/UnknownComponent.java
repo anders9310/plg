@@ -17,4 +17,7 @@ public class UnknownComponent extends FlowObject {
     public String getComponentName() {
         return "Unknown Component";
     }
+    public int getComponentId() {
+        return componentId;
+    }
 }

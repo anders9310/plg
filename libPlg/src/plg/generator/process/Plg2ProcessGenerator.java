@@ -42,7 +42,7 @@ public class Plg2ProcessGenerator extends ProcessGenerator{
 				}
 			}
 			Logger.instance().debug("Activity forced");
-			return newActivity();
+			return newActivity(this.process);
 		}
 	}
 }

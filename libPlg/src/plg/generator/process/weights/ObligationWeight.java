@@ -47,7 +47,7 @@ public class ObligationWeight extends Weight{
         if(thisProductionObligationWeight!=null){
             return thisProductionObligationWeight.calculateValue(state);
         }else{
-            throw new RuntimeException("Unexpected ObligationWeightState");
+            throw new RuntimeException("Unexpected ObligationWeight State");
         }
     }
 

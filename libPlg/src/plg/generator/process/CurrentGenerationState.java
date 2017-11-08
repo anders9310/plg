@@ -2,6 +2,7 @@ package plg.generator.process;
 
 
 import plg.model.UnknownComponent;
+import plg.model.Process;
 
 public class CurrentGenerationState {
     public int currentDepth;
@@ -28,8 +29,8 @@ public class CurrentGenerationState {
         return this;
     }
 
-    public CurrentGenerationState makeCopy(){
-        return new CurrentGenerationState(this.currentDepth, this.canLoop, this.canSkip).setPotential(this.potential).setParentComponent(this.parentComponent);
+    public CurrentGenerationState makeCopy(Process process){
+        return new CurrentGenerationState(this.currentDepth, this.canLoop, this.canSkip).setPotential(this.potential).setParentComponent((UnknownComponent) process.searchComponent(this.parentComponent.getId()));
     }
 
     public CurrentGenerationState setCanLoop(boolean canLoop) {
