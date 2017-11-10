@@ -32,15 +32,15 @@ public class Process {
 	private String id;
 	private String name;
 	private Boolean valid = null;
-	private Set<Component> components;
-	private Set<StartEvent> startEvents;
-	private Set<Task> tasks;
-	private Set<Gateway> gateways;
-	private Set<EndEvent> endEvents;
-	private Set<Sequence> sequences;
-	private Set<DataObject> dataObjects;
+	private List<Component> components;
+	private List<StartEvent> startEvents;
+	private List<Task> tasks;
+	private List<Gateway> gateways;
+	private List<EndEvent> endEvents;
+	private List<Sequence> sequences;
+	private List<DataObject> dataObjects;
 	private MetricCalculator metrics;
-	private Set<UnknownComponent> unknownComponents;
+	private List<UnknownComponent> unknownComponents;
 	private int numSkips;
 	
 	/**
@@ -51,15 +51,15 @@ public class Process {
 	public Process(String name) {
 		this.id = new BigInteger(130, new Random()).toString(32);
 		this.name = name;
-		this.components = new HashSet<Component>();
-		this.startEvents = new HashSet<StartEvent>();
-		this.endEvents = new HashSet<EndEvent>();
-		this.tasks = new HashSet<Task>();
-		this.gateways = new HashSet<Gateway>();
-		this.dataObjects = new HashSet<DataObject>();
-		this.sequences = new HashSet<Sequence>();
+		this.components = new LinkedList<>();
+		this.startEvents = new LinkedList<>();
+		this.endEvents = new LinkedList<>();
+		this.tasks = new LinkedList<>();
+		this.gateways = new LinkedList<>();
+		this.dataObjects = new LinkedList<>();
+		this.sequences = new LinkedList<>();
+		this.unknownComponents = new LinkedList<>();
 		this.metrics = new MetricCalculator(this);
-		this.unknownComponents = new HashSet<UnknownComponent>();
 		this.numSkips = 0;
 	}
 	
@@ -263,6 +263,8 @@ public class Process {
 			tasks.remove((Task) component);
 			valid = false;
 		} else if (component instanceof Sequence) {
+			((FlowObject)searchComponent(((Sequence) component).getSink().getId())).removeIncomingObject(((Sequence) component).getSource());
+			((FlowObject)searchComponent(((Sequence) component).getSource().getId())).removeOutgoingObject(((Sequence) component).getSink());
 			sequences.remove((Sequence) component);
 			valid = false;
 		} else if (component instanceof Gateway) {
@@ -275,6 +277,7 @@ public class Process {
 			unknownComponents.remove((UnknownComponent) component);
 			valid = false;
 		}
+
 		components.remove(component);
 	}
 	
@@ -338,6 +341,11 @@ public class Process {
 	 * @return the newly created sequence
 	 */
 	public Sequence newSequence(FlowObject source, FlowObject sink) throws IllegalSequenceException {
+		if(!components.contains(source)){
+			throw new IllegalArgumentException("The source " + source.toString() + " does not exist in the process");
+		}else if(!components.contains(sink)){
+			throw new IllegalArgumentException("The sink " + sink.toString() + " does not exist in the process");
+		}
 		Sequence s = getSequence(source, sink);
 		if (s == null) {
 			return new Sequence(this, source, sink);
@@ -355,7 +363,7 @@ public class Process {
 	 * 
 	 * @return the set of all registered components
 	 */
-	public Set<Component> getComponents() {
+	public List<Component> getComponents() {
 		return components;
 	}
 	
@@ -364,7 +372,7 @@ public class Process {
 	 * 
 	 * @return the set of start event
 	 */
-	public Set<StartEvent> getStartEvents() {
+	public List<StartEvent> getStartEvents() {
 		return startEvents;
 	}
 
@@ -373,7 +381,7 @@ public class Process {
 	 *  
 	 * @return the set of tasks
 	 */
-	public Set<Task> getTasks() {
+	public List<Task> getTasks() {
 		return tasks;
 	}
 
@@ -382,7 +390,7 @@ public class Process {
 	 *  
 	 * @return the set of gateways
 	 */
-	public Set<Gateway> getGateways() {
+	public List<Gateway> getGateways() {
 		return gateways;
 	}
 
@@ -391,7 +399,7 @@ public class Process {
 	 * 
 	 * @return the set of end events
 	 */
-	public Set<EndEvent> getEndEvents() {
+	public List<EndEvent> getEndEvents() {
 		return endEvents;
 	}
 
@@ -400,7 +408,7 @@ public class Process {
 	 * 
 	 * @return the set of sequences
 	 */
-	public Set<Sequence> getSequences() {
+	public List<Sequence> getSequences() {
 		return sequences;
 	}
 
@@ -410,7 +418,7 @@ public class Process {
 	 * 
 	 * @return the set of data objects
 	 */
-	public Set<DataObject> getDataObjects() {
+	public List<DataObject> getDataObjects() {
 		return dataObjects;
 	}
 	
@@ -460,7 +468,7 @@ public class Process {
 			toRet.add((Task) object);
 			return toRet;
 		} else {
-			Set<FlowObject> in = object.getIncomingObjects();
+			List<FlowObject> in = object.getIncomingObjects();
 			if (in != null) {
 				for(FlowObject fo : in) {
 					toRet.addAll(getPreviousTask(fo, true));

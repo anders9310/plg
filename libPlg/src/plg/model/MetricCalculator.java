@@ -7,7 +7,7 @@ import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
 
-import java.util.Set;
+import java.util.List;
 
 public class MetricCalculator {
     private Process p;
@@ -61,7 +61,7 @@ public class MetricCalculator {
     }
 
     private double calcNumAndGates() {
-        Set<Gateway> gateways =  p.getGateways();
+        List<Gateway> gateways =  p.getGateways();
         int numAndGates = 0;
         for(Gateway gateway : gateways){
             if(gateway instanceof ParallelGateway){
@@ -72,7 +72,7 @@ public class MetricCalculator {
     }
 
     private double calcNumXorGates() {
-        Set<Gateway> gateways =  p.getGateways();
+        List<Gateway> gateways =  p.getGateways();
         int numXorGates = 0;
         for(Gateway gateway : gateways){
             if(gateway instanceof ExclusiveGateway){

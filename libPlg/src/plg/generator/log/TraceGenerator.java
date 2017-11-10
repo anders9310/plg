@@ -93,7 +93,7 @@ public class TraceGenerator extends ThreadWithException<XTrace> {
 		XTrace trace = XLogHelper.createTrace(caseId);
 		
 		// simulation of the control-flow
-		processFlowObject(null, SetUtils.getRandom(process.getStartEvents()), trace, 0);
+		processFlowObject(null, SetUtils.getRandom(new HashSet<>(process.getStartEvents())), trace, 0);
 		
 		// event sorting
 		XLogHelper.sort(trace);
@@ -203,7 +203,7 @@ public class TraceGenerator extends ThreadWithException<XTrace> {
 					// we first have to add the token of the next activity
 					tokens.add(process.getSequence(object, next));
 				}
-				for (FlowObject next : SetUtils.randomizeSet(object.getOutgoingObjects())) {
+				for (FlowObject next : SetUtils.randomizeSet(new HashSet<>(object.getOutgoingObjects()))) {
 					// we can fire the flow on each branch
 					Sequence sequenceToNext = process.getSequence(object, next);
 					processFlowObject(sequenceToNext, next, trace, traceProgressiveTime);
@@ -234,7 +234,7 @@ public class TraceGenerator extends ThreadWithException<XTrace> {
 					// we can add the token of the next activity and call the
 					// procedure of the following element
 					Long maxProgressive = Collections.max(incomingTimestamps);
-					FlowObject next = SetUtils.getRandom(object.getOutgoingObjects());
+					FlowObject next = SetUtils.getRandom(new HashSet<>(object.getOutgoingObjects()));
 					Sequence sequenceToNext = process.getSequence(object, next);
 					tokens.add(sequenceToNext);
 					processFlowObject(sequenceToNext, next, trace, maxProgressive);

@@ -93,38 +93,26 @@ public class ProductionObligationWeight extends Weight{
 
         switch (this.randomizationPattern) {
             case SEQUENCE:
-                //FlowObject beforePattern = (FlowObject)simulationState.parentComponent.getIncomingObjects().toArray()[0];
-                //FlowObject afterPattern = (FlowObject)simulationState.parentComponent.getOutgoingObjects().toArray()[0];
                 simulator.replaceComponentWithSequencePatternDummies(simulationProcess, simulationState.parentComponent);
-                //PatternFrame.connect(beforePattern, entryExit.getFirst());
-                //PatternFrame.connect(entryExit.getSecond(), afterPattern);
                 break;
             case PARALLEL_EXECUTION:
-                Pair<UnknownComponent, UnknownComponent> dummyEntryExitPar = new Pair<>(simulationProcess.newUnknownComponent(), simulationProcess.newUnknownComponent());
-                PatternFrame.connect((FlowObject)simulationState.parentComponent.getIncomingObjects().toArray()[0], dummyEntryExitPar.getFirst());
-                PatternFrame.connect(dummyEntryExitPar.getSecond(), (FlowObject)simulationState.parentComponent.getOutgoingObjects().toArray()[0]);
-                simulator.replaceComponentWithAndPatternDummies(simulationProcess, simulationState.parentComponent, dummyEntryExitPar);
+                simulator.replaceComponentWithAndPatternDummies(simulationProcess, simulationState.parentComponent);
                 break;
             case MUTUAL_EXCLUSION:
-                Pair<UnknownComponent, UnknownComponent> dummyEntryExitMut = new Pair<>(simulationProcess.newUnknownComponent(), simulationProcess.newUnknownComponent());
-                PatternFrame.connect((FlowObject)simulationState.parentComponent.getIncomingObjects().toArray()[0], dummyEntryExitMut.getFirst());
-                PatternFrame.connect(dummyEntryExitMut.getSecond(), (FlowObject)simulationState.parentComponent.getOutgoingObjects().toArray()[0]);
-                simulator.replaceComponentWithAndPatternDummies(simulationProcess, simulationState.parentComponent, dummyEntryExitMut);
+                simulator.replaceComponentWithXorPatternDummies(simulationProcess, simulationState.parentComponent);
+                break;
+            case LOOP:
+                simulator.replaceComponentWithLoopPatternDummies(simulationProcess, simulationState.parentComponent);
                 break;
             case SINGLE_ACTIVITY:
                 PatternFrame activity = simulator.newActivity(simulationProcess);
-                PatternFrame.connect((FlowObject) simulationState.parentComponent.getIncomingObjects().toArray()[0], activity.getLeftBound()).connect((FlowObject) simulationState.parentComponent.getOutgoingObjects().toArray()[0]);
+                PatternFrame.connect(simulationState.parentComponent.getIncomingObjects().get(0), activity.getLeftBound()).connect(simulationState.parentComponent.getOutgoingObjects().get(0));
                 simulationProcess.removeComponent(simulationState.parentComponent);
                 break;
             case SKIP:
-                PatternFrame.connect((FlowObject) simulationState.parentComponent.getIncomingObjects().toArray()[0], (FlowObject) simulationState.parentComponent.getOutgoingObjects().toArray()[0]);
+                PatternFrame.connect(simulationState.parentComponent.getIncomingObjects().get(0), simulationState.parentComponent.getOutgoingObjects().get(0));
                 simulationProcess.removeComponent(simulationState.parentComponent);
                 break;
-            /*case MUTUAL_EXCLUSION:
-                newXorBranches(localState.increaseCurrentDepthBy(1));
-            case LOOP:
-                newLoopBranch(localState.increaseCurrentDepthBy(1));
-            */
             default:
                 throw new RuntimeException("No case for production rule " + this.randomizationPattern.name());
                 /*process.removeComponent(localState.parentComponent);

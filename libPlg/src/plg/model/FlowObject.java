@@ -1,6 +1,8 @@
 package plg.model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import plg.model.event.EndEvent;
@@ -19,8 +21,8 @@ import plg.utils.Pair;
  */
 public abstract class FlowObject extends Component implements Displaceable {
 
-	private Set<FlowObject> incoming;
-	private Set<FlowObject> outgoing;
+	private List<FlowObject> incoming;
+	private List<FlowObject> outgoing;
 	
 	// displacement attributes
 	private Pair<Integer, Integer> location = new Pair<Integer, Integer>(0, 0);
@@ -33,8 +35,8 @@ public abstract class FlowObject extends Component implements Displaceable {
 	 */
 	public FlowObject(Process owner) {
 		super(owner);
-		this.incoming = new HashSet<FlowObject>();
-		this.outgoing = new HashSet<FlowObject>();
+		this.incoming = new LinkedList<>();
+		this.outgoing = new LinkedList<>();
 	}
 	
 	/**
@@ -99,7 +101,7 @@ public abstract class FlowObject extends Component implements Displaceable {
 	 * 
 	 * @return the set of flow objects
 	 */
-	public Set<FlowObject> getIncomingObjects() {
+	public List<FlowObject> getIncomingObjects() {
 		return incoming;
 	}
 	
@@ -108,7 +110,7 @@ public abstract class FlowObject extends Component implements Displaceable {
 	 * 
 	 * @return the set of flow objects
 	 */
-	public Set<FlowObject> getOutgoingObjects() {
+	public List<FlowObject> getOutgoingObjects() {
 		return outgoing;
 	}
 	
