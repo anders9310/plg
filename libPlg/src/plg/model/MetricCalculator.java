@@ -5,15 +5,20 @@ import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
 import plg.utils.Logger;
+import plg.utils.Random;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MetricCalculator {
     private Process process;
     private Process processWithoutUnknownComponents;
+    private Map<RandomizationPattern, Integer> potentialIncreasesCache;
 
     public MetricCalculator(Process process) {
         this.process = process;
+        this.potentialIncreasesCache = new HashMap<>();
     }
 
     public double calculateMetric(GenerationParameter metric){
@@ -44,6 +49,20 @@ public class MetricCalculator {
         }catch(IllegalArgumentException e){//production contribution has to be calculated runtime
             return calculateContribution(state, metric, pattern);
         }
+    }
+
+    public int getPotentialIncreaseOf(RandomizationPattern pattern){
+        if(potentialIncreasesCache.get(pattern)==null){
+            CurrentGenerationState state = new CurrentGenerationState(0, true, true).setParentComponent(process.getUnknownComponents().get(0));
+            potentialIncreasesCache.put(pattern,calculatePotentialIncrease(state, pattern));
+        }
+        return potentialIncreasesCache.get(pattern);
+    }
+
+    private int calculatePotentialIncrease(CurrentGenerationState state, RandomizationPattern pattern){
+        int initialPotential = process.getNumUnknownComponents();
+        int projectedPotential = simulateGenerationOf(state, pattern).getNumUnknownComponents();
+        return projectedPotential - initialPotential;
     }
 
     private double calculateContribution(CurrentGenerationState state, GenerationParameter metric, RandomizationPattern pattern) {

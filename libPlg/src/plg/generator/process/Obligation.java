@@ -10,7 +10,6 @@ public class Obligation {
     private double mean;
     private double targetValue;
     private double currentValue;
-    private int potential;
 
     public Obligation(Process process, GenerationParameter type, double mean){
         if(mean < 0){
@@ -25,7 +24,6 @@ public class Obligation {
         } else{
             this.targetValue = mean;
         }
-        this.potential = 1;
         Logger.instance().debug("Obligation for " + type.name() + " created with target value = " + this.targetValue + " for mean = " + mean);
     }
 

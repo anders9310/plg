@@ -68,7 +68,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         for(Obligation o : obligations){
             Logger.instance().debug("Metric name: " + o.getType().name() + ". Value: " + process.getMetric(o.getType()));
         }
-        Logger.instance().debug("Potential: " + state.potential);
+        Logger.instance().debug("Potential: " + process.getNumUnknownComponents());
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
         if(allProductionWeightsAre0(patterns)){
             for(Production p : patterns) {

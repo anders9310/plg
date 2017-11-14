@@ -486,11 +486,20 @@ public class Process {
 	public double getContributionOf(CurrentGenerationState currentState, GenerationParameter metric, RandomizationPattern pattern){
 		return metrics.getContributionOf(currentState, metric, pattern);
 	}
+	public int getPotentialIncreaseOf(RandomizationPattern pattern){
+		return metrics.getPotentialIncreaseOf(pattern);
+	}
 	public int getNumSkips() {
 		return numSkips;
 	}
 	public void setNumSkips(int numSkips) {
 		this.numSkips = numSkips;
+	}
+	public List<UnknownComponent> getUnknownComponents(){
+		return unknownComponents;
+	}
+	public int getNumUnknownComponents(){
+		return unknownComponents.size();
 	}
 
 	@Override

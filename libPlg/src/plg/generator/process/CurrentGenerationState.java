@@ -8,7 +8,6 @@ public class CurrentGenerationState {
     public int currentDepth;
     public boolean canLoop;
     public boolean canSkip;
-    public int potential;
     public UnknownComponent parentComponent;
 
     /**
@@ -20,7 +19,6 @@ public class CurrentGenerationState {
         this.currentDepth = currentDepth;
         this.canLoop = canLoop;
         this.canSkip = canSkip;
-        this.potential = 1;
 
     }
 
@@ -30,7 +28,7 @@ public class CurrentGenerationState {
     }
 
     public CurrentGenerationState makeCopy(Process process){
-        return new CurrentGenerationState(this.currentDepth, this.canLoop, this.canSkip).setPotential(this.potential).setParentComponent((UnknownComponent) process.searchComponent(this.parentComponent.getId()));
+        return new CurrentGenerationState(this.currentDepth, this.canLoop, this.canSkip).setParentComponent((UnknownComponent) process.searchComponent(this.parentComponent.getId()));
     }
 
     public CurrentGenerationState setCanLoop(boolean canLoop) {
@@ -41,18 +39,9 @@ public class CurrentGenerationState {
         this.canSkip = canSkip;
         return this;
     }
-    public CurrentGenerationState setPotential(int potential) {
-        this.potential = potential;
-        return this;
-    }
 
     public CurrentGenerationState setParentComponent(UnknownComponent parentComponent) {
         this.parentComponent = parentComponent;
-        return this;
-    }
-
-    public CurrentGenerationState increasePotentialBy(int n) {
-        this.potential += n;
         return this;
     }
 }

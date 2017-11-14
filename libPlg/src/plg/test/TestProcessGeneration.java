@@ -14,7 +14,7 @@ import java.util.List;
 
 public class TestProcessGeneration {
 
-    private static final int NUM_GENERATED_MODELS = 10;
+    private static final int NUM_GENERATED_MODELS = 1;
     private static final String PROJECT_ROOT_FOLDER = System.getProperty("user.dir");
     private static final String PROJECT_TEST_FOLDER = PROJECT_ROOT_FOLDER + "\\src\\plg\\test";
     public static final String MODEL_FILES_FOLDER = PROJECT_TEST_FOLDER + "\\modelfiles";

@@ -19,7 +19,6 @@ public class ProductionObligationWeightTest {
     public static void setUp(){
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
         genParam = GenerationParameter.NUM_ACTIVITIES;
-        w_0 = BaseWeights.getPotentialIncreaseFor(pattern);
         ruleContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, genParam);
     }
 
