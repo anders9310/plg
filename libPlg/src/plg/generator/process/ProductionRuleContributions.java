@@ -11,13 +11,12 @@ public class ProductionRuleContributions {
     private ProductionRuleContributions(){
         contributions = new HashMap<>();
 
-        RandomizationPattern pattern = RandomizationPattern.SEQUENCE;
+        /*RandomizationPattern pattern = RandomizationPattern.SEQUENCE;
         Map<GenerationParameter, Integer> obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 0);
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 1);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.SINGLE_ACTIVITY;
@@ -26,7 +25,6 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, -1);
         contributions.put(pattern, obligationsValues);
 
         pattern = RandomizationPattern.MUTUAL_EXCLUSION;
@@ -48,7 +46,7 @@ public class ProductionRuleContributions {
         pattern = RandomizationPattern.LOOP;
         obligationsValues = new HashMap<>();
         obligationsValues.put(GenerationParameter.NUM_ACTIVITIES, 2);
-        obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
+        obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 2);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 1);
         contributions.put(pattern, obligationsValues);
@@ -59,8 +57,7 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 0);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, -1);
-        contributions.put(pattern, obligationsValues);
+        contributions.put(pattern, obligationsValues);*/
 
         /*pattern = RandomizationPattern.MUTUAL_EXCLUSION_SINGLEBRANCH;
         obligationsValues = new HashMap<>();
@@ -68,7 +65,6 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 0);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 1);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);*/
 
         /*pattern = RandomizationPattern.PARALLEL_EXECUTION_SINGLEBRANCH;
@@ -77,15 +73,20 @@ public class ProductionRuleContributions {
         obligationsValues.put(GenerationParameter.NUM_GATEWAYS, 1);
         obligationsValues.put(GenerationParameter.NUM_AND_GATES, 1);
         obligationsValues.put(GenerationParameter.NUM_XOR_GATES, 0);
-        obligationsValues.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0);
         contributions.put(pattern, obligationsValues);*/
     }
 
     public int getContribution(RandomizationPattern pattern, GenerationParameter parameter){
-        return contributions.get(pattern).get(parameter);
-    }
+        Map<GenerationParameter, Integer> patternMap = contributions.get(pattern);
+        if(patternMap == null){
+            throw new IllegalArgumentException("No predetermined contributions for " + pattern.name());
+        }
 
-    public Map<GenerationParameter, Integer> getContribution(RandomizationPattern pattern){
-        return contributions.get(pattern);
+        Integer contribution = patternMap.get(parameter);
+        if(contribution == null){
+            throw new IllegalArgumentException("No predetermined contribution for " + parameter.name() + " in " + pattern.name());
+        }
+
+        return contribution;
     }
 }

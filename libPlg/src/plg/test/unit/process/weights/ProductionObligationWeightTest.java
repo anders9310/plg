@@ -19,7 +19,7 @@ public class ProductionObligationWeightTest {
     public static void setUp(){
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
         genParam = GenerationParameter.NUM_ACTIVITIES;
-        w_0 = BaseWeights.BASE_WEIGHTS.getBasePotential(pattern);
+        w_0 = BaseWeights.getPotentialIncreaseFor(pattern);
         ruleContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, genParam);
     }
 
@@ -39,7 +39,7 @@ public class ProductionObligationWeightTest {
     @Test
     public void testValueRemainingPositiveAfterProduction() {
         /*o_t = 10;
-        o_r = o_t - ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, genParam);
+        o_r = o_t - ProductionRuleContributions.CONTRIBUTIONS.getContributionOf(pattern, genParam);
         obligation = new Obligation(genParam,o_t);
         pow = new ProductionObligationWeight(pattern, obligation);
 

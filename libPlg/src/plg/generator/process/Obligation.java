@@ -25,16 +25,12 @@ public class Obligation {
         } else{
             this.targetValue = mean;
         }
-        this.currentValue = process.getMetric(type);
         this.potential = 1;
         Logger.instance().debug("Obligation for " + type.name() + " created with target value = " + this.targetValue + " for mean = " + mean);
     }
 
     public double getTargetValue() {
         return targetValue;
-    }
-    public double getRemaining() {
-        return targetValue - currentValue;
     }
     public GenerationParameter getType() {
         return type;
@@ -45,9 +41,6 @@ public class Obligation {
     public double getCurrentValue() {
         this.currentValue = process.getMetric(type);
         return currentValue;
-    }
-    public int getPotential(){
-        return potential;
     }
     public Process getProcess() {
         return process;

@@ -1,22 +1,23 @@
 package plg.model;
 
-import plg.generator.process.GenerationParameter;
-import plg.generator.process.ProductionRuleContributions;
-import plg.generator.process.RandomizationPattern;
+import plg.generator.process.*;
 import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
+import plg.utils.Logger;
 
 import java.util.List;
 
 public class MetricCalculator {
-    private Process p;
+    private Process process;
+    private Process processWithoutUnknownComponents;
 
     public MetricCalculator(Process process) {
-        this.p = process;
+        this.process = process;
     }
 
-    public double getMetric(GenerationParameter metric){
+    public double calculateMetric(GenerationParameter metric){
+        processWithoutUnknownComponents = ((Process)process.clone()).replaceUnknownComponentsWithNull();
         switch(metric){
             case NUM_ACTIVITIES:
                 return calcNumActivities();
@@ -33,18 +34,58 @@ public class MetricCalculator {
         }
     }
 
-    public double getContribution(GenerationParameter metric, RandomizationPattern pattern){
+    public void setProcess(Process process) {
+        this.process = process;
+    }
+
+    public double getContributionOf(CurrentGenerationState state, GenerationParameter metric, RandomizationPattern pattern){
         try{
             return ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, metric);
-        }catch(Exception e){//production contribution has to be calculated runtime TODO: find correct exception
-            return calculateContribution(metric, pattern);
+        }catch(IllegalArgumentException e){//production contribution has to be calculated runtime
+            return calculateContribution(state, metric, pattern);
         }
     }
 
-    private double calculateContribution(GenerationParameter metric, RandomizationPattern pattern) {
-        double initialMetric = getMetric(metric);
-        double projectedMetric = simulatePatternGeneration(pattern).getMetric(metric);
+    private double calculateContribution(CurrentGenerationState state, GenerationParameter metric, RandomizationPattern pattern) {
+        double initialMetric = process.getMetric(metric);
+        double projectedMetric = simulateGenerationOf(state, pattern).getMetric(metric);
         return projectedMetric - initialMetric;
+    }
+
+    private Process simulateGenerationOf(CurrentGenerationState state, RandomizationPattern pattern) {
+        Process simulationProcess = (Process) process.clone();
+        CurrentGenerationState simulationState = state.makeCopy(simulationProcess);
+        RandomizationConfiguration parameters = new ParameterRandomizationConfiguration(simulationProcess,0,0,0,0,0,0);
+        ProcessGenerator simulator = new ProcessGenerator(simulationProcess, parameters);
+
+        switch (pattern) {
+            case SEQUENCE:
+                simulator.replaceComponentWithSequencePatternDummies(simulationProcess, simulationState.parentComponent);
+                break;
+            case PARALLEL_EXECUTION:
+                simulator.replaceComponentWithAndPatternDummies(simulationProcess, simulationState.parentComponent);
+                break;
+            case MUTUAL_EXCLUSION:
+                simulator.replaceComponentWithXorPatternDummies(simulationProcess, simulationState.parentComponent);
+                break;
+            case LOOP:
+                simulator.replaceComponentWithLoopPatternDummies(simulationProcess, simulationState.parentComponent);
+                break;
+            case SINGLE_ACTIVITY:
+                PatternFrame activity = simulator.newActivity(simulationProcess);
+                PatternFrame.connect(simulationState.parentComponent.getIncomingObjects().get(0), activity.getLeftBound()).connect(simulationState.parentComponent.getOutgoingObjects().get(0));
+                simulationProcess.removeComponent(simulationState.parentComponent);
+                break;
+            case SKIP:
+                PatternFrame.connect(simulationState.parentComponent.getIncomingObjects().get(0), simulationState.parentComponent.getOutgoingObjects().get(0));
+                simulationProcess.removeComponent(simulationState.parentComponent);
+                break;
+            default:
+                throw new RuntimeException("No case for production rule " + pattern.name());
+                /*process.removeComponent(localState.parentComponent);
+                generatedFrame = newActivity();*/
+        }
+        return simulationProcess;
     }
 
     private Process simulatePatternGeneration(RandomizationPattern pattern) {
@@ -53,15 +94,15 @@ public class MetricCalculator {
     }
 
     private double calcNumActivities() {
-        return p.getTasks().size();
+        return processWithoutUnknownComponents.getTasks().size();
     }
 
     private double calcNumGateways() {
-        return p.getGateways().size();
+        return processWithoutUnknownComponents.getGateways().size();
     }
 
     private double calcNumAndGates() {
-        List<Gateway> gateways =  p.getGateways();
+        List<Gateway> gateways =  processWithoutUnknownComponents.getGateways();
         int numAndGates = 0;
         for(Gateway gateway : gateways){
             if(gateway instanceof ParallelGateway){
@@ -72,7 +113,7 @@ public class MetricCalculator {
     }
 
     private double calcNumXorGates() {
-        List<Gateway> gateways =  p.getGateways();
+        List<Gateway> gateways =  processWithoutUnknownComponents.getGateways();
         int numXorGates = 0;
         for(Gateway gateway : gateways){
             if(gateway instanceof ExclusiveGateway){
@@ -83,8 +124,8 @@ public class MetricCalculator {
     }
 
     private double calcCoefficientOfNetworkConnectivity(){
-        double projectedNumArcs = p.getComponents().size() - p.getSequences().size() - p.getGateways().size() - 1 + (5.0/2.0)*p.getGateways().size() - p.getNumSkips();
-        double numNodes = p.getComponents().size() - p.getSequences().size();
+        double projectedNumArcs = processWithoutUnknownComponents.getSequences().size();
+        double numNodes = processWithoutUnknownComponents.getComponents().size() - processWithoutUnknownComponents.getSequences().size();
         if(!(projectedNumArcs>0)){
             return 0;
         }

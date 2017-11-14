@@ -106,7 +106,7 @@ public class ProcessGenerator {
 
     public PatternFrame newInternalPattern(CurrentGenerationState localState,RandomizationPattern nextAction) {
         PatternFrame generatedFrame;
-        localState.increasePotentialBy(BaseWeights.BASE_WEIGHTS.getBasePotential(nextAction));
+        localState.increasePotentialBy(BaseWeights.getPotentialIncreaseFor(nextAction));
 
         switch (nextAction) {
             case SEQUENCE:

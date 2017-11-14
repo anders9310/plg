@@ -5,7 +5,9 @@ import java.util.*;
 
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
+import plg.generator.process.CurrentGenerationState;
 import plg.generator.process.GenerationParameter;
+import plg.generator.process.PatternFrame;
 import plg.generator.process.RandomizationPattern;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
 import plg.generator.scriptexecuter.StringScriptExecutor;
@@ -479,10 +481,10 @@ public class Process {
 	}
 
 	public double getMetric(GenerationParameter metric) {
-		return metrics.getMetric(metric);
+		return metrics.calculateMetric(metric);
 	}
-	public double getContribution(GenerationParameter metric, RandomizationPattern pattern){
-		return metrics.getContribution(metric, pattern);
+	public double getContributionOf(CurrentGenerationState currentState, GenerationParameter metric, RandomizationPattern pattern){
+		return metrics.getContributionOf(currentState, metric, pattern);
 	}
 	public int getNumSkips() {
 		return numSkips;
@@ -576,5 +578,21 @@ public class Process {
 			e1.printStackTrace();
 		}
 		return p;
+	}
+
+	public Process replaceUnknownComponentsWithNull(){
+		for(UnknownComponent c : new LinkedList<>(unknownComponents)){
+			connectRightAndLeftFlowObjectsOf(c);
+			removeComponent(c);
+		}
+		return this;
+	}
+
+	private void connectRightAndLeftFlowObjectsOf(FlowObject object){
+		for (FlowObject incoming : object.getIncomingObjects()) {
+			for (FlowObject outgoing : object.getOutgoingObjects()){
+				PatternFrame.connect(incoming, outgoing);
+			}
+		}
 	}
 }

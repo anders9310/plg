@@ -1,10 +1,7 @@
 package plg.generator.process.weights;
 
 import plg.generator.process.*;
-import plg.model.FlowObject;
 import plg.model.Process;
-import plg.model.UnknownComponent;
-import plg.utils.Pair;
 
 public class ProductionObligationWeight extends Weight{
     private int productionPotentialIncrease;
@@ -21,7 +18,7 @@ public class ProductionObligationWeight extends Weight{
     }
 
     private void cacheProductionPotential() {
-        productionPotentialIncrease = BaseWeights.BASE_WEIGHTS.getBasePotential(this.randomizationPattern);
+        productionPotentialIncrease = BaseWeights.getPotentialIncreaseFor(this.randomizationPattern);
     }
 
     protected double calculateValue(CurrentGenerationState state) {
@@ -29,7 +26,7 @@ public class ProductionObligationWeight extends Weight{
             return 0;
         }
 
-        double metricContribution = getContributionBySimulation(state);
+        double metricContribution = process.getContributionOf(state, this.obligation.getType(), randomizationPattern);;
         double targetValue = obligation.getTargetValue();
         double currentValue = obligation.getCurrentValue();
         double currentPotential = state.potential;
@@ -84,7 +81,7 @@ public class ProductionObligationWeight extends Weight{
         return terminalWish + potentialWish;
     }
 
-    private double getContributionBySimulation(CurrentGenerationState state) {
+    /*private double getContributionBySimulation(CurrentGenerationState state) {
         double currentValue = process.getMetric(this.obligation.getType());
         Process simulationProcess = (Process) process.clone();
         CurrentGenerationState simulationState = state.makeCopy(simulationProcess);
@@ -115,16 +112,12 @@ public class ProductionObligationWeight extends Weight{
                 break;
             default:
                 throw new RuntimeException("No case for production rule " + this.randomizationPattern.name());
-                /*process.removeComponent(localState.parentComponent);
-                generatedFrame = newActivity();*/
         }
 
         double simulatedValue = simulationProcess.getMetric(this.obligation.getType());
         double contribution = simulatedValue - currentValue;
         return contribution;
-
-
-    }
+    }*/
 
     public RandomizationPattern getRandomizationPattern() {
         return randomizationPattern;
