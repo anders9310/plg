@@ -4,9 +4,11 @@ import plg.generator.process.*;
 import plg.model.Process;
 
 public class ProductionObligationWeight extends Weight{
+    private final double POTENTIAL_THRESHOLD = 1;
+    private final double VALUE_GRANULARITY = 0.01;
+
     private Obligation obligation;
     private RandomizationPattern randomizationPattern;
-    private double POTENTIAL_THRESHOLD = 1;
     private Process process;
 
     public ProductionObligationWeight(RandomizationPattern randomizationPattern, Obligation obligation){
@@ -27,7 +29,8 @@ public class ProductionObligationWeight extends Weight{
         double potentialIncrease = process.getPotentialIncreaseOf(randomizationPattern);
 
         double terminalWish;
-        if(currentValue<targetValue){//increase
+        int comparedValue = compare(currentValue, targetValue, VALUE_GRANULARITY/2);
+        if(comparedValue==-1){//increase
             if(metricContribution>0){
                 terminalWish = 1;
             }else if(metricContribution==0){
@@ -35,7 +38,7 @@ public class ProductionObligationWeight extends Weight{
             }else{
                 terminalWish = -1;
             }
-        }else if(currentValue==targetValue){//Stay the same
+        }else if(comparedValue==0){//Stay the same
             if(metricContribution == 0){
                 terminalWish = 1;
             }else{
@@ -52,7 +55,7 @@ public class ProductionObligationWeight extends Weight{
         }
 
         double potentialWish;
-        if(currentValue<targetValue && currentPotential<=2.0*POTENTIAL_THRESHOLD){//increase
+        if(comparedValue==-1 && currentPotential<=2.0*POTENTIAL_THRESHOLD){//increase
             if(potentialIncrease >0){
                 if(currentPotential<=POTENTIAL_THRESHOLD){
                     return 1;
@@ -63,7 +66,7 @@ public class ProductionObligationWeight extends Weight{
             }else{
                 potentialWish = -1;
             }
-        }else{//decrease
+        } else{//decrease
             if(potentialIncrease <0){
                 potentialWish = 1;
             }else if(potentialIncrease ==0){
@@ -72,11 +75,20 @@ public class ProductionObligationWeight extends Weight{
                 potentialWish = -1;
             }
         }
-
         return terminalWish + potentialWish;
     }
 
     public RandomizationPattern getRandomizationPattern() {
         return randomizationPattern;
+    }
+
+    public static int compare(double value, double comparedTo, double threshold){
+        if(value > comparedTo + threshold){
+            return 1;
+        }else if(value < comparedTo - threshold){
+            return -1;
+        }else{
+            return 0;
+        }
     }
 }

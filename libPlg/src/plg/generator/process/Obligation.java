@@ -4,6 +4,9 @@ import plg.generator.process.weights.BaseWeights;
 import plg.model.Process;
 import plg.utils.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Obligation {
     private Process process;
     private GenerationParameter type;
@@ -49,5 +52,13 @@ public class Obligation {
         if(mean!=0 && !(currentValue==targetValue)){
             Logger.instance().debug("Did not hit target value");
         }
+    }
+
+    public Map<String, Double> getStatus() {
+        Map<String, Double> status = new HashMap<>();
+        status.put("Current value", getCurrentValue());
+        status.put("Target value", getTargetValue());
+        status.put("Mean", getMean());
+        return status;
     }
 }

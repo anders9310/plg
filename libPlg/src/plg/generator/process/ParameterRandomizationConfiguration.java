@@ -47,9 +47,6 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     private void initProductions(){
         List<RandomizationPattern> randomizationPatterns = new LinkedList<>();
-        //randomizationPatterns.add(RandomizationPattern.PARALLEL_EXECUTION);
-        //randomizationPatterns.add(RandomizationPattern.SKIP);
-        //randomizationPatterns.add(RandomizationPattern.SEQUENCE);
         randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
         productions = new LinkedList<>();
         for(RandomizationPattern pattern : randomizationPatterns){
@@ -100,5 +97,12 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         for(Obligation o : obligations){
             o.printStatus();
         }
+    }
+    public Map<String, Map<String, Double>> getStatus(){
+        Map<String, Map<String, Double>> results = new HashMap<>();
+        for(Obligation o : obligations){
+            results.put(o.getType().name(), o.getStatus());
+        }
+        return results;
     }
 }

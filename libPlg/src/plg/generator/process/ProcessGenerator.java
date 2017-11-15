@@ -37,7 +37,7 @@ public class ProcessGenerator {
     public static final String DATA_OBJECT_NAME_PATTERN = "variable_%s";
 
     protected Process process;
-    private RandomizationConfiguration parameters;
+    protected RandomizationConfiguration parameters;
     protected int generatedActivities = 0;
     protected int generatedDataObjects = 0;
 
@@ -55,6 +55,11 @@ public class ProcessGenerator {
      */
     public static void randomizeProcess(Process process, RandomizationConfiguration parameters) {
         new ProcessGenerator(process, parameters).begin();
+    }
+
+    public Process randomizeProcess(){
+        begin();
+        return process;
     }
 
     /**
@@ -405,7 +410,8 @@ public class ProcessGenerator {
     public RandomizationConfiguration getParameters() {
         return parameters;
     }
-    public int getGeneratedConnections(){
-        return process.getSequences().size();
+
+    protected boolean hasPerformedGeneration(){
+        return process.getComponents().size() != 0;
     }
 }

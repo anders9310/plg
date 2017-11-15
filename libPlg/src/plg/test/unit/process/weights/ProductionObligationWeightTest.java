@@ -19,7 +19,22 @@ public class ProductionObligationWeightTest {
     public static void setUp(){
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
         genParam = GenerationParameter.NUM_ACTIVITIES;
-        ruleContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, genParam);
+        //ruleContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, genParam);
+    }
+
+    @Test
+    public void testCompare(){
+        double v1 = 1.5;
+        double v2 = 1;
+        double threshold = 0.5;
+        assert ProductionObligationWeight.compare(v1, v2, threshold)==0;
+
+        v1 = 1.50001;
+        assert ProductionObligationWeight.compare(v1, v2, threshold)==1;
+
+        v1 = 0.499999;
+        assert ProductionObligationWeight.compare(v1, v2, threshold)==-1;
+
     }
 
     @Test
