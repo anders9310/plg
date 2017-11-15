@@ -2,12 +2,11 @@ package plg.test.unit.process.weights;
 
 import org.junit.*;
 import plg.generator.process.*;
-import plg.generator.process.weights.BaseWeights;
 import plg.generator.process.weights.ProductionObligationWeight;
 
 public class ProductionObligationWeightTest {
     static RandomizationPattern pattern;
-    static GenerationParameter genParam;
+    static Metric genParam;
     static ProductionObligationWeight pow;
     static Obligation obligation;
     static double o_t;
@@ -18,7 +17,7 @@ public class ProductionObligationWeightTest {
     @BeforeClass
     public static void setUp(){
         pattern = RandomizationPattern.PARALLEL_EXECUTION;
-        genParam = GenerationParameter.NUM_ACTIVITIES;
+        genParam = Metric.NUM_ACTIVITIES;
         //ruleContribution = ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, genParam);
     }
 

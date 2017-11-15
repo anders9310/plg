@@ -4,10 +4,9 @@ import plg.generator.process.*;
 import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
-import plg.utils.Logger;
-import plg.utils.Random;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class MetricCalculator {
         this.potentialIncreasesCache = new HashMap<>();
     }
 
-    public double calculateMetric(GenerationParameter metric){
+    public double calculateMetric(Metric metric){
         processWithoutUnknownComponents = ((Process)process.clone()).replaceUnknownComponentsWithNull();
         switch(metric){
             case NUM_ACTIVITIES:
@@ -34,6 +33,8 @@ public class MetricCalculator {
                 return calcNumXorGates();
             case COEFFICIENT_OF_NETWORK_CONNECTIVITY:
                 return calcCoefficientOfNetworkConnectivity();
+            case CONTROL_FLOW_COMPLEXITY:
+                return calcCFC();
             default:
                 throw new IllegalArgumentException("Cannot handle the metric: " + metric.name());
         }
@@ -43,7 +44,7 @@ public class MetricCalculator {
         this.process = process;
     }
 
-    public double getContributionOf(CurrentGenerationState state, GenerationParameter metric, RandomizationPattern pattern){
+    public double getContributionOf(CurrentGenerationState state, Metric metric, RandomizationPattern pattern){
         try{
             return ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, metric);
         }catch(IllegalArgumentException e){//production contribution has to be calculated runtime
@@ -65,7 +66,7 @@ public class MetricCalculator {
         return projectedPotential - initialPotential;
     }
 
-    private double calculateContribution(CurrentGenerationState state, GenerationParameter metric, RandomizationPattern pattern) {
+    private double calculateContribution(CurrentGenerationState state, Metric metric, RandomizationPattern pattern) {
         double initialMetric = process.getMetric(metric);
         double projectedMetric = simulateGenerationOf(state, pattern).getMetric(metric);
         return projectedMetric - initialMetric;
@@ -74,7 +75,7 @@ public class MetricCalculator {
     private Process simulateGenerationOf(CurrentGenerationState state, RandomizationPattern pattern) {
         Process simulationProcess = (Process) process.clone();
         CurrentGenerationState simulationState = state.makeCopy(simulationProcess);
-        RandomizationConfiguration parameters = new ParameterRandomizationConfiguration(simulationProcess,0,0,0,0,0,0);
+        RandomizationConfiguration parameters = new ParameterRandomizationConfiguration(simulationProcess, new HashMap<>());
         ProcessGenerator simulator = new ProcessGenerator(simulationProcess, parameters);
 
         switch (pattern) {
@@ -101,8 +102,6 @@ public class MetricCalculator {
                 break;
             default:
                 throw new RuntimeException("No case for production rule " + pattern.name());
-                /*process.removeComponent(localState.parentComponent);
-                generatedFrame = newActivity();*/
         }
         return simulationProcess;
     }
@@ -154,5 +153,47 @@ public class MetricCalculator {
         else {
             return projectedNumArcs / numNodes;
         }
+    }
+
+    private double calcCFC() {
+        int andGateContributions = calcAndGateContributionForCFC();
+        int xorGateContributions = calcXorGateContributionForCFC();
+        return andGateContributions + xorGateContributions;
+    }
+
+    private int calcXorGateContributionForCFC() {
+        List<ExclusiveGateway> xorGates = new LinkedList<>();
+        for(Gateway g : processWithoutUnknownComponents.getGateways()){
+            if(g instanceof ExclusiveGateway){
+                xorGates.add((ExclusiveGateway) g);
+            }
+        }
+        List<ExclusiveGateway> xorGateSplits = new LinkedList<>();
+        for(ExclusiveGateway g : xorGates){
+            if(g.getIncomingObjects().size()==1 && g.getOutgoingObjects().size()>1){
+                xorGateSplits.add(g);
+            }
+        }
+        int sumOfFanout = 0;
+        for(ExclusiveGateway g : xorGateSplits){
+            sumOfFanout += g.getOutgoingObjects().size();
+        }
+        return sumOfFanout;
+    }
+
+    private int calcAndGateContributionForCFC() {//TODO there is probably a bug here
+        List<ParallelGateway> andGates = new LinkedList<>();
+        for(Gateway g : processWithoutUnknownComponents.getGateways()){
+            if(g instanceof ParallelGateway){
+                andGates.add((ParallelGateway) g);
+            }
+        }
+        List<ParallelGateway> andGateSplits = new LinkedList<>();
+        for(ParallelGateway g : andGates){
+            if(g.getIncomingObjects().size()==1 && g.getOutgoingObjects().size()>1){
+                andGateSplits.add(g);
+            }
+        }
+        return andGateSplits.size();
     }
 }

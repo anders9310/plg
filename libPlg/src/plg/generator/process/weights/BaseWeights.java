@@ -1,12 +1,5 @@
 package plg.generator.process.weights;
 
-import plg.generator.process.GenerationParameter;
-import plg.generator.process.ProductionRuleContributions;
-import plg.generator.process.RandomizationPattern;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class BaseWeights {
 
 //    public static int getPotentialIncreaseFor(RandomizationPattern pattern){

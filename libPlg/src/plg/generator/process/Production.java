@@ -1,7 +1,6 @@
 package plg.generator.process;
 
 import plg.generator.process.weights.ProductionWeight;
-import plg.utils.Logger;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class Production {
         this.weight = new ProductionWeight(type, obligations, allRandomizationPatterns);
     }
 
-    public double getContribution(GenerationParameter genParameter) {
+    public double getContribution(Metric genParameter) {
         return ProductionRuleContributions.CONTRIBUTIONS.getContribution(this.type, genParameter);
     }
     public RandomizationPattern getType() {

@@ -2,12 +2,9 @@ package plg.test.unit.process.weights;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import plg.generator.process.GenerationParameter;
 import plg.generator.process.Obligation;
-import plg.generator.process.weights.ProductionWeight;
 import plg.generator.process.RandomizationPattern;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class ProductionWeightTest {
@@ -23,8 +20,8 @@ public class ProductionWeightTest {
 
     private static void setUpObligations() {
         /*obligations = new LinkedList<>();
-        obligations.add(new Obligation(GenerationParameter.NUM_ACTIVITIES, valueForAllObligations));
-        obligations.add(new Obligation(GenerationParameter.NUM_GATEWAYS, valueForAllObligations));*/
+        obligations.add(new Obligation(Metric.NUM_ACTIVITIES, valueForAllObligations));
+        obligations.add(new Obligation(Metric.NUM_GATEWAYS, valueForAllObligations));*/
     }
 
     @Test

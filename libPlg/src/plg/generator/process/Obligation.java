@@ -1,6 +1,5 @@
 package plg.generator.process;
 
-import plg.generator.process.weights.BaseWeights;
 import plg.model.Process;
 import plg.utils.Logger;
 
@@ -9,12 +8,12 @@ import java.util.Map;
 
 public class Obligation {
     private Process process;
-    private GenerationParameter type;
+    private Metric type;
     private double mean;
     private double targetValue;
     private double currentValue;
 
-    public Obligation(Process process, GenerationParameter type, double mean){
+    public Obligation(Process process, Metric type, double mean){
         if(mean < 0){
             throw new IllegalArgumentException("The obligation value must be equal to or greater than 0");
         }
@@ -33,7 +32,7 @@ public class Obligation {
     public double getTargetValue() {
         return targetValue;
     }
-    public GenerationParameter getType() {
+    public Metric getType() {
         return type;
     }
     public double getMean() {

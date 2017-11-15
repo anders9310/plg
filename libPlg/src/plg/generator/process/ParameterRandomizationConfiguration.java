@@ -13,34 +13,34 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private Process process;
     private CurrentGenerationState state;
 
-    public ParameterRandomizationConfiguration(Process process, int numActivities, int numGateways, int numAndGates, int numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
+    public ParameterRandomizationConfiguration(Process process, Map<Metric, Double> inputs) {
         super(2, 2, 0.0);
         this.process = process;
-        initObligations(numActivities, numGateways, numAndGates, numXorGates, diameter, coefficientOfNetworkConnectivity);
+        initObligations(inputs);
         initProductions();
     }
 
-    private void initObligations(double numActivities, double numGateways, double numAndGates, double numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
-        Map<GenerationParameter, Double> generationParameters = new HashMap<>();
-        if(numActivities>0) generationParameters.put(GenerationParameter.NUM_ACTIVITIES, numActivities);
-        if(numGateways>0) generationParameters.put(GenerationParameter.NUM_GATEWAYS, numGateways);
-        if(numAndGates>0) generationParameters.put(GenerationParameter.NUM_AND_GATES, numAndGates);
-        if(numXorGates>0) generationParameters.put(GenerationParameter.NUM_XOR_GATES, numXorGates);
-        if(diameter>0) generationParameters.put(GenerationParameter.DIAMETER, diameter);
-        if(coefficientOfNetworkConnectivity>0) generationParameters.put(GenerationParameter.COEFFICIENT_OF_NETWORK_CONNECTIVITY, coefficientOfNetworkConnectivity);
+    /*private void initObligations(double numActivities, double numGateways, double numAndGates, double numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
+        Map<Metric, Double> generationParameters = new HashMap<>();
+        if(numActivities>0) generationParameters.put(Metric.NUM_ACTIVITIES, numActivities);
+        if(numGateways>0) generationParameters.put(Metric.NUM_GATEWAYS, numGateways);
+        if(numAndGates>0) generationParameters.put(Metric.NUM_AND_GATES, numAndGates);
+        if(numXorGates>0) generationParameters.put(Metric.NUM_XOR_GATES, numXorGates);
+        if(diameter>0) generationParameters.put(Metric.DIAMETER, diameter);
+        if(coefficientOfNetworkConnectivity>0) generationParameters.put(Metric.COEFFICIENT_OF_NETWORK_CONNECTIVITY, coefficientOfNetworkConnectivity);
         initObligations(generationParameters);
-    }
+    }*/
 
-    private void initObligations(Map<GenerationParameter, Double> genParams) {
+    private void initObligations(Map<Metric, Double> genParams) {
         obligations = new ArrayList<>();
         for (Map.Entry gpAndValue : genParams.entrySet()) {
-            GenerationParameter gp = (GenerationParameter) gpAndValue.getKey();
+            Metric gp = (Metric) gpAndValue.getKey();
             double value = (double) gpAndValue.getValue();
             initObligation(gp, value);
         }
     }
 
-    private void initObligation(GenerationParameter gp, double value) {
+    private void initObligation(Metric gp, double value) {
         Obligation obligation = new Obligation(process, gp, value);
         obligations.add(obligation);
     }

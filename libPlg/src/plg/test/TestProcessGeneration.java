@@ -47,7 +47,9 @@ public class TestProcessGeneration {
         String bpmnExtension = ".bpmn";
         for(int i = 0; i< NUM_GENERATED_MODELS; i++){
             Process p =new Process("test" );
-            ObligationsProcessGenerator generator = new ObligationsProcessGenerator(p, new ParameterRandomizationConfiguration(p, 15, 0, 0, 0, 0, 0));
+
+            Map<Metric, Double> inputs = createInputMetrics();
+            ObligationsProcessGenerator generator = new ObligationsProcessGenerator(p, inputs);
             generator.randomizeProcess();
 
             generationResults.add(generator.getGenerationResults());
@@ -60,6 +62,12 @@ public class TestProcessGeneration {
         }
         writeGenerationResultsToCsv(GENERATION_RESULTS_FOLDER, GENERATION_RESULTS_FILE_NAME);
         return exportedFiles;
+    }
+
+    private static Map<Metric, Double> createInputMetrics(){
+        Map<Metric, Double> inputs = new HashMap<>();
+        inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 10.0);
+        return inputs;
     }
 
     private static void analyzeExportResults(){

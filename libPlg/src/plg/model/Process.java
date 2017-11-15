@@ -6,7 +6,7 @@ import java.util.*;
 import plg.exceptions.IllegalSequenceException;
 import plg.exceptions.InvalidProcessException;
 import plg.generator.process.CurrentGenerationState;
-import plg.generator.process.GenerationParameter;
+import plg.generator.process.Metric;
 import plg.generator.process.PatternFrame;
 import plg.generator.process.RandomizationPattern;
 import plg.generator.scriptexecuter.IntegerScriptExecutor;
@@ -480,10 +480,10 @@ public class Process {
 		return toRet;
 	}
 
-	public double getMetric(GenerationParameter metric) {
+	public double getMetric(Metric metric) {
 		return metrics.calculateMetric(metric);
 	}
-	public double getContributionOf(CurrentGenerationState currentState, GenerationParameter metric, RandomizationPattern pattern){
+	public double getContributionOf(CurrentGenerationState currentState, Metric metric, RandomizationPattern pattern){
 		return metrics.getContributionOf(currentState, metric, pattern);
 	}
 	public int getPotentialIncreaseOf(RandomizationPattern pattern){

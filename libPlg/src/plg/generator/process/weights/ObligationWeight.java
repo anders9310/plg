@@ -1,7 +1,7 @@
 package plg.generator.process.weights;
 
 import plg.generator.process.CurrentGenerationState;
-import plg.generator.process.GenerationParameter;
+import plg.generator.process.Metric;
 import plg.generator.process.Obligation;
 import plg.generator.process.RandomizationPattern;
 
@@ -10,12 +10,12 @@ import java.util.List;
 
 public class ObligationWeight extends Weight{
     RandomizationPattern randomizationPattern;
-    GenerationParameter generationParameter;
+    Metric metric;
     List<ProductionObligationWeight> pows;
 
     public ObligationWeight(RandomizationPattern randomizationPattern, List<RandomizationPattern> allRandomizationPatterns, Obligation obligation){
         this.randomizationPattern = randomizationPattern;
-        this.generationParameter = obligation.getType();
+        this.metric = obligation.getType();
         pows = new ArrayList<>();
         for(RandomizationPattern pattern : allRandomizationPatterns){
             ProductionObligationWeight pow = new ProductionObligationWeight(pattern, obligation);
