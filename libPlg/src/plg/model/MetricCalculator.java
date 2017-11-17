@@ -38,6 +38,8 @@ public class MetricCalculator {
                 return calcCFC();
             case NUMBER_OF_CYCLES:
                 return calcNumCycles();
+            case TOKEN_SPLIT:
+                return calcTokenSplit();
             default:
                 throw new IllegalArgumentException("Cannot handle the metric: " + metric.name());
         }
@@ -153,7 +155,7 @@ public class MetricCalculator {
         }
     }
 
-    private double calcCFC() {//TODO there is probably a bug here
+    private double calcCFC() {
         int andGateContributions = calcAndGateContributionForCFC();
         int xorGateContributions = calcXorGateContributionForCFC();
         return andGateContributions + xorGateContributions;
@@ -222,4 +224,19 @@ public class MetricCalculator {
         }
         return cycleStartObjects.size();
     }
+
+    private double calcTokenSplit() {
+        List<Gateway> gateSplits = new LinkedList<>();
+        for(Gateway g : processWithoutUnknownComponents.getGateways()){
+            if(g.getIncomingObjects().size()==1 && g.getOutgoingObjects().size()>1){
+                gateSplits.add(g);
+            }
+        }
+        int sumOfTS = 0;
+        for(Gateway g : gateSplits){
+            sumOfTS += g.getOutgoingObjects().size() -1;
+        }
+        return sumOfTS;
+    }
+
 }
