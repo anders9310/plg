@@ -7,14 +7,8 @@ public enum Metric {
     NUM_XOR_GATES,
     DIAMETER,
     COEFFICIENT_OF_NETWORK_CONNECTIVITY,
-    CONTROL_FLOW_COMPLEXITY;
+    SEQUENTIALITY,
+    CONTROL_FLOW_COMPLEXITY,
+    NUMBER_OF_CYCLES;
 
-    public boolean isRatioBased(){
-        switch (this){
-            case COEFFICIENT_OF_NETWORK_CONNECTIVITY:
-                return true;
-            default:
-                return false;
-        }
-    }
 }

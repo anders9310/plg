@@ -20,12 +20,8 @@ public class Obligation {
         this.process =process;
         this.type = type;
         this.mean = mean;
-        if(!type.isRatioBased()){
-            this.targetValue = mean;
-            //this.targetValue = Random.poissonRandom(mean);
-        } else{
-            this.targetValue = mean;
-        }
+        this.targetValue = mean;
+        //this.targetValue = Random.poissonRandom(mean);
         Logger.instance().debug("Obligation for " + type.name() + " created with target value = " + this.targetValue + " for mean = " + mean);
     }
 

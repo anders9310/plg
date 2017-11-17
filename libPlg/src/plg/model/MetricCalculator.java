@@ -4,6 +4,8 @@ import plg.generator.process.*;
 import plg.model.gateway.ExclusiveGateway;
 import plg.model.gateway.Gateway;
 import plg.model.gateway.ParallelGateway;
+import plg.model.graphs.ElementaryCyclesSearch;
+import plg.model.sequence.Sequence;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,15 +35,15 @@ public class MetricCalculator {
                 return calcNumXorGates();
             case COEFFICIENT_OF_NETWORK_CONNECTIVITY:
                 return calcCoefficientOfNetworkConnectivity();
+            case SEQUENTIALITY:
+                return calcSequentiality();
             case CONTROL_FLOW_COMPLEXITY:
                 return calcCFC();
+            case NUMBER_OF_CYCLES:
+                return calcNumCycles();
             default:
                 throw new IllegalArgumentException("Cannot handle the metric: " + metric.name());
         }
-    }
-
-    public void setProcess(Process process) {
-        this.process = process;
     }
 
     public double getContributionOf(CurrentGenerationState state, Metric metric, RandomizationPattern pattern){
@@ -58,6 +60,10 @@ public class MetricCalculator {
             potentialIncreasesCache.put(pattern,calculatePotentialIncrease(state, pattern));
         }
         return potentialIncreasesCache.get(pattern);
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
     }
 
     private int calculatePotentialIncrease(CurrentGenerationState state, RandomizationPattern pattern){
@@ -106,11 +112,6 @@ public class MetricCalculator {
         return simulationProcess;
     }
 
-    private Process simulatePatternGeneration(RandomizationPattern pattern) {
-        //Simulate using process generator
-        return new Process("replace");
-    }
-
     private double calcNumActivities() {
         return processWithoutUnknownComponents.getTasks().size();
     }
@@ -155,7 +156,7 @@ public class MetricCalculator {
         }
     }
 
-    private double calcCFC() {
+    private double calcCFC() {//TODO there is probably a bug here
         int andGateContributions = calcAndGateContributionForCFC();
         int xorGateContributions = calcXorGateContributionForCFC();
         return andGateContributions + xorGateContributions;
@@ -181,7 +182,7 @@ public class MetricCalculator {
         return sumOfFanout;
     }
 
-    private int calcAndGateContributionForCFC() {//TODO there is probably a bug here
+    private int calcAndGateContributionForCFC() {
         List<ParallelGateway> andGates = new LinkedList<>();
         for(Gateway g : processWithoutUnknownComponents.getGateways()){
             if(g instanceof ParallelGateway){
@@ -195,5 +196,38 @@ public class MetricCalculator {
             }
         }
         return andGateSplits.size();
+    }
+
+    private double calcSequentiality(){
+        List<Sequence> sequencesBetweenNonConnectorNodes = new LinkedList<>();
+        for(Sequence seq : processWithoutUnknownComponents.getSequences()){
+            FlowObject source = seq.getSource();
+            FlowObject sink = seq.getSink();
+            if(!(source instanceof Gateway) && !(sink instanceof Gateway)){
+                sequencesBetweenNonConnectorNodes.add(seq);
+            }
+        }
+        return (double)sequencesBetweenNonConnectorNodes.size() / (double) processWithoutUnknownComponents.getSequences().size();
+    }
+
+    private double calcNumCycles() {
+        /*List<ExclusiveGateway> loopJoinGates = new LinkedList<>();
+        for(Gateway g : processWithoutUnknownComponents.getGateways()){
+            if(g instanceof ExclusiveGateway){
+                if(isLoopJoinGate((ExclusiveGateway) g)){
+                    loopJoinGates.add((ExclusiveGateway) g);
+                }
+
+            }
+        }
+        return 0;*/
+        List<FlowObject> nodes = new LinkedList<>();
+        for(Component c : processWithoutUnknownComponents.getComponents()){
+            if(c instanceof FlowObject){
+                nodes.add((FlowObject)c);
+            }
+        }
+        boolean[][] adjacencyMatrixForProcess = new AdjacencyMatrix(nodes, processWithoutUnknownComponents.getSequences()).getAdjacencyMatrix();
+        return new ElementaryCyclesSearch(adjacencyMatrixForProcess, nodes.toArray()).getElementaryCycles().size();
     }
 }

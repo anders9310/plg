@@ -66,7 +66,7 @@ public class TestProcessGeneration {
 
     private static Map<Metric, Double> createInputMetrics(){
         Map<Metric, Double> inputs = new HashMap<>();
-        inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 10.0);
+        inputs.put(Metric.NUMBER_OF_CYCLES, 10.0);
         return inputs;
     }
 
