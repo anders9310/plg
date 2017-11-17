@@ -7,10 +7,7 @@ import plg.model.gateway.ParallelGateway;
 import plg.model.graphs.ElementaryCyclesSearch;
 import plg.model.sequence.Sequence;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MetricCalculator {
     private Process process;
@@ -211,16 +208,6 @@ public class MetricCalculator {
     }
 
     private double calcNumCycles() {
-        /*List<ExclusiveGateway> loopJoinGates = new LinkedList<>();
-        for(Gateway g : processWithoutUnknownComponents.getGateways()){
-            if(g instanceof ExclusiveGateway){
-                if(isLoopJoinGate((ExclusiveGateway) g)){
-                    loopJoinGates.add((ExclusiveGateway) g);
-                }
-
-            }
-        }
-        return 0;*/
         List<FlowObject> nodes = new LinkedList<>();
         for(Component c : processWithoutUnknownComponents.getComponents()){
             if(c instanceof FlowObject){
@@ -228,6 +215,11 @@ public class MetricCalculator {
             }
         }
         boolean[][] adjacencyMatrixForProcess = new AdjacencyMatrix(nodes, processWithoutUnknownComponents.getSequences()).getAdjacencyMatrix();
-        return new ElementaryCyclesSearch(adjacencyMatrixForProcess, nodes.toArray()).getElementaryCycles().size();
+        List<Vector> cycles = new ElementaryCyclesSearch(adjacencyMatrixForProcess, nodes.toArray()).getElementaryCycles();
+        Set cycleStartObjects = new HashSet();
+        for(Vector cycle : cycles){
+            cycleStartObjects.add(cycle.get(0));
+        }
+        return cycleStartObjects.size();
     }
 }
