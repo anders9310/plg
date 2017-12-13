@@ -9,7 +9,7 @@ import static org.junit.Assert.fail;
 
 public class ParameterRandomizationConfigurationTest {
     @Test
-    public void testZeroObligation(){
+    public void testZeroTarget(){
         /*int numActivities = 10;
         int numGateways = 0;
         ParameterRandomizationConfiguration randomConfig = new ParameterRandomizationConfiguration(numActivities, numGateways, 0, 0);

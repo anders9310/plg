@@ -2,7 +2,7 @@ package plg.test.unit.process.weights;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import plg.generator.process.Obligation;
+import plg.generator.process.Target;
 import plg.generator.process.RandomizationPattern;
 
 import java.util.List;
@@ -10,15 +10,15 @@ import java.util.List;
 public class ProductionWeightTest {
     private static int valueForAllObligations = 4;
     private static RandomizationPattern productionPattern;
-    private static List<Obligation> obligations;
+    private static List<Target> targets;
 
     @BeforeClass
     public static void setUp(){
-        setUpObligations();
+        setUpTargets();
         productionPattern = RandomizationPattern.PARALLEL_EXECUTION;
     }
 
-    private static void setUpObligations() {
+    private static void setUpTargets() {
         /*obligations = new LinkedList<>();
         obligations.add(new Obligation(Metric.NUM_ACTIVITIES, valueForAllObligations));
         obligations.add(new Obligation(Metric.NUM_GATEWAYS, valueForAllObligations));*/

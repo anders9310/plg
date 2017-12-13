@@ -6,23 +6,23 @@ import plg.utils.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Obligation {
+public class Target {
     private Process process;
     private Metric type;
     private double mean;
     private double targetValue;
     private double currentValue;
 
-    public Obligation(Process process, Metric type, double mean){
+    public Target(Process process, Metric type, double mean){
         if(mean < 0){
-            throw new IllegalArgumentException("The obligation value must be equal to or greater than 0");
+            throw new IllegalArgumentException("The target value must be equal to or greater than 0");
         }
         this.process =process;
         this.type = type;
         this.mean = mean;
         this.targetValue = mean;
         //this.targetValue = Random.poissonRandom(mean);
-        Logger.instance().debug("Obligation for " + type.name() + " created with target value = " + this.targetValue + " for mean = " + mean);
+        Logger.instance().debug("Target for " + type.name() + " created with value = " + this.targetValue + " for mean = " + mean);
     }
 
     public double getTargetValue() {
@@ -53,7 +53,7 @@ public class Obligation {
         Map<String, Double> status = new HashMap<>();
         status.put("Current value", getCurrentValue());
         status.put("Target value", getTargetValue());
-        status.put("Mean", getMean());
+        status.put("Diff", getCurrentValue() - getTargetValue());
         return status;
     }
 }

@@ -1,30 +1,28 @@
 package plg.generator.process.weights;
 
 import plg.generator.process.CurrentGenerationState;
-import plg.generator.process.Obligation;
-import plg.generator.process.Production;
+import plg.generator.process.Target;
 import plg.generator.process.RandomizationPattern;
-import plg.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductionWeight extends Weight{
-    private List<ObligationWeight> obligationWeights;
+    private List<TargetWeight> targetWeights;
     private RandomizationPattern randomizationPattern;
 
-    public ProductionWeight(RandomizationPattern randomizationPattern, List<Obligation> obligations, List<RandomizationPattern> allRandomizationPatterns){
+    public ProductionWeight(RandomizationPattern randomizationPattern, List<Target> targets, List<RandomizationPattern> allRandomizationPatterns){
         this.randomizationPattern = randomizationPattern;
-        obligationWeights = new ArrayList<>();
-        for(Obligation obligation : obligations){
-            ObligationWeight ow = new ObligationWeight(randomizationPattern, allRandomizationPatterns, obligation);
-            obligationWeights.add(ow);
+        targetWeights = new ArrayList<>();
+        for(Target target : targets){
+            TargetWeight ow = new TargetWeight(randomizationPattern, allRandomizationPatterns, target);
+            targetWeights.add(ow);
         }
     }
 
     protected double calculateValue(CurrentGenerationState state){
         double sumOfWeights = 0;
-        for (ObligationWeight ow : obligationWeights) {
+        for (TargetWeight ow : targetWeights) {
             sumOfWeights += ow.getValue(state);
         }
         if(sumOfWeights<0) return 0;

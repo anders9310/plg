@@ -3,28 +3,28 @@ package plg.generator.process.weights;
 import plg.generator.process.*;
 import plg.model.Process;
 
-public class ProductionObligationWeight extends Weight{
+public class ProductionTargetWeight extends Weight{
     private final double POTENTIAL_THRESHOLD = 1;
     private final double VALUE_GRANULARITY = 0.01;
 
-    private Obligation obligation;
+    private Target target;
     private RandomizationPattern randomizationPattern;
     private Process process;
 
-    public ProductionObligationWeight(RandomizationPattern randomizationPattern, Obligation obligation){
+    public ProductionTargetWeight(RandomizationPattern randomizationPattern, Target target){
         this.randomizationPattern = randomizationPattern;
-        this.obligation = obligation;
-        this.process = obligation.getProcess();
+        this.target = target;
+        this.process = target.getProcess();
     }
 
     protected double calculateValue(CurrentGenerationState state) {
-        if(obligation.getMean() == 0){
+        if(target.getMean() == 0){
             return 0;
         }
 
-        double metricContribution = process.getContributionOf(state, this.obligation.getType(), randomizationPattern);;
-        double targetValue = obligation.getTargetValue();
-        double currentValue = obligation.getCurrentValue();
+        double metricContribution = process.getContributionOf(state, this.target.getType(), randomizationPattern);;
+        double targetValue = target.getTargetValue();
+        double currentValue = target.getCurrentValue();
         double currentPotential = process.getNumUnknownComponents();
         double potentialIncrease = process.getPotentialIncreaseOf(randomizationPattern);
 

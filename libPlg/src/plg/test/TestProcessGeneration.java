@@ -16,12 +16,13 @@ import java.util.*;
 
 public class TestProcessGeneration {
 
-    private static final int NUM_GENERATED_MODELS = 2;
+    private static final int NUM_GENERATED_MODELS = 10;
     private static final String PROJECT_ROOT_FOLDER = System.getProperty("user.dir");
     private static final String PROJECT_TEST_FOLDER = PROJECT_ROOT_FOLDER + "\\src\\plg\\test";
     public static final String MODEL_FILES_FOLDER = PROJECT_TEST_FOLDER + "\\modelfiles";
     public static final String RESULT_FILE_FOLDER = PROJECT_TEST_FOLDER + "\\analysisresults";
     public static final String GENERATION_RESULTS_FOLDER = PROJECT_TEST_FOLDER + "\\generationresults";
+    public static final String EXPERIMENT_RESULTS_FOLDER = PROJECT_TEST_FOLDER + "\\experimentresults";
     public static final String RESULT_FILE_NAME = "testmodels_results.csv";
     public static final String GENERATION_RESULTS_FILE_NAME = "generation_results.csv";
     private static BPMNProcessAnalyzer processAnalyzer = new BPMNProcessAnalyzer();
@@ -66,7 +67,14 @@ public class TestProcessGeneration {
 
     private static Map<Metric, Double> createInputMetrics(){
         Map<Metric, Double> inputs = new HashMap<>();
-        inputs.put(Metric.TOKEN_SPLIT, 10.0);
+        //inputs.put(Metric.NUM_AND_GATES, 10.0);
+        //inputs.put(Metric.NUM_XOR_GATES, 10.0);
+        //inputs.put(Metric.NUM_ACTIVITIES, 40.0);
+        inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 25.0);
+        //inputs.put(Metric.TOKEN_SPLIT, 50.0);
+        //inputs.put(Metric.NUMBER_OF_CYCLES, 5.0);
+        //inputs.put(Metric.SEQUENTIALITY, 10.0);
+        //inputs.put(Metric.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 10.0);
         return inputs;
     }
 
@@ -91,8 +99,8 @@ public class TestProcessGeneration {
         final String NEW_LINE_SEPARATOR = "\n";
         final String CURRENT_VALUE = "Current value";
         final String TARGET_VALUE = "Target value";
-        final String MEAN = "Mean";
-        final Object [] FILE_HEADER = {"Process number", "Metric name", CURRENT_VALUE, TARGET_VALUE, MEAN};
+        final String DIFF = "Diff";
+        final Object [] FILE_HEADER = {"Process number", "Metric name", CURRENT_VALUE, TARGET_VALUE, DIFF};
 
         FileWriter fileWriter = null;
         CSVPrinter csvFilePrinter = null;
@@ -103,16 +111,18 @@ public class TestProcessGeneration {
             csvFilePrinter = new CSVPrinter(fileWriter, csvFileFormat);
             csvFilePrinter.printRecord(FILE_HEADER);
 
+            int modelNumber = 0;
             for(Map<String, Map<String, Double>> result : generationResults){
                 for(String metricName : result.keySet()){
                     List<String> generationResultList = new LinkedList<>();
-                    generationResultList.add(String.valueOf(generationResults.indexOf(result)));
+                    generationResultList.add(String.valueOf(modelNumber));
                     generationResultList.add(metricName);
                     generationResultList.add(result.get(metricName).get(CURRENT_VALUE).toString());
                     generationResultList.add(result.get(metricName).get(TARGET_VALUE).toString());
-                    generationResultList.add(result.get(metricName).get(MEAN).toString());
+                    generationResultList.add(result.get(metricName).get(DIFF).toString());
                     csvFilePrinter.printRecord(generationResultList);
                 }
+                modelNumber++;
             }
         }catch (Exception e) {
             System.out.println("Error in CsvFileWriter !!!");

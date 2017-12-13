@@ -8,7 +8,7 @@ import java.util.*;
 
 public class ParameterRandomizationConfiguration extends RandomizationConfiguration{
 
-    private List<Obligation> obligations;
+    private List<Target> targets;
     private List<Production> productions;
     private Process process;
     private CurrentGenerationState state;
@@ -16,11 +16,11 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     public ParameterRandomizationConfiguration(Process process, Map<Metric, Double> inputs) {
         super(2, 2, 0.0);
         this.process = process;
-        initObligations(inputs);
+        initTargets(inputs);
         initProductions();
     }
 
-    /*private void initObligations(double numActivities, double numGateways, double numAndGates, double numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
+    /*private void initTargets(double numActivities, double numGateways, double numAndGates, double numXorGates, double diameter, double coefficientOfNetworkConnectivity) {
         Map<Metric, Double> generationParameters = new HashMap<>();
         if(numActivities>0) generationParameters.put(Metric.NUM_ACTIVITIES, numActivities);
         if(numGateways>0) generationParameters.put(Metric.NUM_GATEWAYS, numGateways);
@@ -28,21 +28,21 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         if(numXorGates>0) generationParameters.put(Metric.NUM_XOR_GATES, numXorGates);
         if(diameter>0) generationParameters.put(Metric.DIAMETER, diameter);
         if(coefficientOfNetworkConnectivity>0) generationParameters.put(Metric.COEFFICIENT_OF_NETWORK_CONNECTIVITY, coefficientOfNetworkConnectivity);
-        initObligations(generationParameters);
+        initTargets(generationParameters);
     }*/
 
-    private void initObligations(Map<Metric, Double> genParams) {
-        obligations = new ArrayList<>();
+    private void initTargets(Map<Metric, Double> genParams) {
+        targets = new ArrayList<>();
         for (Map.Entry gpAndValue : genParams.entrySet()) {
             Metric gp = (Metric) gpAndValue.getKey();
             double value = (double) gpAndValue.getValue();
-            initObligation(gp, value);
+            initTarget(gp, value);
         }
     }
 
-    private void initObligation(Metric gp, double value) {
-        Obligation obligation = new Obligation(process, gp, value);
-        obligations.add(obligation);
+    private void initTarget(Metric gp, double value) {
+        Target target = new Target(process, gp, value);
+        targets.add(target);
     }
 
     private void initProductions(){
@@ -50,7 +50,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
         productions = new LinkedList<>();
         for(RandomizationPattern pattern : randomizationPatterns){
-            productions.add(new Production(pattern, obligations, randomizationPatterns));
+            productions.add(new Production(pattern, targets, randomizationPatterns));
         }
     }
 
@@ -62,7 +62,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private RandomizationPattern generateRandomPattern(List<Production> patterns) {
         Logger.instance().debug("-------------------------------------------");
 
-        for(Obligation o : obligations){
+        for(Target o : targets){
             Logger.instance().debug("Metric name: " + o.getType().name() + ". Value: " + process.getMetric(o.getType()));
         }
         Logger.instance().debug("Potential: " + process.getNumUnknownComponents());
@@ -94,13 +94,13 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     }
 
     public void printResults(){
-        for(Obligation o : obligations){
+        for(Target o : targets){
             o.printStatus();
         }
     }
     public Map<String, Map<String, Double>> getStatus(){
         Map<String, Map<String, Double>> results = new HashMap<>();
-        for(Obligation o : obligations){
+        for(Target o : targets){
             results.put(o.getType().name(), o.getStatus());
         }
         return results;

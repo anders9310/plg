@@ -2,13 +2,13 @@ package plg.test.unit.process.weights;
 
 import org.junit.*;
 import plg.generator.process.*;
-import plg.generator.process.weights.ProductionObligationWeight;
+import plg.generator.process.weights.ProductionTargetWeight;
 
-public class ProductionObligationWeightTest {
+public class ProductionTargetWeightTest {
     static RandomizationPattern pattern;
     static Metric genParam;
-    static ProductionObligationWeight pow;
-    static Obligation obligation;
+    static ProductionTargetWeight pow;
+    static Target target;
     static double o_t;
     static double o_r;
     static double w_0;
@@ -26,13 +26,13 @@ public class ProductionObligationWeightTest {
         double v1 = 1.5;
         double v2 = 1;
         double threshold = 0.5;
-        assert ProductionObligationWeight.compare(v1, v2, threshold)==0;
+        assert ProductionTargetWeight.compare(v1, v2, threshold)==0;
 
         v1 = 1.50001;
-        assert ProductionObligationWeight.compare(v1, v2, threshold)==1;
+        assert ProductionTargetWeight.compare(v1, v2, threshold)==1;
 
         v1 = 0.499999;
-        assert ProductionObligationWeight.compare(v1, v2, threshold)==-1;
+        assert ProductionTargetWeight.compare(v1, v2, threshold)==-1;
 
     }
 
