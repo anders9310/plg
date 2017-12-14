@@ -30,7 +30,7 @@ public class Benefit extends Weight{
 
         double currentStateOfBenefit = (currentValue-targetValue) / targetValue;
         double projectedStateOfBenefit = (currentValue + metricContribution - targetValue) / targetValue;
-        return compare(Math.abs(currentStateOfBenefit), Math.abs(projectedStateOfBenefit), VALUE_GRANULARITY);
+        return compare(Math.abs(currentStateOfBenefit), Math.abs(projectedStateOfBenefit), 0);
 
 
 
@@ -84,29 +84,30 @@ public class Benefit extends Weight{
         return terminalWish + potentialWish;*/
     }
 
-    public double calculatePotentialGrowthBenefit(CurrentGenerationState state){
-        double potentialGrowthContribution = process.getPotentialIncreaseOf(randomizationPattern);;
+    public double calculatePotentialGrowthBenefit(){
+        double potentialGrowthContribution = process.getPotentialIncreaseOf(randomizationPattern);
+        final double TARGET_RELATIVE_GRANULARITY = 0.05;
+
         double currentValue = target.getCurrentValue();
         double targetValue = target.getTargetValue();
-        double diff = compare(targetValue, currentValue, VALUE_GRANULARITY);
-        if(diff>0){
-            if(potentialGrowthContribution > 0){
-                return diff;
-            } else if(potentialGrowthContribution==0){
-                return 0;
-            } else{
-                return -diff;
-            }
-        } else {
-            if(potentialGrowthContribution > 0){
-                return -diff;
-            }else if(potentialGrowthContribution==0){
-                return 0;
-            } else {
-                return diff;
-            }
-        }
+        double currentDistance = (currentValue-targetValue) / targetValue;
+        //double diff = compare(targetValue, currentValue, VALUE_GRANULARITY);
 
+        if(process.getNumUnknownComponents()<=2 && currentDistance < -TARGET_RELATIVE_GRANULARITY){//If should grow
+            if(potentialGrowthContribution > 0){//If grows
+                return 1;
+            } else {
+                return -1;
+            }
+        }else if(process.getNumUnknownComponents()>5 || currentDistance < -TARGET_RELATIVE_GRANULARITY){//If should decrease
+            if(potentialGrowthContribution > 0){//If grows
+                return -1;
+            }else{
+                return 1;
+            }
+        }else{//We don't care
+            return 0;
+        }
     }
 
     public RandomizationPattern getRandomizationPattern() {

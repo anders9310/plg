@@ -27,19 +27,20 @@ public class TargetWeight extends Weight{
     protected double calculateValue(CurrentGenerationState state) {
         double rawWeightGivenToThisPattern = rawWeightGivenToThisPattern(state);
         double rawWeightGivenToAllPatterns = rawWeightGivenToAllPatternsAbs(state);
-        if(!isAnythingBeneficial(state)){
+        //if(!isAnythingBeneficial(state)){
+        //if(benefits.get(0).getProcess().getNumUnknownComponents()<=3){
             //get weights based on which contribute to reducing potential
             double rawWeightGivenToThisPatternPotential = rawWeightGivenThisPatternBasedOnPotential();
             double rawWeightGivenToAllPatternsPotential = rawWeightGivenToAllPatternsBasedOnPotentialAbs();
 
             //assure that the potential weights count for 50 % of the total weight, by superimposing it on the other weights
             //double rawWeightGivenToThisPatternPotentialNorm = rawWeightGivenToThisPatternPotential / rawWeightGivenToAllPatternsPotential;
-            double equalizationFactor = rawWeightGivenToAllPatterns / rawWeightGivenToAllPatternsPotential;
+            double equalizationFactor = rawWeightGivenToAllPatternsPotential!=0 ? rawWeightGivenToAllPatterns / rawWeightGivenToAllPatternsPotential : 0;
             double weightGivenToThisPatternPotential = rawWeightGivenToThisPatternPotential * equalizationFactor;
             double weightGivenToAllPatternsPotential = rawWeightGivenToAllPatternsPotential * equalizationFactor;
             rawWeightGivenToThisPattern += weightGivenToThisPatternPotential;
             rawWeightGivenToAllPatterns += weightGivenToAllPatternsPotential;
-        }
+        //}
         return rawWeightGivenToThisPattern / rawWeightGivenToAllPatterns;
     }
 
@@ -48,12 +49,8 @@ public class TargetWeight extends Weight{
     }
 
     private double rawWeightGivenToPatternBasedOnPotential(RandomizationPattern pattern){
-        double potentialIncreaseOfPattern = benefits.get(0).getProcess().getPotentialIncreaseOf(pattern);
-        if(potentialIncreaseOfPattern<0){
-            return 1;
-        }else{
-            return 0;
-        }
+        Benefit thisProductionTargetWeight = findProductionObligatWeightForRandomizationPattern(pattern);
+        return thisProductionTargetWeight.calculatePotentialGrowthBenefit();
     }
 
     private double rawWeightGivenToAllPatternsBasedOnPotentialAbs() {

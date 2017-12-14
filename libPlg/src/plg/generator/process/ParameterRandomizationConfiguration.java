@@ -80,6 +80,9 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         //}
         //options = shiftTo0AsLowestWeight(options);
         options = cutoffAt0AsLowestWeight(options);
+        if(allProductionWeightsAre0(options)){
+            options = uniformWeights(options);
+        }
         for(Pair<RandomizationPattern, Double> p : options) {
             Logger.instance().debug("Pattern: " + p.getFirst().name() + " - Weight: " + p.getSecond());
         }
@@ -113,12 +116,20 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return cutoffSet;
     }
 
-    private boolean allProductionWeightsAre0(List<Pattern> patterns) {
+    private boolean allProductionWeightsAre0(Set<Pair<RandomizationPattern, Double>> options) {
         double sum = 0;
-        for(Pattern p : patterns) {
-            sum += p.getWeight(state);
+        for(Pair<RandomizationPattern, Double> o : options) {
+            sum += o.getSecond();
         }
         return sum==0;
+    }
+
+    private Set<Pair<RandomizationPattern, Double>> uniformWeights(Set<Pair<RandomizationPattern, Double>> options){
+        Set<Pair<RandomizationPattern, Double>> uniformSet = new HashSet<>();
+        for(Pair<RandomizationPattern, Double> o : options) {
+            uniformSet.add(new Pair<>(o.getFirst(), 1.0));
+        }
+        return uniformSet;
     }
 
     public void printResults(){
