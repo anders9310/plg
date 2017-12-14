@@ -9,7 +9,7 @@ import java.util.*;
 public class ParameterRandomizationConfiguration extends RandomizationConfiguration{
 
     private List<Target> targets;
-    private List<Production> productions;
+    private List<Pattern> productions;
     private Process process;
     private CurrentGenerationState state;
 
@@ -50,7 +50,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
         productions = new LinkedList<>();
         for(RandomizationPattern pattern : randomizationPatterns){
-            productions.add(new Production(pattern, targets, randomizationPatterns));
+            productions.add(new Pattern(pattern, targets, randomizationPatterns));
         }
     }
 
@@ -59,7 +59,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return generateRandomPattern(productions);
     }
 
-    private RandomizationPattern generateRandomPattern(List<Production> patterns) {
+    private RandomizationPattern generateRandomPattern(List<Pattern> patterns) {
         Logger.instance().debug("-------------------------------------------");
 
         for(Target o : targets){
@@ -67,17 +67,21 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         }
         Logger.instance().debug("Potential: " + process.getNumUnknownComponents());
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
-        if(allProductionWeightsAre0(patterns)){
-            for(Production p : patterns) {
+        /*if(allProductionWeightsAre0(patterns)){
+            for(Pattern p : patterns) {
                 options.add(new Pair<>(p.getType(), 1.0));
                 Logger.instance().debug("Pattern: " + p.getType().name() + " - Weight: " + 1.0);
             }
-        }else{
-            for(Production p : patterns) {
-                double weight = p.getWeight(state);
-                options.add(new Pair<>(p.getType(), weight));
-                Logger.instance().debug("Pattern: " + p.getType().name() + " - Weight: " + weight);
-            }
+        }else{*/
+        for(Pattern p : patterns) {
+            double weight = p.getWeight(state);
+            options.add(new Pair<>(p.getType(), weight));
+        }
+        //}
+        //options = shiftTo0AsLowestWeight(options);
+        options = cutoffAt0AsLowestWeight(options);
+        for(Pair<RandomizationPattern, Double> p : options) {
+            Logger.instance().debug("Pattern: " + p.getFirst().name() + " - Weight: " + p.getSecond());
         }
         RandomizationPattern generatedPattern = SetUtils.getRandomWeighted(options);
         Logger.instance().debug("Next pattern: " + generatedPattern.name());
@@ -85,9 +89,33 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         return generatedPattern;
     }
 
-    private boolean allProductionWeightsAre0(List<Production> patterns) {
+    private Set<Pair<RandomizationPattern, Double>> shiftTo0AsLowestWeight(Set<Pair<RandomizationPattern, Double>> options) {
+        Set<Pair<RandomizationPattern, Double>> shiftedSet = new HashSet<>();
+        double lowestWeight = 0;
+        for(Pair<RandomizationPattern, Double> pair : options){
+            if(pair.getSecond() < lowestWeight){
+                lowestWeight = pair.getSecond();
+            }
+        }
+        for(Pair<RandomizationPattern, Double> pair : options){
+            shiftedSet.add(new Pair<>(pair.getFirst(), pair.getSecond() + Math.abs(lowestWeight)));
+        }
+        return shiftedSet;
+    }
+
+    private Set<Pair<RandomizationPattern, Double>> cutoffAt0AsLowestWeight(Set<Pair<RandomizationPattern, Double>> options) {
+        Set<Pair<RandomizationPattern, Double>> cutoffSet = new HashSet<>();
+        double lowestWeight = 0;
+        for(Pair<RandomizationPattern, Double> pair : options){
+            double cutoffWeight = pair.getSecond()>=0 ? pair.getSecond() : 0;
+            cutoffSet.add(new Pair<>(pair.getFirst(), cutoffWeight));
+        }
+        return cutoffSet;
+    }
+
+    private boolean allProductionWeightsAre0(List<Pattern> patterns) {
         double sum = 0;
-        for(Production p : patterns) {
+        for(Pattern p : patterns) {
             sum += p.getWeight(state);
         }
         return sum==0;

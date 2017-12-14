@@ -7,11 +7,11 @@ import plg.generator.process.RandomizationPattern;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductionWeight extends Weight{
+public class PatternWeight extends Weight{
     private List<TargetWeight> targetWeights;
     private RandomizationPattern randomizationPattern;
 
-    public ProductionWeight(RandomizationPattern randomizationPattern, List<Target> targets, List<RandomizationPattern> allRandomizationPatterns){
+    public PatternWeight(RandomizationPattern randomizationPattern, List<Target> targets, List<RandomizationPattern> allRandomizationPatterns){
         this.randomizationPattern = randomizationPattern;
         targetWeights = new ArrayList<>();
         for(Target target : targets){
@@ -25,7 +25,8 @@ public class ProductionWeight extends Weight{
         for (TargetWeight ow : targetWeights) {
             sumOfWeights += ow.getValue(state);
         }
-        if(sumOfWeights<0) return 0;
-        else return sumOfWeights;
+        //if(sumOfWeights<0) return 0;
+        //else return sumOfWeights;
+        return sumOfWeights;
     }
 }

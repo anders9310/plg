@@ -2,12 +2,12 @@ package plg.test.unit.process.weights;
 
 import org.junit.*;
 import plg.generator.process.*;
-import plg.generator.process.weights.ProductionTargetWeight;
+import plg.generator.process.weights.Benefit;
 
 public class ProductionTargetWeightTest {
     static RandomizationPattern pattern;
     static Metric genParam;
-    static ProductionTargetWeight pow;
+    static Benefit pow;
     static Target target;
     static double o_t;
     static double o_r;
@@ -26,13 +26,13 @@ public class ProductionTargetWeightTest {
         double v1 = 1.5;
         double v2 = 1;
         double threshold = 0.5;
-        assert ProductionTargetWeight.compare(v1, v2, threshold)==0;
+        assert Benefit.compare(v1, v2, threshold)==0;
 
         v1 = 1.50001;
-        assert ProductionTargetWeight.compare(v1, v2, threshold)==1;
+        assert Benefit.compare(v1, v2, threshold)==1;
 
         v1 = 0.499999;
-        assert ProductionTargetWeight.compare(v1, v2, threshold)==-1;
+        assert Benefit.compare(v1, v2, threshold)==-1;
 
     }
 

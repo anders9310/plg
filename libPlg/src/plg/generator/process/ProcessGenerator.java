@@ -1,7 +1,6 @@
 package plg.generator.process;
 
 import plg.exceptions.InvalidProcessException;
-import plg.generator.process.weights.BaseWeights;
 import plg.model.FlowObject;
 import plg.model.Process;
 import plg.model.UnknownComponent;

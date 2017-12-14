@@ -11,39 +11,80 @@ import java.util.List;
 public class TargetWeight extends Weight{
     RandomizationPattern randomizationPattern;
     Metric metric;
-    List<ProductionTargetWeight> pows;
+    List<Benefit> benefits;
 
     public TargetWeight(RandomizationPattern randomizationPattern, List<RandomizationPattern> allRandomizationPatterns, Target target){
         this.randomizationPattern = randomizationPattern;
         this.metric = target.getType();
-        pows = new ArrayList<>();
+        benefits = new ArrayList<>();
         for(RandomizationPattern pattern : allRandomizationPatterns){
-            ProductionTargetWeight pow = new ProductionTargetWeight(pattern, target);
-            pows.add(pow);
+            Benefit pow = new Benefit(pattern, target);
+            benefits.add(pow);
         }
     }
 
     @Override
     protected double calculateValue(CurrentGenerationState state) {
-        double totalProductionTargetWeight = getTotalProductionTargetWeights(state);
-        double thisTargetProductionWeight = getThisTargetProductionWeight(state);
-        if(totalProductionTargetWeight>0){
-            return thisTargetProductionWeight / totalProductionTargetWeight;
+        double rawWeightGivenToThisPattern = rawWeightGivenToThisPattern(state);
+        double rawWeightGivenToAllPatterns = rawWeightGivenToAllPatternsAbs(state);
+        if(!isAnythingBeneficial(state)){
+            //get weights based on which contribute to reducing potential
+            double rawWeightGivenToThisPatternPotential = rawWeightGivenThisPatternBasedOnPotential();
+            double rawWeightGivenToAllPatternsPotential = rawWeightGivenToAllPatternsBasedOnPotentialAbs();
+
+            //assure that the potential weights count for 50 % of the total weight, by superimposing it on the other weights
+            //double rawWeightGivenToThisPatternPotentialNorm = rawWeightGivenToThisPatternPotential / rawWeightGivenToAllPatternsPotential;
+            double equalizationFactor = rawWeightGivenToAllPatterns / rawWeightGivenToAllPatternsPotential;
+            double weightGivenToThisPatternPotential = rawWeightGivenToThisPatternPotential * equalizationFactor;
+            double weightGivenToAllPatternsPotential = rawWeightGivenToAllPatternsPotential * equalizationFactor;
+            rawWeightGivenToThisPattern += weightGivenToThisPatternPotential;
+            rawWeightGivenToAllPatterns += weightGivenToAllPatternsPotential;
+        }
+        return rawWeightGivenToThisPattern / rawWeightGivenToAllPatterns;
+    }
+
+    private double rawWeightGivenThisPatternBasedOnPotential() {
+        return rawWeightGivenToPatternBasedOnPotential(randomizationPattern);
+    }
+
+    private double rawWeightGivenToPatternBasedOnPotential(RandomizationPattern pattern){
+        double potentialIncreaseOfPattern = benefits.get(0).getProcess().getPotentialIncreaseOf(pattern);
+        if(potentialIncreaseOfPattern<0){
+            return 1;
         }else{
             return 0;
         }
     }
 
-    private double getTotalProductionTargetWeights(CurrentGenerationState state){
+    private double rawWeightGivenToAllPatternsBasedOnPotentialAbs() {
         double sumOfWeights = 0;
-        for(ProductionTargetWeight pow : pows){
+        for(Benefit benefit : benefits){
+            sumOfWeights += Math.abs(rawWeightGivenToPatternBasedOnPotential(benefit.getRandomizationPattern()));
+        }
+        return sumOfWeights;
+    }
+
+    private boolean isAnythingBeneficial(CurrentGenerationState state) {
+        boolean isAnythingBeneficial = false;
+        for(Benefit pow : benefits){
+            if(pow.getValue(state) > 0){
+                isAnythingBeneficial = true;
+            }
+        }
+        return isAnythingBeneficial;
+    }
+
+
+    private double rawWeightGivenToAllPatternsAbs(CurrentGenerationState state){
+        double sumOfWeights = 0;
+        for(Benefit pow : benefits){
             sumOfWeights += Math.abs(pow.getValue(state));
         }
         return sumOfWeights;
     }
 
-    private double getThisTargetProductionWeight(CurrentGenerationState state){
-        ProductionTargetWeight thisProductionTargetWeight = findProductionObligatWeightForRandomizationPattern(this.randomizationPattern);
+    private double rawWeightGivenToThisPattern(CurrentGenerationState state){
+        Benefit thisProductionTargetWeight = findProductionObligatWeightForRandomizationPattern(this.randomizationPattern);
         if(thisProductionTargetWeight !=null){
             return thisProductionTargetWeight.calculateValue(state);
         }else{
@@ -51,8 +92,8 @@ public class TargetWeight extends Weight{
         }
     }
 
-    private ProductionTargetWeight findProductionObligatWeightForRandomizationPattern(RandomizationPattern randomizationPattern){
-        for(ProductionTargetWeight pow : pows){
+    private Benefit findProductionObligatWeightForRandomizationPattern(RandomizationPattern randomizationPattern){
+        for(Benefit pow : benefits){
             if(pow.getRandomizationPattern()==randomizationPattern){
                 return pow;
             }
