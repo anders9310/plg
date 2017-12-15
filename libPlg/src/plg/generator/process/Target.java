@@ -2,6 +2,7 @@ package plg.generator.process;
 
 import plg.model.Process;
 import plg.utils.Logger;
+import plg.utils.Random;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +21,8 @@ public class Target {
         this.process =process;
         this.type = type;
         this.mean = mean;
-        this.targetValue = mean;
-        //this.targetValue = Random.poissonRandom(mean);
+        //this.targetValue = mean;
+        this.targetValue = Random.poissonRandom(mean);
         Logger.instance().debug("Target for " + type.name() + " created with value = " + this.targetValue + " for mean = " + mean);
     }
 

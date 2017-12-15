@@ -4,9 +4,10 @@ import plg.utils.Logger;
 import plg.utils.Pair;
 import plg.utils.SetUtils;
 import plg.model.Process;
+
 import java.util.*;
 
-public class ParameterRandomizationConfiguration extends RandomizationConfiguration{
+public class ParameterRandomizationConfiguration extends RandomizationConfiguration {
 
     private List<Target> targets;
     private List<Pattern> productions;
@@ -45,11 +46,11 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         targets.add(target);
     }
 
-    private void initProductions(){
+    private void initProductions() {
         List<RandomizationPattern> randomizationPatterns = new LinkedList<>();
         randomizationPatterns.addAll(Arrays.asList(RandomizationPattern.values()));
         productions = new LinkedList<>();
-        for(RandomizationPattern pattern : randomizationPatterns){
+        for (RandomizationPattern pattern : randomizationPatterns) {
             productions.add(new Pattern(pattern, targets, randomizationPatterns));
         }
     }
@@ -62,28 +63,26 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private RandomizationPattern generateRandomPattern(List<Pattern> patterns) {
         Logger.instance().debug("-------------------------------------------");
 
-        for(Target o : targets){
+        for (Target o : targets) {
             Logger.instance().debug("Metric name: " + o.getType().name() + ". Value: " + process.getMetric(o.getType()));
         }
         Logger.instance().debug("Potential: " + process.getNumUnknownComponents());
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
-        /*if(allProductionWeightsAre0(patterns)){
-            for(Pattern p : patterns) {
-                options.add(new Pair<>(p.getType(), 1.0));
-                Logger.instance().debug("Pattern: " + p.getType().name() + " - Weight: " + 1.0);
-            }
-        }else{*/
-        for(Pattern p : patterns) {
+        for (Pattern p : patterns) {
             double weight = p.getWeight(state);
             options.add(new Pair<>(p.getType(), weight));
         }
-        //}
         //options = shiftTo0AsLowestWeight(options);
-        options = cutoffAt0AsLowestWeight(options);
-        if(allProductionWeightsAre0(options)){
-            options = uniformWeights(options);
+        if (allProductionWeightsAreLEZero(options)) {
+            if(allProductionWeightsAre0(options)){
+                options = uniformWeights(options);
+            }else{
+                options = setHighestWeightTo1(options);
+            }
         }
-        for(Pair<RandomizationPattern, Double> p : options) {
+        options = cutoffAt0AsLowestWeight(options);
+
+        for (Pair<RandomizationPattern, Double> p : options) {
             Logger.instance().debug("Pattern: " + p.getFirst().name() + " - Weight: " + p.getSecond());
         }
         RandomizationPattern generatedPattern = SetUtils.getRandomWeighted(options);
@@ -95,51 +94,76 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
     private Set<Pair<RandomizationPattern, Double>> shiftTo0AsLowestWeight(Set<Pair<RandomizationPattern, Double>> options) {
         Set<Pair<RandomizationPattern, Double>> shiftedSet = new HashSet<>();
         double lowestWeight = 0;
-        for(Pair<RandomizationPattern, Double> pair : options){
-            if(pair.getSecond() < lowestWeight){
+        for (Pair<RandomizationPattern, Double> pair : options) {
+            if (pair.getSecond() < lowestWeight) {
                 lowestWeight = pair.getSecond();
             }
         }
-        for(Pair<RandomizationPattern, Double> pair : options){
+        for (Pair<RandomizationPattern, Double> pair : options) {
             shiftedSet.add(new Pair<>(pair.getFirst(), pair.getSecond() + Math.abs(lowestWeight)));
         }
         return shiftedSet;
     }
 
+    private Set<Pair<RandomizationPattern, Double>> setHighestWeightTo1(Set<Pair<RandomizationPattern, Double>> options) {
+        Set<Pair<RandomizationPattern, Double>> newSet = new HashSet<>();
+        double highestWeight = highestWeight(options);
+        for (Pair<RandomizationPattern, Double> pair : options) {
+            double cutoffWeight = pair.getSecond() == highestWeight ? 1.0 : pair.getSecond();
+            newSet.add(new Pair<>(pair.getFirst(), cutoffWeight));
+        }
+        return newSet;
+    }
+
     private Set<Pair<RandomizationPattern, Double>> cutoffAt0AsLowestWeight(Set<Pair<RandomizationPattern, Double>> options) {
         Set<Pair<RandomizationPattern, Double>> cutoffSet = new HashSet<>();
-        double lowestWeight = 0;
-        for(Pair<RandomizationPattern, Double> pair : options){
-            double cutoffWeight = pair.getSecond()>=0 ? pair.getSecond() : 0;
+        for (Pair<RandomizationPattern, Double> pair : options) {
+            double cutoffWeight = pair.getSecond() >= 0 ? pair.getSecond() : 0;
             cutoffSet.add(new Pair<>(pair.getFirst(), cutoffWeight));
         }
         return cutoffSet;
     }
 
-    private boolean allProductionWeightsAre0(Set<Pair<RandomizationPattern, Double>> options) {
-        double sum = 0;
-        for(Pair<RandomizationPattern, Double> o : options) {
-            sum += o.getSecond();
-        }
-        return sum==0;
+    private boolean allProductionWeightsAreLEZero(Set<Pair<RandomizationPattern, Double>> options) {
+        double highestWeight = highestWeight(options);
+        return highestWeight <= 0;
     }
 
-    private Set<Pair<RandomizationPattern, Double>> uniformWeights(Set<Pair<RandomizationPattern, Double>> options){
+    private double highestWeight(Set<Pair<RandomizationPattern, Double>> options) {
+        double highestWeight = 0;
+        for (Pair<RandomizationPattern, Double> o : options) {
+            if(o.getSecond() > highestWeight){
+                highestWeight = o.getSecond();
+            }
+        }
+        return highestWeight;
+    }
+
+    private boolean allProductionWeightsAre0(Set<Pair<RandomizationPattern, Double>> options) {
+        double sum = 0;
+        for (Pair<RandomizationPattern, Double> o : options) {
+            sum += o.getSecond();
+        }
+        return sum == 0;
+    }
+
+    private Set<Pair<RandomizationPattern, Double>> uniformWeights(Set<Pair<RandomizationPattern, Double>> options) {
         Set<Pair<RandomizationPattern, Double>> uniformSet = new HashSet<>();
-        for(Pair<RandomizationPattern, Double> o : options) {
+        for (Pair<RandomizationPattern, Double> o : options) {
             uniformSet.add(new Pair<>(o.getFirst(), 1.0));
         }
         return uniformSet;
     }
 
-    public void printResults(){
-        for(Target o : targets){
+    public void printResults() {
+        for (Target o : targets) {
             o.printStatus();
         }
     }
-    public Map<String, Map<String, Double>> getStatus(){
+
+    public Map<String, Map<String, Double>> getStatus() {
         Map<String, Map<String, Double>> results = new HashMap<>();
-        for(Target o : targets){
+        for (Target o : targets) {
             results.put(o.getType().name(), o.getStatus());
         }
         return results;

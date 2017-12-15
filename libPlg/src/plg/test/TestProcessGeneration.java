@@ -67,14 +67,14 @@ public class TestProcessGeneration {
 
     private static Map<Metric, Double> createInputMetrics(){
         Map<Metric, Double> inputs = new HashMap<>();
-        inputs.put(Metric.NUM_AND_GATES, 10.0);
-        inputs.put(Metric.NUM_XOR_GATES, 10.0);
-        //inputs.put(Metric.NUM_GATEWAYS, 24.0);
-        inputs.put(Metric.NUM_ACTIVITIES, 40.0);
+        //inputs.put(Metric.NUM_AND_GATES, 6.0);
+        //inputs.put(Metric.NUM_XOR_GATES, 6.0);
+        //inputs.put(Metric.NUM_GATEWAYS, 20.0);
+        //inputs.put(Metric.NUM_ACTIVITIES, 20.0);
         //inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 25.0);
         //inputs.put(Metric.TOKEN_SPLIT, 50.0);
-        inputs.put(Metric.NUMBER_OF_CYCLES, 3.0);
-        //inputs.put(Metric.SEQUENTIALITY, 0.46);
+        //inputs.put(Metric.NUMBER_OF_CYCLES, 3.0);
+        inputs.put(Metric.SEQUENTIALITY, 0.46);
         //inputs.put(Metric.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 10.0);
         return inputs;
     }

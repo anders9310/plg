@@ -36,12 +36,13 @@ public class TargetWeight extends Weight{
             //assure that the potential weights count for 50 % of the total weight, by superimposing it on the other weights
             //double rawWeightGivenToThisPatternPotentialNorm = rawWeightGivenToThisPatternPotential / rawWeightGivenToAllPatternsPotential;
             double equalizationFactor = rawWeightGivenToAllPatternsPotential!=0 ? rawWeightGivenToAllPatterns / rawWeightGivenToAllPatternsPotential : 0;
+            equalizationFactor = equalizationFactor != 0 ? equalizationFactor : 1.0;
             double weightGivenToThisPatternPotential = rawWeightGivenToThisPatternPotential * equalizationFactor;
             double weightGivenToAllPatternsPotential = rawWeightGivenToAllPatternsPotential * equalizationFactor;
             rawWeightGivenToThisPattern += weightGivenToThisPatternPotential;
             rawWeightGivenToAllPatterns += weightGivenToAllPatternsPotential;
         //}
-        return rawWeightGivenToThisPattern / rawWeightGivenToAllPatterns;
+        return rawWeightGivenToAllPatterns != 0 ? rawWeightGivenToThisPattern / rawWeightGivenToAllPatterns : 0;
     }
 
     private double rawWeightGivenThisPatternBasedOnPotential() {

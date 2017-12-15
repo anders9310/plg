@@ -47,13 +47,20 @@ public class Random {
 	}
 
 	/**
-	 * Generates a Poisson-distributed random number using inverse transformation sampling
+	 * Generates a Poisson-distributed random number using inverse transformation sampling.
+	 * Supports non-integer numbers with two decimal granularity
 	 * @param mean The expected mean of the Poisson distribution
 	 * @return Poisson-distributed random number
 	 */
-	public static int poissonRandom(double mean){
+	public static double poissonRandom(double mean){
+		final int GRANULARITY_FACTOR = 100;
+		boolean meanHasDecimals = hasDecimalDigits(mean);
 		double lambda = mean;
-		int k = 0;
+		if(meanHasDecimals){
+			lambda = mean * GRANULARITY_FACTOR;
+		}
+
+		double k = 0;
 		double p = Math.exp(-lambda);
 		double s = p;
 		double u = Math.random();
@@ -62,6 +69,14 @@ public class Random {
 			p *= lambda/k;
 			s += p;
 		}
+		if(meanHasDecimals){
+			k = k/(double)GRANULARITY_FACTOR;
+		}
 		return k;
+	}
+
+	private static boolean hasDecimalDigits(double number) {
+		double decimals = number - Math.floor(number);
+		return decimals > 0.0;
 	}
 }
