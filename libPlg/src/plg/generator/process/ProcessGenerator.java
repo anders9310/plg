@@ -3,7 +3,7 @@ package plg.generator.process;
 import plg.exceptions.InvalidProcessException;
 import plg.model.FlowObject;
 import plg.model.Process;
-import plg.model.UnknownComponent;
+import plg.model.PlaceholderComponent;
 import plg.model.activity.Task;
 import plg.model.data.DataObject;
 import plg.model.data.IDataObjectOwner;
@@ -39,6 +39,9 @@ public class ProcessGenerator {
     protected RandomizationConfiguration parameters;
     protected int generatedActivities = 0;
     protected int generatedDataObjects = 0;
+
+    protected int generatedPatternsCount = 0;
+    protected final int MAX_PATTERN_COUNT = 1000;
 
     /**
      * This public static method is the main interface for the process
@@ -83,7 +86,7 @@ public class ProcessGenerator {
         Event start = process.newStartEvent();
         Event end = process.newEndEvent();
 
-        UnknownComponent c = process.newUnknownComponent();
+        PlaceholderComponent c = process.newUnknownComponent();
         PatternFrame.connect(start, c).connect(end);
 
         PatternFrame p = generateMainFrame(new CurrentGenerationState(0, true, true).setParentComponent(c));
@@ -104,7 +107,11 @@ public class ProcessGenerator {
      * @return the frame containing the generated pattern
      */
     protected PatternFrame newInternalPattern(CurrentGenerationState localState) {
-        RandomizationPattern nextAction = parameters.generateRandomPattern(localState);
+        RandomizationPattern nextAction = RandomizationPattern.SKIP;
+        if(generatedPatternsCount<=MAX_PATTERN_COUNT){
+            nextAction = parameters.generateRandomPattern(localState);
+            generatedPatternsCount++;
+        }
         return newInternalPattern(localState, nextAction);
     }
 
@@ -170,15 +177,15 @@ public class ProcessGenerator {
      */
     protected PatternFrame newSequence(CurrentGenerationState localState) {
         Logger.instance().debug("New sequence pattern to create");
-        Pair<UnknownComponent, UnknownComponent> newComponents = replaceComponentWithSequencePatternDummies(this.process, localState.parentComponent);
+        Pair<PlaceholderComponent, PlaceholderComponent> newComponents = replaceComponentWithSequencePatternDummies(this.process, localState.parentComponent);
         PatternFrame p1 = newInternalPattern(localState.makeCopy(this.process).setParentComponent(newComponents.getFirst()));
         PatternFrame p2 = newInternalPattern(localState.makeCopy(this.process).setParentComponent(newComponents.getSecond()));
         return PatternFrame.connect(p1, p2);
     }
 
-    public Pair<UnknownComponent, UnknownComponent> replaceComponentWithSequencePatternDummies(Process process, UnknownComponent parentComponent){
-        UnknownComponent c1 = process.newUnknownComponent();
-        UnknownComponent c2 = process.newUnknownComponent();
+    public Pair<PlaceholderComponent, PlaceholderComponent> replaceComponentWithSequencePatternDummies(Process process, PlaceholderComponent parentComponent){
+        PlaceholderComponent c1 = process.newUnknownComponent();
+        PlaceholderComponent c2 = process.newUnknownComponent();
         PatternFrame.connect((FlowObject)parentComponent.getIncomingObjects().toArray()[0], c1);
         PatternFrame.connect(c1, c2);
         PatternFrame.connect(c2, (FlowObject)parentComponent.getOutgoingObjects().toArray()[0]);
@@ -195,14 +202,14 @@ public class ProcessGenerator {
     protected PatternFrame newAndBranches(CurrentGenerationState localState) {
         Logger.instance().debug("New AND pattern to create");
 
-        UnknownComponent[] branchComponents = replaceComponentWithAndPatternDummies(this.process, localState.parentComponent);
+        PlaceholderComponent[] branchComponents = replaceComponentWithAndPatternDummies(this.process, localState.parentComponent);
 
         Gateway split = (Gateway) branchComponents[0].getIncomingObjects().get(0);
         Gateway join = (Gateway) branchComponents[0].getOutgoingObjects().get(0);
         Task beforeSplit = (Task) split.getIncomingObjects().get(0);
         Task afterJoin = (Task) join.getOutgoingObjects().get(0);
 
-        for (UnknownComponent bc : branchComponents) {
+        for (PlaceholderComponent bc : branchComponents) {
             PatternFrame p = newInternalPattern(localState.makeCopy(this.process).setCanSkip(false).setParentComponent(bc));
             PatternFrame.connect(split, p).connect(join);
         }
@@ -210,14 +217,14 @@ public class ProcessGenerator {
         return new PatternFrame(beforeSplit, afterJoin);
     }
 
-    public UnknownComponent[] replaceComponentWithAndPatternDummies(Process process, UnknownComponent parentComponent){
+    public PlaceholderComponent[] replaceComponentWithAndPatternDummies(Process process, PlaceholderComponent parentComponent){
         PatternFrame beforeSplit = newActivity(process);
         Gateway split = process.newParallelGateway();
         Gateway join = process.newParallelGateway();
         PatternFrame afterJoin = newActivity(process);
         int branchesToGenerate = parameters.getRandomANDBranches();
 
-        UnknownComponent[] components = new UnknownComponent[branchesToGenerate];
+        PlaceholderComponent[] components = new PlaceholderComponent[branchesToGenerate];
         for(int i = 0; i < branchesToGenerate; i++) {
             components[i] = process.newUnknownComponent();
             PatternFrame.connect(split, components[i]).connect(join);
@@ -239,7 +246,7 @@ public class ProcessGenerator {
     protected PatternFrame newXorBranches(CurrentGenerationState localState) {
         Logger.instance().debug("New XOR pattern to create");
 
-        UnknownComponent[] branchComponents = replaceComponentWithXorPatternDummies(this.process, localState.parentComponent);
+        PlaceholderComponent[] branchComponents = replaceComponentWithXorPatternDummies(this.process, localState.parentComponent);
 
         Gateway split = (Gateway) branchComponents[0].getIncomingObjects().get(0);
         Gateway join = (Gateway) branchComponents[0].getOutgoingObjects().get(0);
@@ -253,14 +260,14 @@ public class ProcessGenerator {
         return new PatternFrame(beforeSplit, afterJoin);
     }
 
-    public UnknownComponent[] replaceComponentWithXorPatternDummies(Process process, UnknownComponent parentComponent){
+    public PlaceholderComponent[] replaceComponentWithXorPatternDummies(Process process, PlaceholderComponent parentComponent){
         PatternFrame beforeSplit = newActivity(process);
         Gateway split = process.newExclusiveGateway();
         Gateway join = process.newExclusiveGateway();
         PatternFrame afterJoin = newActivity(process);
         int branchesToGenerate = parameters.getRandomXORBranches();
 
-        UnknownComponent[] components = new UnknownComponent[branchesToGenerate];
+        PlaceholderComponent[] components = new PlaceholderComponent[branchesToGenerate];
         for(int i = 0; i < branchesToGenerate; i++) {
             components[i] = process.newUnknownComponent();
             PatternFrame.connect(split, components[i]).connect(join);
@@ -282,7 +289,7 @@ public class ProcessGenerator {
     protected PatternFrame newLoopBranch(CurrentGenerationState localState) {
         Logger.instance().debug("New loop pattern to create");
 
-        Pair<UnknownComponent, UnknownComponent> bodyAndRollback = replaceComponentWithLoopPatternDummies(this.process, localState.parentComponent);
+        Pair<PlaceholderComponent, PlaceholderComponent> bodyAndRollback = replaceComponentWithLoopPatternDummies(this.process, localState.parentComponent);
 
         Gateway split = (Gateway) bodyAndRollback.getSecond().getOutgoingObjects().get(0);
         Gateway join = (Gateway) bodyAndRollback.getSecond().getIncomingObjects().get(0);
@@ -316,15 +323,15 @@ public class ProcessGenerator {
         return new PatternFrame(beforeSplit, afterJoin);
     }//
 
-    public Pair<UnknownComponent, UnknownComponent> replaceComponentWithLoopPatternDummies(Process process, UnknownComponent parentComponent){
+    public Pair<PlaceholderComponent, PlaceholderComponent> replaceComponentWithLoopPatternDummies(Process process, PlaceholderComponent parentComponent){
         PatternFrame beforeSplit = newActivity(process);
         Gateway split = process.newExclusiveGateway();
         Gateway join = process.newExclusiveGateway();
         PatternFrame afterJoin = newActivity(process);
 
-        UnknownComponent cBody = process.newUnknownComponent();
+        PlaceholderComponent cBody = process.newUnknownComponent();
         PatternFrame.connect(split, cBody).connect(join);
-        UnknownComponent cRollback = process.newUnknownComponent();
+        PlaceholderComponent cRollback = process.newUnknownComponent();
         PatternFrame.connect(join, cRollback).connect(split);
 
         PatternFrame.connect(parentComponent.getIncomingObjects().get(0), beforeSplit).connect(split);

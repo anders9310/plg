@@ -2,7 +2,7 @@ package plg.analysis.bpmeter.model;
 
 import java.util.List;
 
-public class AnalysisResult {
+public class RawAnalysisResult {
 
     String name; //Model name
     List<Metric> metrics;
@@ -18,5 +18,8 @@ public class AnalysisResult {
 
     public String getName() {
         return name;
+    }
+    public List<Metric> getMetrics() {
+        return metrics;
     }
 }

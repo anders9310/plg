@@ -1,6 +1,6 @@
 package plg.model;
 
-public class UnknownComponent extends FlowObject {
+public class PlaceholderComponent extends FlowObject {
 
     /**
      * This method creates a new component and tries to register it to the
@@ -9,7 +9,7 @@ public class UnknownComponent extends FlowObject {
      *
      * @param owner the process owner of this component
      */
-    public UnknownComponent(Process owner) {
+    public PlaceholderComponent(Process owner) {
         super(owner);
     }
 

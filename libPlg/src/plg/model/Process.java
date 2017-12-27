@@ -42,7 +42,7 @@ public class Process {
 	private List<Sequence> sequences;
 	private List<DataObject> dataObjects;
 	private MetricCalculator metrics;
-	private List<UnknownComponent> unknownComponents;
+	private List<PlaceholderComponent> placeholderComponents;
 	private int numSkips;
 	
 	/**
@@ -60,7 +60,7 @@ public class Process {
 		this.gateways = new LinkedList<>();
 		this.dataObjects = new LinkedList<>();
 		this.sequences = new LinkedList<>();
-		this.unknownComponents = new LinkedList<>();
+		this.placeholderComponents = new LinkedList<>();
 		this.metrics = new MetricCalculator(this);
 		this.numSkips = 0;
 	}
@@ -210,8 +210,8 @@ public class Process {
 			valid = false;
 		} else if (component instanceof DataObject) {
 			dataObjects.add((DataObject) component);
-		} else if (component instanceof UnknownComponent) {
-			unknownComponents.add((UnknownComponent) component);
+		} else if (component instanceof PlaceholderComponent) {
+			placeholderComponents.add((PlaceholderComponent) component);
 			valid = false;
 		}
 	}
@@ -275,8 +275,8 @@ public class Process {
 		} else if (component instanceof DataObject) {
 			dataObjects.remove((DataObject) component);
 			valid = false;
-		} else if (component instanceof UnknownComponent) {
-			unknownComponents.remove((UnknownComponent) component);
+		} else if (component instanceof PlaceholderComponent) {
+			placeholderComponents.remove((PlaceholderComponent) component);
 			valid = false;
 		}
 
@@ -356,8 +356,8 @@ public class Process {
 		}
 	}
 
-	public UnknownComponent newUnknownComponent() {
-		return new UnknownComponent(this);
+	public PlaceholderComponent newUnknownComponent() {
+		return new PlaceholderComponent(this);
 	}
 	
 	/**
@@ -487,7 +487,7 @@ public class Process {
 		return metrics.getContributionOf(currentState, metric, pattern);
 	}
 	public int getPotentialIncreaseOf(RandomizationPattern pattern){
-		return metrics.getPotentialIncreaseOf(pattern);
+		return metrics.getPlaceholderIncrease(pattern);
 	}
 	public int getNumSkips() {
 		return numSkips;
@@ -495,11 +495,11 @@ public class Process {
 	public void setNumSkips(int numSkips) {
 		this.numSkips = numSkips;
 	}
-	public List<UnknownComponent> getUnknownComponents(){
-		return unknownComponents;
+	public List<PlaceholderComponent> getPlaceholderComponents(){
+		return placeholderComponents;
 	}
-	public int getNumUnknownComponents(){
-		return unknownComponents.size();
+	public int getNumPlaceholderComponents(){
+		return placeholderComponents.size();
 	}
 
 	@Override
@@ -567,7 +567,7 @@ public class Process {
 				}
 			}
 		}
-		for(UnknownComponent c : unknownComponents){
+		for(PlaceholderComponent c : placeholderComponents){
 			p.newUnknownComponent().setComponentId(c.componentId);
 		}
 		for (Sequence s : getSequences()) {
@@ -589,8 +589,8 @@ public class Process {
 		return p;
 	}
 
-	public Process replaceUnknownComponentsWithNull(){
-		for(UnknownComponent c : new LinkedList<>(unknownComponents)){
+	public Process replacePlaceholdersWithNull(){
+		for(PlaceholderComponent c : new LinkedList<>(placeholderComponents)){
 			connectRightAndLeftFlowObjectsOf(c);
 			removeComponent(c);
 		}

@@ -11,17 +11,19 @@ import java.util.*;
 
 public class MetricCalculator {
     private Process process;
-    private Process processWithoutUnknownComponents;
-    private Map<RandomizationPattern, Integer> potentialIncreasesCache;
+    private Process processWithoutPlaceholders;
+    private Map<RandomizationPattern, Integer> placeholderIncreasesCache;
 
     public MetricCalculator(Process process) {
         this.process = process;
-        this.potentialIncreasesCache = new HashMap<>();
+        this.placeholderIncreasesCache = new HashMap<>();
     }
 
-    public double calculateMetric(Metric metric){
-        processWithoutUnknownComponents = ((Process)process.clone()).replaceUnknownComponentsWithNull();
-        switch(metric){
+    public double calculateMetric(Metric metric) {
+        processWithoutPlaceholders = ((Process) process.clone()).replacePlaceholdersWithNull();
+        switch (metric) {
+            case NUM_NODES:
+                return calcNumNodes();
             case NUM_ACTIVITIES:
                 return calcNumActivities();
             case NUM_GATEWAYS:
@@ -30,10 +32,14 @@ public class MetricCalculator {
                 return calcNumAndGates();
             case NUM_XOR_GATES:
                 return calcNumXorGates();
+            case AVG_DEGREE_OF_CONNECTORS:
+                return calcAvgDegreeOfConnectors();
             case COEFFICIENT_OF_NETWORK_CONNECTIVITY:
                 return calcCoefficientOfNetworkConnectivity();
             case SEQUENTIALITY:
                 return calcSequentiality();
+            case CONNECTOR_HETEROGENEITY:
+                return calcConnectorHeterogeneity();
             case CONTROL_FLOW_COMPLEXITY:
                 return calcCFC();
             case NUMBER_OF_CYCLES:
@@ -45,30 +51,30 @@ public class MetricCalculator {
         }
     }
 
-    public double getContributionOf(CurrentGenerationState state, Metric metric, RandomizationPattern pattern){
-        try{
+    public double getContributionOf(CurrentGenerationState state, Metric metric, RandomizationPattern pattern) {
+        try {
             return ProductionRuleContributions.CONTRIBUTIONS.getContribution(pattern, metric);
-        }catch(IllegalArgumentException e){//production contribution has to be calculated runtime
+        } catch (IllegalArgumentException e) {//production contribution has to be calculated runtime
             return calculateContribution(state, metric, pattern);
         }
     }
 
-    public int getPotentialIncreaseOf(RandomizationPattern pattern){
-        if(potentialIncreasesCache.get(pattern)==null){
-            CurrentGenerationState state = new CurrentGenerationState(0, true, true).setParentComponent(process.getUnknownComponents().get(0));
-            potentialIncreasesCache.put(pattern,calculatePotentialIncrease(state, pattern));
+    public int getPlaceholderIncrease(RandomizationPattern pattern) {
+        if (placeholderIncreasesCache.get(pattern) == null) {
+            CurrentGenerationState state = new CurrentGenerationState(0, true, true).setParentComponent(process.getPlaceholderComponents().get(0));
+            placeholderIncreasesCache.put(pattern, calculatePlaceholderIncrease(state, pattern));
         }
-        return potentialIncreasesCache.get(pattern);
+        return placeholderIncreasesCache.get(pattern);
     }
 
     public void setProcess(Process process) {
         this.process = process;
     }
 
-    private int calculatePotentialIncrease(CurrentGenerationState state, RandomizationPattern pattern){
-        int initialPotential = process.getNumUnknownComponents();
-        int projectedPotential = simulateGenerationOf(state, pattern).getNumUnknownComponents();
-        return projectedPotential - initialPotential;
+    private int calculatePlaceholderIncrease(CurrentGenerationState state, RandomizationPattern pattern) {
+        int initialPlaceholders = process.getNumPlaceholderComponents();
+        int projectedPlaceholders = simulateGenerationOf(state, pattern).getNumPlaceholderComponents();
+        return projectedPlaceholders - initialPlaceholders;
     }
 
     private double calculateContribution(CurrentGenerationState state, Metric metric, RandomizationPattern pattern) {
@@ -80,7 +86,7 @@ public class MetricCalculator {
     private Process simulateGenerationOf(CurrentGenerationState state, RandomizationPattern pattern) {
         Process simulationProcess = (Process) process.clone();
         CurrentGenerationState simulationState = state.makeCopy(simulationProcess);
-        RandomizationConfiguration parameters = new ParameterRandomizationConfiguration(simulationProcess, new HashMap<>());
+        RandomizationConfiguration parameters = new DynamicRandomizationConfiguration(simulationProcess, new HashMap<>());
         ProcessGenerator simulator = new ProcessGenerator(simulationProcess, parameters);
 
         switch (pattern) {
@@ -111,19 +117,23 @@ public class MetricCalculator {
         return simulationProcess;
     }
 
+    private double calcNumNodes() {
+        return processWithoutPlaceholders.getComponents().size() - processWithoutPlaceholders.getSequences().size();
+    }
+
     private double calcNumActivities() {
-        return processWithoutUnknownComponents.getTasks().size();
+        return processWithoutPlaceholders.getTasks().size();
     }
 
     private double calcNumGateways() {
-        return processWithoutUnknownComponents.getGateways().size();
+        return processWithoutPlaceholders.getGateways().size();
     }
 
     private double calcNumAndGates() {
-        List<Gateway> gateways =  processWithoutUnknownComponents.getGateways();
+        List<Gateway> gateways = processWithoutPlaceholders.getGateways();
         int numAndGates = 0;
-        for(Gateway gateway : gateways){
-            if(gateway instanceof ParallelGateway){
+        for (Gateway gateway : gateways) {
+            if (gateway instanceof ParallelGateway) {
                 numAndGates++;
             }
         }
@@ -131,28 +141,35 @@ public class MetricCalculator {
     }
 
     private double calcNumXorGates() {
-        List<Gateway> gateways =  processWithoutUnknownComponents.getGateways();
+        List<Gateway> gateways = processWithoutPlaceholders.getGateways();
         int numXorGates = 0;
-        for(Gateway gateway : gateways){
-            if(gateway instanceof ExclusiveGateway){
+        for (Gateway gateway : gateways) {
+            if (gateway instanceof ExclusiveGateway) {
                 numXorGates++;
             }
         }
         return numXorGates;
     }
 
-    private double calcCoefficientOfNetworkConnectivity(){
-        double projectedNumArcs = processWithoutUnknownComponents.getSequences().size();
-        double numNodes = processWithoutUnknownComponents.getComponents().size() - processWithoutUnknownComponents.getSequences().size();
-        if(!(projectedNumArcs>0)){
-            return 0;
+    private double calcDensity() {
+        double numArcs = processWithoutPlaceholders.getSequences().size();
+        double numNodes = processWithoutPlaceholders.getComponents().size() - processWithoutPlaceholders.getSequences().size();
+        return numNodes > 1 ? numArcs / (numNodes * (numNodes - 1)) : Double.POSITIVE_INFINITY;
+    }
+
+    private double calcAvgDegreeOfConnectors() {
+        double numGateways = processWithoutPlaceholders.getGateways().size();
+        double numConnections = 0;
+        for (Gateway g : processWithoutPlaceholders.getGateways()) {
+            numConnections += g.getOutgoingObjects().size();
         }
-        else if(!(numNodes>0)) {
-            return Double.POSITIVE_INFINITY;
-        }
-        else {
-            return projectedNumArcs / numNodes;
-        }
+        return numGateways > 0 ? numConnections/numGateways : 0;
+    }
+
+    private double calcCoefficientOfNetworkConnectivity() {
+        double numArcs = processWithoutPlaceholders.getSequences().size();
+        double numNodes = processWithoutPlaceholders.getComponents().size() - processWithoutPlaceholders.getSequences().size();
+        return numNodes != 0 ? numArcs / numNodes : Double.POSITIVE_INFINITY;
     }
 
     private double calcCFC() {
@@ -163,19 +180,19 @@ public class MetricCalculator {
 
     private int calcXorGateContributionForCFC() {
         List<ExclusiveGateway> xorGates = new LinkedList<>();
-        for(Gateway g : processWithoutUnknownComponents.getGateways()){
-            if(g instanceof ExclusiveGateway){
+        for (Gateway g : processWithoutPlaceholders.getGateways()) {
+            if (g instanceof ExclusiveGateway) {
                 xorGates.add((ExclusiveGateway) g);
             }
         }
         List<ExclusiveGateway> xorGateSplits = new LinkedList<>();
-        for(ExclusiveGateway g : xorGates){
-            if(g.getIncomingObjects().size()==1 && g.getOutgoingObjects().size()>1){
+        for (ExclusiveGateway g : xorGates) {
+            if (g.getIncomingObjects().size() == 1 && g.getOutgoingObjects().size() > 1) {
                 xorGateSplits.add(g);
             }
         }
         int sumOfFanout = 0;
-        for(ExclusiveGateway g : xorGateSplits){
+        for (ExclusiveGateway g : xorGateSplits) {
             sumOfFanout += g.getOutgoingObjects().size();
         }
         return sumOfFanout;
@@ -183,43 +200,73 @@ public class MetricCalculator {
 
     private int calcAndGateContributionForCFC() {
         List<ParallelGateway> andGates = new LinkedList<>();
-        for(Gateway g : processWithoutUnknownComponents.getGateways()){
-            if(g instanceof ParallelGateway){
+        for (Gateway g : processWithoutPlaceholders.getGateways()) {
+            if (g instanceof ParallelGateway) {
                 andGates.add((ParallelGateway) g);
             }
         }
         List<ParallelGateway> andGateSplits = new LinkedList<>();
-        for(ParallelGateway g : andGates){
-            if(g.getIncomingObjects().size()==1 && g.getOutgoingObjects().size()>1){
+        for (ParallelGateway g : andGates) {
+            if (g.getIncomingObjects().size() == 1 && g.getOutgoingObjects().size() > 1) {
                 andGateSplits.add(g);
             }
         }
         return andGateSplits.size();
     }
 
-    private double calcSequentiality(){
+    private double calcConnectorHeterogeneity() {
+        double numGateways = processWithoutPlaceholders.getGateways().size();
+        double numParallelGateways = 0;
+        double numExclusiveGateways = 0;
+        for (Gateway g : processWithoutPlaceholders.getGateways()) {
+            if (g instanceof ParallelGateway) {
+                numParallelGateways++;
+            } else if (g instanceof ExclusiveGateway) {
+                numExclusiveGateways++;
+            }
+        }
+        if(numParallelGateways + numExclusiveGateways != numGateways){
+            throw new RuntimeException("number of parallel and exclusive gateways does not match the total number of gateways");
+        }
+
+        if(numGateways > 0){
+            double clPar = numParallelGateways / numGateways;
+            double clExc = numExclusiveGateways / numGateways;
+            double chPar = clPar > 0 ? clPar * log(clPar, 2) : 0;
+            double chExc = clExc > 0 ? clExc * log(clExc, 2) : 0;
+            return -(chPar + chExc);
+        }else{
+            return 0;
+        }
+    }
+
+    private double log(double x, double base){
+        return Math.log10(x) / Math.log10(base);
+    }
+
+    private double calcSequentiality() {
         List<Sequence> sequencesBetweenNonConnectorNodes = new LinkedList<>();
-        for(Sequence seq : processWithoutUnknownComponents.getSequences()){
+        for (Sequence seq : processWithoutPlaceholders.getSequences()) {
             FlowObject source = seq.getSource();
             FlowObject sink = seq.getSink();
-            if(!(source instanceof Gateway) && !(sink instanceof Gateway)){
+            if (!(source instanceof Gateway) && !(sink instanceof Gateway)) {
                 sequencesBetweenNonConnectorNodes.add(seq);
             }
         }
-        return (double)sequencesBetweenNonConnectorNodes.size() / (double) processWithoutUnknownComponents.getSequences().size();
+        return (double) sequencesBetweenNonConnectorNodes.size() / (double) processWithoutPlaceholders.getSequences().size();
     }
 
     private double calcNumCycles() {
         List<FlowObject> nodes = new LinkedList<>();
-        for(Component c : processWithoutUnknownComponents.getComponents()){
-            if(c instanceof FlowObject){
-                nodes.add((FlowObject)c);
+        for (Component c : processWithoutPlaceholders.getComponents()) {
+            if (c instanceof FlowObject) {
+                nodes.add((FlowObject) c);
             }
         }
-        boolean[][] adjacencyMatrixForProcess = new AdjacencyMatrix(nodes, processWithoutUnknownComponents.getSequences()).getAdjacencyMatrix();
+        boolean[][] adjacencyMatrixForProcess = new AdjacencyMatrix(nodes, processWithoutPlaceholders.getSequences()).getAdjacencyMatrix();
         List<Vector> cycles = new ElementaryCyclesSearch(adjacencyMatrixForProcess, nodes.toArray()).getElementaryCycles();
         Set cycleStartObjects = new HashSet();
-        for(Vector cycle : cycles){
+        for (Vector cycle : cycles) {
             cycleStartObjects.add(cycle.get(0));
         }
         return cycleStartObjects.size();
@@ -227,14 +274,14 @@ public class MetricCalculator {
 
     private double calcTokenSplit() {
         List<Gateway> gateSplits = new LinkedList<>();
-        for(Gateway g : processWithoutUnknownComponents.getGateways()){
-            if(g.getIncomingObjects().size()==1 && g.getOutgoingObjects().size()>1){
+        for (Gateway g : processWithoutPlaceholders.getGateways()) {
+            if (g.getIncomingObjects().size() == 1 && g.getOutgoingObjects().size() > 1) {
                 gateSplits.add(g);
             }
         }
         int sumOfTS = 0;
-        for(Gateway g : gateSplits){
-            sumOfTS += g.getOutgoingObjects().size() -1;
+        for (Gateway g : gateSplits) {
+            sumOfTS += g.getOutgoingObjects().size() - 1;
         }
         return sumOfTS;
     }

@@ -3,7 +3,7 @@ package plg.test;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import plg.analysis.BPMNProcessAnalyzer;
-import plg.analysis.bpmeter.model.AnalysisResult;
+import plg.analysis.bpmeter.model.RawAnalysisResult;
 import plg.generator.process.*;
 import plg.io.exporter.BPMNExporter;
 import plg.model.Process;
@@ -16,13 +16,13 @@ import java.util.*;
 
 public class TestProcessGeneration {
 
-    private static final int NUM_GENERATED_MODELS = 10;
+    private static final int NUM_GENERATED_MODELS = 100;
     private static final String PROJECT_ROOT_FOLDER = System.getProperty("user.dir");
     private static final String PROJECT_TEST_FOLDER = PROJECT_ROOT_FOLDER + "\\src\\plg\\test";
     public static final String MODEL_FILES_FOLDER = PROJECT_TEST_FOLDER + "\\modelfiles";
     public static final String RESULT_FILE_FOLDER = PROJECT_TEST_FOLDER + "\\analysisresults";
     public static final String GENERATION_RESULTS_FOLDER = PROJECT_TEST_FOLDER + "\\generationresults";
-    public static final String EXPERIMENT_RESULTS_FOLDER = PROJECT_TEST_FOLDER + "\\experimentresults";
+    public static final String ANALYSE_RESPONSE = PROJECT_TEST_FOLDER + "\\experimentresults";
     public static final String RESULT_FILE_NAME = "testmodels_results.csv";
     public static final String GENERATION_RESULTS_FILE_NAME = "generation_results.csv";
     private static BPMNProcessAnalyzer processAnalyzer = new BPMNProcessAnalyzer();
@@ -37,8 +37,8 @@ public class TestProcessGeneration {
 
     private static void generateAnalyzeExportResults(){
         List<File> exportedFiles = generateProcessModelFilesAndWriteResultsToCsv();
-        List<AnalysisResult> analysisResults = processAnalyzer.analyzeModels(exportedFiles);
-        processAnalyzer.exportAnalysisResultsToCsv(RESULT_FILE_FOLDER, RESULT_FILE_NAME, analysisResults);
+        List<RawAnalysisResult> rawAnalysisResult = processAnalyzer.analyzeModels(exportedFiles);
+        processAnalyzer.exportAnalysisResultsToCsv(RESULT_FILE_FOLDER, RESULT_FILE_NAME, rawAnalysisResult);
     }
 
     private static List<File> generateProcessModelFilesAndWriteResultsToCsv(){
@@ -46,6 +46,7 @@ public class TestProcessGeneration {
         List<File> exportedFiles = new LinkedList<>();
         String baseFileName = "bpmnmodel_";
         String bpmnExtension = ".bpmn";
+        long startTime = System.currentTimeMillis();
         for(int i = 0; i< NUM_GENERATED_MODELS; i++){
             Process p =new Process("test" );
 
@@ -60,29 +61,85 @@ public class TestProcessGeneration {
             e.exportModel(p, path);
             File processFile = new File(path);
             exportedFiles.add(processFile);
+            Logger.instance().info("Generated " + baseFileName + modelNumber + bpmnExtension);
         }
+        long endTime = System.currentTimeMillis();
+        Logger.instance().info("EXECUTION TIME: " + (endTime-startTime)/1000.0 + " s");
+        Logger.instance().info("AVG TIME PER MODEL: " + (endTime-startTime)/1000.0/NUM_GENERATED_MODELS + " s");
         writeGenerationResultsToCsv(GENERATION_RESULTS_FOLDER, GENERATION_RESULTS_FILE_NAME);
         return exportedFiles;
     }
 
     private static Map<Metric, Double> createInputMetrics(){
         Map<Metric, Double> inputs = new HashMap<>();
-        //inputs.put(Metric.NUM_AND_GATES, 6.0);
-        //inputs.put(Metric.NUM_XOR_GATES, 6.0);
-        //inputs.put(Metric.NUM_GATEWAYS, 20.0);
-        //inputs.put(Metric.NUM_ACTIVITIES, 20.0);
-        //inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 25.0);
-        //inputs.put(Metric.TOKEN_SPLIT, 50.0);
+        //Test 1
+        //inputs.put(Metric.NUM_AND_GATES, 10.0);
+        //inputs.put(Metric.NUM_XOR_GATES, 10.0);
+        //inputs.put(Metric.NUM_ACTIVITIES, 30.0);
+
+        //Test 2
+        //inputs.put(Metric.NUM_NODES, 40.0);
+        //inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 10.0);
+        //inputs.put(Metric.CONNECTOR_HETEROGENEITY, 0.75);
+
+        //Test 3
+        //inputs.put(Metric.NUM_NODES, 50.0);
+
+        //Test 4: One ratio-based metric
+        //inputs.put(Metric.NUM_NODES, 40.0);
+        //inputs.put(Metric.CONNECTOR_HETEROGENEITY, 0.75);
+
+        //Test 5: ratio-based metrics
+        //inputs.put(Metric.NUM_NODES, 30.0);
+        //inputs.put(Metric.CONNECTOR_HETEROGENEITY, 0.75);
+        //inputs.put(Metric.AVG_DEGREE_OF_CONNECTORS, 1.25);
+        //inputs.put(Metric.SEQUENTIALITY, 0.46);
+
+        //Time complexity tests
+        //Test: Time - low size
+        //inputs.put(Metric.NUM_NODES, 10.0);
+        //Test: Time - highsize
+        //inputs.put(Metric.NUM_NODES, 100.0);
+        //Test: Time - simple metrics
+        //inputs.put(Metric.NUM_NODES, 50.0);
+        //inputs.put(Metric.NUM_ACTIVITIES, 35.0);
+        //Test: Time - complex metrics
+        inputs.put(Metric.NUM_NODES, 50.0);
+        inputs.put(Metric.NUMBER_OF_CYCLES, 5.0);
+
+        //inputs.put(Metric.CONNECTOR_HETEROGENEITY, 0.75);
+        //inputs.put(Metric.AVG_DEGREE_OF_CONNECTORS, 1.25);
+        //inputs.put(Metric.SEQUENTIALITY, 0.46);
+
+        //inputs.put(Metric.NUM_NODES, 60.0);
+        //inputs.put(Metric.NUM_AND_GATES, 10.0);
+        //inputs.put(Metric.NUM_XOR_GATES, 10.0);
+        //inputs.put(Metric.NUM_ACTIVITIES, 30.0);
+        //inputs.put(Metric.NUMBER_OF_CYCLES, 2.0);
+        //inputs.put(Metric.NUM_GATEWAYS, 10.0);
+        //inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 15.0);
+
+        //inputs.put(Metric.CONNECTOR_HETEROGENEITY, 0.28);
+        //inputs.put(Metric.AVG_DEGREE_OF_CONNECTORS, 1.25);
+        //inputs.put(Metric.TOKEN_SPLIT, 1.82);
+        //inputs.put(Metric.SEQUENTIALITY, 0.46);
+
+        //inputs.put(Metric.NUM_NODES, 40.0);
+        //inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 10.0);
+        //inputs.put(Metric.CONNECTOR_HETEROGENEITY, 0.75);
+
         //inputs.put(Metric.NUMBER_OF_CYCLES, 3.0);
-        inputs.put(Metric.SEQUENTIALITY, 0.46);
-        //inputs.put(Metric.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 10.0);
+        //inputs.put(Metric.NUM_ACTIVITIES, 20.0);
+
+        //inputs.put(Metric.COEFFICIENT_OF_NETWORK_CONNECTIVITY, 0.96);
+        //inputs.put(Metric.DENSITY, 0.09);
         return inputs;
     }
 
     private static void analyzeExportResults(){
         List<File> generatedFiles = Arrays.asList(new File(MODEL_FILES_FOLDER).listFiles());
-        List<AnalysisResult> analysisResults = processAnalyzer.analyzeModels(generatedFiles);
-        processAnalyzer.exportAnalysisResultsToCsv(RESULT_FILE_FOLDER, RESULT_FILE_NAME, analysisResults);
+        List<RawAnalysisResult> rawAnalysisResult = processAnalyzer.analyzeModels(generatedFiles);
+        processAnalyzer.exportAnalysisResultsToCsv(RESULT_FILE_FOLDER, RESULT_FILE_NAME, rawAnalysisResult);
     }
 
     private static void cleanUpModelFiles(){

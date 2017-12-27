@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import plg.analysis.BPMNProcessAnalyzer;
-import plg.analysis.bpmeter.model.AnalysisResult;
+import plg.analysis.bpmeter.model.RawAnalysisResult;
 import plg.analysis.bpmeter.model.Metric;
 import plg.analysis.bpmeter.model.MetricType;
 import plg.utils.Logger;
@@ -29,8 +29,8 @@ public class BPMNProcessAnalyzerTest {
 
     @Test
     public void testAnalyzeFile(){
-        AnalysisResult analysisResult = processAnalyzer.analyzeModel(inFile);
-        Metric numActivities = analysisResult.findMetric(MetricType.NUM_ACTIVITIES.getName());
+        RawAnalysisResult rawAnalysisResult = processAnalyzer.analyzeModel(inFile);
+        Metric numActivities = rawAnalysisResult.findMetric(MetricType.NUM_ACTIVITIES.getName());
         double numActivitiesValue = numActivities.getValues().get(0).getValue();
         assert numActivitiesValue == 42;
     }
@@ -45,22 +45,22 @@ public class BPMNProcessAnalyzerTest {
             modelFiles.add(file);
         }
 
-        List<AnalysisResult> analysisResults = processAnalyzer.analyzeModels(modelFiles);
+        List<RawAnalysisResult> rawAnalysisResult = processAnalyzer.analyzeModels(modelFiles);
 
-        int numActivitiesModel1 = (int) analysisResults.get(0).findMetric(MetricType.NUM_ACTIVITIES.getName()).getValues().get(0).getValue();
-        int numActivitiesModel2 = (int) analysisResults.get(1).findMetric(MetricType.NUM_ACTIVITIES.getName()).getValues().get(0).getValue();
-        assert analysisResults!=null;
+        int numActivitiesModel1 = (int) rawAnalysisResult.get(0).findMetric(MetricType.NUM_ACTIVITIES.getName()).getValues().get(0).getValue();
+        int numActivitiesModel2 = (int) rawAnalysisResult.get(1).findMetric(MetricType.NUM_ACTIVITIES.getName()).getValues().get(0).getValue();
+        assert rawAnalysisResult !=null;
         assert numActivitiesModel1 == 42 || numActivitiesModel1 == 1;
         assert numActivitiesModel2 == 1 || numActivitiesModel2 == 42;
     }
 
     @Test
     public void testExportAnalysisResultsToCsv(){
-        List<AnalysisResult> analysisResults = new LinkedList<>();
-        AnalysisResult analysisResult = processAnalyzer.analyzeModel(inFile);
-        analysisResults.add(analysisResult);
+        List<RawAnalysisResult> rawAnalysisResultList = new LinkedList<>();
+        RawAnalysisResult rawAnalysisResult = processAnalyzer.analyzeModel(inFile);
+        rawAnalysisResultList.add(rawAnalysisResult);
 
-        processAnalyzer.exportAnalysisResultsToCsv(FILE_PATH, CSV_FILE_NAME, analysisResults);
+        processAnalyzer.exportAnalysisResultsToCsv(FILE_PATH, CSV_FILE_NAME, rawAnalysisResultList);
 
         //Then
         File resultsFile = new File(FILE_PATH + "\\" + CSV_FILE_NAME);
@@ -83,12 +83,12 @@ public class BPMNProcessAnalyzerTest {
         }
 
         long startMillis = System.currentTimeMillis();
-        List<AnalysisResult> analysisResults = processAnalyzer.analyzeModels(modelFiles);
+        List<RawAnalysisResult> rawAnalysisResult = processAnalyzer.analyzeModels(modelFiles);
 
         long durationSecs = (System.currentTimeMillis()-startMillis)/1000;
         Logger.instance().debug("Analysis of " + numFiles + " files took " + durationSecs + " seconds.");
 
-        assert analysisResults.size() == numFiles;
+        assert rawAnalysisResult.size() == numFiles;
     }
 
 

@@ -25,63 +25,12 @@ public class Benefit extends Weight {
         double metricContribution = process.getContributionOf(state, this.target.getType(), randomizationPattern);
         double targetValue = target.getTargetValue();
         double currentValue = target.getCurrentValue();
-        //double currentPotential = process.getNumUnknownComponents();
-        //double potentialIncrease = process.getPotentialIncreaseOf(randomizationPattern);
+        //double currentPotential = process.getNumPlaceholderComponents();
+        //double potentialIncrease = process.getPlaceholderIncrease(randomizationPattern);
 
         double currentStateOfBenefit = (currentValue - targetValue) / targetValue;
         double projectedStateOfBenefit = (currentValue + metricContribution - targetValue) / targetValue;
         return compare(Math.abs(currentStateOfBenefit), Math.abs(projectedStateOfBenefit), 0);
-
-
-
-        /*double terminalWish;
-        int comparedValue = compare(currentValue, targetValue, VALUE_GRANULARITY/2);
-        if(comparedValue==-1){//increase
-            if(metricContribution>0){
-                terminalWish = 1;
-            }else if(metricContribution==0){
-                terminalWish = 0;
-            }else{
-                terminalWish = -1;
-            }
-        }else if(comparedValue==0){//Stay the same
-            if(metricContribution == 0){
-                terminalWish = 1;
-            }else{
-                terminalWish = -1;
-            }
-        }else{//decrease
-            if(metricContribution<0){
-                terminalWish = 1;
-            }else if(metricContribution==0){
-                terminalWish = 0;
-            }else{
-                terminalWish = -1;
-            }
-        }*/
-
-        /*double potentialWish;
-        if(comparedValue==-1 && currentPotential<=2.0*POTENTIAL_THRESHOLD){//increase
-            if(potentialIncrease >0){
-                if(currentPotential<=POTENTIAL_THRESHOLD){
-                    return 1;
-                }
-                potentialWish = 1;
-            }else if(potentialIncrease ==0){
-                potentialWish = 0;
-            }else{
-                potentialWish = -1;
-            }
-        } else{//decrease
-            if(potentialIncrease <0){
-                potentialWish = 1;
-            }else if(potentialIncrease ==0){
-                potentialWish = 0;
-            }else{
-                potentialWish = -1;
-            }
-        }
-        return terminalWish + potentialWish;*/
     }
 
     public double calculatePotentialGrowthBenefit() {
@@ -93,15 +42,15 @@ public class Benefit extends Weight {
         double currentDistance = (currentValue - targetValue) / targetValue;
         //double diff = compare(targetValue, currentValue, VALUE_GRANULARITY);
 
-        boolean shouldDecreasePotential = process.getNumUnknownComponents() > 5 || ((!isLikelyARatio(targetValue) && currentDistance > -TARGET_RELATIVE_GRANULARITY) || (isLikelyARatio(targetValue) && Math.abs(currentDistance) < TARGET_RELATIVE_GRANULARITY));
-        boolean shouldIncreasePotential = process.getNumUnknownComponents() <= 2 && ((!isLikelyARatio(targetValue) && currentDistance < -TARGET_RELATIVE_GRANULARITY) || (isLikelyARatio(targetValue) && Math.abs(currentDistance) > TARGET_RELATIVE_GRANULARITY));
-        if (shouldDecreasePotential) {//If should decrease
+        boolean shouldDecreasePlaceholders = process.getNumPlaceholderComponents() > 5 || ((!isLikelyARatio(targetValue) && currentDistance > -TARGET_RELATIVE_GRANULARITY) || (isLikelyARatio(targetValue) && Math.abs(currentDistance) < TARGET_RELATIVE_GRANULARITY));
+        boolean shouldIncreasePlaceholders = process.getNumPlaceholderComponents() <= 2 && ((!isLikelyARatio(targetValue) && currentDistance < -TARGET_RELATIVE_GRANULARITY) || (isLikelyARatio(targetValue) && Math.abs(currentDistance) > TARGET_RELATIVE_GRANULARITY));
+        if (shouldDecreasePlaceholders) {//If should decrease
             if (potentialGrowthContribution > 0) {//If grows
                 return -1;
             } else {
                 return 1;
             }
-        } else if (shouldIncreasePotential) {//If should grow
+        } else if (shouldIncreasePlaceholders) {//If should grow
             if (potentialGrowthContribution > 0) {//If grows
                 return 1;
             } else {

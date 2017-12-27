@@ -28,36 +28,36 @@ public class TargetWeight extends Weight{
         double rawWeightGivenToThisPattern = rawWeightGivenToThisPattern(state);
         double rawWeightGivenToAllPatterns = rawWeightGivenToAllPatternsAbs(state);
         //if(!isAnythingBeneficial(state)){
-        //if(benefits.get(0).getProcess().getNumUnknownComponents()<=3){
+        //if(benefits.get(0).getProcess().getNumPlaceholderComponents()<=3){
             //get weights based on which contribute to reducing potential
-            double rawWeightGivenToThisPatternPotential = rawWeightGivenThisPatternBasedOnPotential();
-            double rawWeightGivenToAllPatternsPotential = rawWeightGivenToAllPatternsBasedOnPotentialAbs();
+            double rawWeightGivenToThisPatternPlaceholders = rawWeightGivenThisPatternBasedOnPlaceholders();
+            double rawWeightGivenToAllPatternsPlaceholders = rawWeightGivenToAllPatternsBasedOnPlaceholdersAbs();
 
             //assure that the potential weights count for 50 % of the total weight, by superimposing it on the other weights
-            //double rawWeightGivenToThisPatternPotentialNorm = rawWeightGivenToThisPatternPotential / rawWeightGivenToAllPatternsPotential;
-            double equalizationFactor = rawWeightGivenToAllPatternsPotential!=0 ? rawWeightGivenToAllPatterns / rawWeightGivenToAllPatternsPotential : 0;
+            //double rawWeightGivenToThisPatternPotentialNorm = rawWeightGivenToThisPatternPlaceholders / rawWeightGivenToAllPatternsPlaceholders;
+            double equalizationFactor = rawWeightGivenToAllPatternsPlaceholders!=0 ? rawWeightGivenToAllPatterns / rawWeightGivenToAllPatternsPlaceholders : 0;
             equalizationFactor = equalizationFactor != 0 ? equalizationFactor : 1.0;
-            double weightGivenToThisPatternPotential = rawWeightGivenToThisPatternPotential * equalizationFactor;
-            double weightGivenToAllPatternsPotential = rawWeightGivenToAllPatternsPotential * equalizationFactor;
-            rawWeightGivenToThisPattern += weightGivenToThisPatternPotential;
-            rawWeightGivenToAllPatterns += weightGivenToAllPatternsPotential;
+            double weightGivenToThisPatternPlaceholders = rawWeightGivenToThisPatternPlaceholders * equalizationFactor;
+            double weightGivenToAllPatternsPlaceholders = rawWeightGivenToAllPatternsPlaceholders * equalizationFactor;
+            rawWeightGivenToThisPattern += weightGivenToThisPatternPlaceholders;
+            rawWeightGivenToAllPatterns += weightGivenToAllPatternsPlaceholders;
         //}
         return rawWeightGivenToAllPatterns != 0 ? rawWeightGivenToThisPattern / rawWeightGivenToAllPatterns : 0;
     }
 
-    private double rawWeightGivenThisPatternBasedOnPotential() {
-        return rawWeightGivenToPatternBasedOnPotential(randomizationPattern);
+    private double rawWeightGivenThisPatternBasedOnPlaceholders() {
+        return rawWeightGivenToPatternBasedOnPlaceholders(randomizationPattern);
     }
 
-    private double rawWeightGivenToPatternBasedOnPotential(RandomizationPattern pattern){
+    private double rawWeightGivenToPatternBasedOnPlaceholders(RandomizationPattern pattern){
         Benefit thisProductionTargetWeight = findProductionObligatWeightForRandomizationPattern(pattern);
         return thisProductionTargetWeight.calculatePotentialGrowthBenefit();
     }
 
-    private double rawWeightGivenToAllPatternsBasedOnPotentialAbs() {
+    private double rawWeightGivenToAllPatternsBasedOnPlaceholdersAbs() {
         double sumOfWeights = 0;
         for(Benefit benefit : benefits){
-            sumOfWeights += Math.abs(rawWeightGivenToPatternBasedOnPotential(benefit.getRandomizationPattern()));
+            sumOfWeights += Math.abs(rawWeightGivenToPatternBasedOnPlaceholders(benefit.getRandomizationPattern()));
         }
         return sumOfWeights;
     }

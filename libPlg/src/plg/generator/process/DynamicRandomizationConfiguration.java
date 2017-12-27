@@ -7,14 +7,15 @@ import plg.model.Process;
 
 import java.util.*;
 
-public class ParameterRandomizationConfiguration extends RandomizationConfiguration {
+public class DynamicRandomizationConfiguration extends RandomizationConfiguration {
 
+    private static final int WEIGHT_GRANULARITY = 1000;
     private List<Target> targets;
     private List<Pattern> productions;
     private Process process;
     private CurrentGenerationState state;
 
-    public ParameterRandomizationConfiguration(Process process, Map<Metric, Double> inputs) {
+    public DynamicRandomizationConfiguration(Process process, Map<Metric, Double> inputs) {
         super(2, 2, 0.0);
         this.process = process;
         initTargets(inputs);
@@ -66,7 +67,7 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
         for (Target o : targets) {
             Logger.instance().debug("Metric name: " + o.getType().name() + ". Value: " + process.getMetric(o.getType()));
         }
-        Logger.instance().debug("Potential: " + process.getNumUnknownComponents());
+        Logger.instance().debug("Placeholders: " + process.getNumPlaceholderComponents());
         Set<Pair<RandomizationPattern, Double>> options = new HashSet<>();
         for (Pattern p : patterns) {
             double weight = p.getWeight(state);
@@ -126,7 +127,8 @@ public class ParameterRandomizationConfiguration extends RandomizationConfigurat
 
     private boolean allProductionWeightsAreLEZero(Set<Pair<RandomizationPattern, Double>> options) {
         double highestWeight = highestWeight(options);
-        return highestWeight <= 0;
+        int highestWeightGranular = (int) highestWeight*WEIGHT_GRANULARITY;
+        return highestWeightGranular <= 0;
     }
 
     private double highestWeight(Set<Pair<RandomizationPattern, Double>> options) {
