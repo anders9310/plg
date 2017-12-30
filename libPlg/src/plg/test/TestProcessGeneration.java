@@ -51,7 +51,7 @@ public class TestProcessGeneration {
             Process p =new Process("test" );
 
             Map<Metric, Double> inputs = createInputMetrics();
-            ObligationsProcessGenerator generator = new ObligationsProcessGenerator(p, inputs);
+            DynamicProcessGenerator generator = new DynamicProcessGenerator(p, inputs);
             generator.randomizeProcess();
 
             generationResults.add(generator.getGenerationResults());
@@ -68,6 +68,23 @@ public class TestProcessGeneration {
         Logger.instance().info("AVG TIME PER MODEL: " + (endTime-startTime)/1000.0/NUM_GENERATED_MODELS + " s");
         writeGenerationResultsToCsv(GENERATION_RESULTS_FOLDER, GENERATION_RESULTS_FILE_NAME);
         return exportedFiles;
+    }
+
+    private static List<Process> generateProcessModels(int numberOfModels){
+        List<Process> generatedProcesses = new LinkedList<>();
+
+        for(int i = 0; i< numberOfModels; i++){
+            Process p = new Process("test" );
+
+            Map<Metric, Double> inputs = new HashMap<>();
+            inputs.put(Metric.NUM_NODES, 40.0);
+            inputs.put(Metric.CONTROL_FLOW_COMPLEXITY, 10.0);
+
+            DynamicProcessGenerator generator = new DynamicProcessGenerator(p, inputs);
+            generator.randomizeProcess();
+        }
+
+        return generatedProcesses;
     }
 
     private static Map<Metric, Double> createInputMetrics(){
@@ -104,8 +121,8 @@ public class TestProcessGeneration {
         //inputs.put(Metric.NUM_NODES, 50.0);
         //inputs.put(Metric.NUM_ACTIVITIES, 35.0);
         //Test: Time - complex metrics
-        inputs.put(Metric.NUM_NODES, 50.0);
-        inputs.put(Metric.NUMBER_OF_CYCLES, 5.0);
+        inputs.put(Metric.NUM_NODES, 32.0);
+        //inputs.put(Metric.NUMBER_OF_CYCLES, 5.0);
 
         //inputs.put(Metric.CONNECTOR_HETEROGENEITY, 0.75);
         //inputs.put(Metric.AVG_DEGREE_OF_CONNECTORS, 1.25);

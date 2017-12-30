@@ -4,8 +4,8 @@ import plg.model.Process;
 
 import java.util.Map;
 
-public class ObligationsProcessGenerator extends ProcessGenerator{
-    public ObligationsProcessGenerator(Process process, Map<Metric, Double> inputs){
+public class DynamicProcessGenerator extends ProcessGenerator{
+    public DynamicProcessGenerator(Process process, Map<Metric, Double> inputs){
         super(process, new DynamicRandomizationConfiguration(process, inputs));
     }
 
